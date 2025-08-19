@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Globe } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import logoSmall from '@/assets/kadmeia-logo-small.png';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -30,12 +29,10 @@ const Header = () => {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex lg:flex-1">
-            <Link to="/" className="-m-1.5 p-1.5 flex items-center">
-              <img 
-                src={logoSmall} 
-                alt="KADMEIA" 
-                className="h-8 w-auto"
-              />
+            <Link to="/" className="-m-1.5 p-1.5">
+              <span className="font-display text-2xl font-semibold text-primary">
+                KADMEIA
+              </span>
             </Link>
           </div>
 
