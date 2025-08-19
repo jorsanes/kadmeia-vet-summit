@@ -14,11 +14,27 @@ import {
   Star,
   CheckCircle
 } from 'lucide-react';
+import { PageSeo } from '@/components/seo/PageSeo';
+import { OrganizationJsonLd } from '@/components/seo/SeoJsonLd';
+import { useLocale } from '@/i18n/LocaleProvider';
 import heroImage from '@/assets/hero-kadmeia.jpg';
 import logoLarge from '@/assets/kadmeia-logo-large.png';
 
 const Home = () => {
   const { t } = useTranslation();
+  const { locale } = useLocale();
+
+  const getLocalizedHref = (path: string) => {
+    return locale === 'en' ? `/en${path}` : path;
+  };
+
+  const seoTitle = locale === 'es' 
+    ? 'KADMEIA - Consultoría y Tecnología Veterinaria' 
+    : 'KADMEIA - Veterinary Consulting and Technology';
+  
+  const seoDescription = locale === 'es'
+    ? 'Consultoría y tecnología veterinaria que une evidencia, claridad e impacto. Puenteamos ciencia, negocio y tecnología para clínicas y fabricantes.'
+    : 'Veterinary consulting and technology that unites evidence, clarity and impact. We bridge science, business and technology for clinics and manufacturers.';
 
   const fadeInUp = {
     initial: { opacity: 0, y: 20 },
@@ -36,6 +52,13 @@ const Home = () => {
 
   return (
     <div className="min-h-screen">
+      <PageSeo 
+        title={seoTitle}
+        description={seoDescription}
+        ogType="website"
+      />
+      <OrganizationJsonLd />
+
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-hero">
         <div className="absolute inset-0">
