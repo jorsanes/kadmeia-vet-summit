@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -246,7 +247,14 @@ const Contact = () => {
                       className="mt-1"
                     />
                     <label htmlFor="consent" className="text-sm text-muted-foreground leading-relaxed">
-                      {t('contact.form.consent')} *
+                      {t('contact.form.consent')} *{' '}
+                      <Link 
+                        to="/privacidad" 
+                        className="text-primary hover:text-primary-hover transition-colors underline"
+                        target="_blank"
+                      >
+                        Ver política de privacidad
+                      </Link>
                     </label>
                   </div>
 
