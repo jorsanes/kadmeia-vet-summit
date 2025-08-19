@@ -15,6 +15,7 @@ import {
   CheckCircle
 } from 'lucide-react';
 import heroImage from '@/assets/hero-kadmeia.jpg';
+import logoLarge from '@/assets/kadmeia-logo-large.png';
 
 const Home = () => {
   const { t } = useTranslation();
@@ -44,6 +45,16 @@ const Home = () => {
             className="w-full h-full object-cover opacity-10"
           />
         </div>
+        
+        {/* Large logo decoration */}
+        <div className="absolute right-8 top-1/2 -translate-y-1/2 opacity-5 hidden xl:block">
+          <img 
+            src={logoLarge} 
+            alt="" 
+            className="w-80 h-80 object-contain"
+          />
+        </div>
+        
         <div className="relative mx-auto max-w-7xl px-6 py-24 lg:px-8 lg:py-32">
           <motion.div 
             className="mx-auto max-w-4xl text-center"
