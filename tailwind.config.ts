@@ -61,7 +61,11 @@ export default {
 				warning: {
 					DEFAULT: 'hsl(var(--warning))',
 					foreground: 'hsl(var(--warning-foreground))'
-				}
+				},
+				// KADMEIA Brand Colors Exactos
+				'kadmeia-blue': '#1E2A38',
+				'kadmeia-gold': '#B38A3F', 
+				'kadmeia-cream': '#F5F1EA'
 			},
 			fontFamily: {
 				'display': ['Playfair Display', 'Georgia', 'serif'],
@@ -87,7 +91,33 @@ export default {
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
+				sm: 'calc(var(--radius) - 4px)',
+				'2xl': '1rem',
+				'3xl': '1.5rem',
+				'4xl': '2rem'
+			},
+			spacing: {
+				'18': '4.5rem',
+				'22': '5.5rem', 
+				'26': '6.5rem',
+				'30': '7.5rem',
+				'34': '8.5rem',
+				'38': '9.5rem',
+				'42': '10.5rem',
+				'46': '11.5rem',
+				'50': '12.5rem',
+				'54': '13.5rem',
+				'58': '14.5rem',
+				'62': '15.5rem',
+				'66': '16.5rem',
+				'70': '17.5rem',
+				'74': '18.5rem',
+				'78': '19.5rem',
+				'82': '20.5rem',
+				'86': '21.5rem',
+				'90': '22.5rem',
+				'94': '23.5rem',
+				'98': '24.5rem'
 			},
 			keyframes: {
 				'accordion-down': {

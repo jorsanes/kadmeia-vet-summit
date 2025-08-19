@@ -161,9 +161,47 @@ All colors are HSL for consistent theming. Professional, elegant, trustworthy.
     @apply bg-transparent text-foreground hover:bg-muted transition-all duration-200;
   }
 
-  /* Premium Cards */
+  /* Premium Cards con variantes KADMEIA */
   .card-premium {
     @apply bg-card border border-border/50 shadow-md hover:shadow-lg transition-all duration-300 rounded-2xl;
+  }
+
+  .card-outline {
+    @apply border-2 border-primary/20 bg-transparent shadow-sm hover:shadow-md hover:border-primary/40 rounded-2xl transition-all duration-300;
+  }
+
+  .card-subtle {
+    @apply bg-muted/30 border-0 shadow-sm hover:shadow-md rounded-2xl transition-all duration-300;
+  }
+
+  .card-premium-gradient {
+    @apply bg-gradient-subtle border border-border/30 shadow-md hover:shadow-elegant rounded-2xl transition-all duration-300;
+  }
+
+  /* Theme utilities - KADMEIA Corporate */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .bg-glass {
+    @apply bg-background/95 backdrop-blur-sm border border-border/50;
+  }
+
+  .focus-ring-kadmeia {
+    @apply focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:ring-offset-2 focus:ring-offset-background;
+  }
+
+  /* Smooth transitions optimized for KADMEIA */
+  .transition-kadmeia {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  .hover-lift {
+    @apply hover:-translate-y-1 transition-transform duration-300;
+  }
+
+  .hover-glow {
+    @apply hover:shadow-elegant transition-shadow duration-300;
   }
 
   /* Elegant Animations */
