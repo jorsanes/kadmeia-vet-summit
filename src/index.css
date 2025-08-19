@@ -8,63 +8,63 @@ All colors are HSL for consistent theming. Professional, elegant, trustworthy.
 
 @layer base {
   :root {
-    /* Core Brand Colors */
-    --background: 40 29% 93%; /* Marfil Claro #F5F1EA */
-    --foreground: 210 33% 17%; /* Azul Profundo #1E2A38 */
+    /* KADMEIA Core Brand Colors - Exact Brand Tokens */
+    --background: 38 29% 94%; /* Marfil Claro #F5F1EA */
+    --foreground: 210 30% 17%; /* Azul Profundo #1E2A38 */
 
     /* Card System - Clean & Elegant */
-    --card: 40 45% 96%; /* Ligero marfil para cards */
-    --card-foreground: 210 33% 17%;
+    --card: 38 35% 97%; /* Ligero marfil para cards */
+    --card-foreground: 210 30% 17%;
 
     /* Popovers & Modals */
-    --popover: 40 45% 98%;
-    --popover-foreground: 210 33% 17%;
+    --popover: 38 35% 98%;
+    --popover-foreground: 210 30% 17%;
 
     /* Primary Brand - Azul Profundo Corporativo */
-    --primary: 210 33% 17%; /* #1E2A38 */
-    --primary-foreground: 40 29% 93%;
-    --primary-hover: 210 33% 22%; /* Hover state */
+    --primary: 210 30% 17%; /* #1E2A38 - Exact Brand Color */
+    --primary-foreground: 38 29% 94%;
+    --primary-hover: 210 30% 22%; /* Hover state */
 
     /* Secondary Brand - Oro Clásico */
-    --secondary: 40 46% 47%; /* #B38A3F */
-    --secondary-foreground: 40 29% 93%;
-    --secondary-hover: 40 46% 42%;
+    --secondary: 39 48% 47%; /* #B38A3F - Exact Brand Color */
+    --secondary-foreground: 38 29% 94%;
+    --secondary-hover: 39 48% 42%;
 
-    /* Muted Elements - Subtle Grays */
-    --muted: 40 20% 88%;
-    --muted-foreground: 210 15% 35%;
+    /* Muted Elements - Subtle Grays derivados del brand */
+    --muted: 38 20% 88%;
+    --muted-foreground: 210 15% 40%;
 
     /* Accent - Gold Highlights */
-    --accent: 40 46% 47%;
-    --accent-foreground: 40 29% 93%;
+    --accent: 39 48% 47%;
+    --accent-foreground: 38 29% 94%;
 
-    /* Status Colors */
-    --destructive: 0 70% 55%;
-    --destructive-foreground: 40 29% 93%;
-    --success: 140 50% 45%;
-    --success-foreground: 40 29% 93%;
-    --warning: 35 85% 55%;
-    --warning-foreground: 40 29% 93%;
+    /* Status Colors - Aligned with brand palette */
+    --destructive: 0 65% 50%;
+    --destructive-foreground: 38 29% 94%;
+    --success: 140 45% 40%;
+    --success-foreground: 38 29% 94%;
+    --warning: 35 80% 50%;
+    --warning-foreground: 38 29% 94%;
 
     /* Borders & Inputs */
-    --border: 40 20% 85%;
-    --input: 40 20% 85%;
-    --ring: 210 33% 17%;
+    --border: 38 20% 85%;
+    --input: 38 20% 85%;
+    --ring: 210 30% 17%;
 
     /* Corporate Radius */
     --radius: 0.75rem; /* Más premium que 0.5rem */
 
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(210 33% 17%), hsl(210 33% 22%));
-    --gradient-secondary: linear-gradient(135deg, hsl(40 46% 47%), hsl(40 46% 52%));
-    --gradient-subtle: linear-gradient(180deg, hsl(40 29% 93%), hsl(40 25% 88%));
-    --gradient-hero: linear-gradient(135deg, hsl(210 33% 17% / 0.05), hsl(40 46% 47% / 0.05));
+    /* KADMEIA Brand Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(210 30% 17%), hsl(210 30% 22%));
+    --gradient-secondary: linear-gradient(135deg, hsl(39 48% 47%), hsl(39 48% 52%));
+    --gradient-subtle: linear-gradient(180deg, hsl(38 29% 94%), hsl(38 25% 88%));
+    --gradient-hero: linear-gradient(135deg, hsl(210 30% 17% / 0.05), hsl(39 48% 47% / 0.05));
 
-    /* Shadows - Premium Corporate */
-    --shadow-sm: 0 2px 8px hsl(210 33% 17% / 0.04);
-    --shadow-md: 0 4px 16px hsl(210 33% 17% / 0.08);
-    --shadow-lg: 0 8px 32px hsl(210 33% 17% / 0.12);
-    --shadow-elegant: 0 10px 40px hsl(210 33% 17% / 0.15);
+    /* Shadows - Premium Corporate con brand colors exactos */
+    --shadow-sm: 0 2px 8px hsl(210 30% 17% / 0.04);
+    --shadow-md: 0 4px 16px hsl(210 30% 17% / 0.08);
+    --shadow-lg: 0 8px 32px hsl(210 30% 17% / 0.12);
+    --shadow-elegant: 0 10px 40px hsl(210 30% 17% / 0.15);
 
     /* Typography Weights */
     --font-light: 300;
@@ -75,44 +75,44 @@ All colors are HSL for consistent theming. Professional, elegant, trustworthy.
   }
 
   .dark {
-    /* Dark mode - Elegant night theme */
+    /* Dark mode - Elegant night theme with brand alignment */
     --background: 210 35% 8%;
-    --foreground: 40 29% 93%;
+    --foreground: 38 29% 94%;
 
     --card: 210 35% 10%;
-    --card-foreground: 40 29% 93%;
+    --card-foreground: 38 29% 94%;
 
     --popover: 210 35% 10%;
-    --popover-foreground: 40 29% 93%;
+    --popover-foreground: 38 29% 94%;
 
-    --primary: 40 29% 93%;
-    --primary-foreground: 210 33% 17%;
-    --primary-hover: 40 29% 88%;
+    --primary: 38 29% 94%;
+    --primary-foreground: 210 30% 17%;
+    --primary-hover: 38 29% 88%;
 
-    --secondary: 40 46% 47%;
+    --secondary: 39 48% 47%;
     --secondary-foreground: 210 35% 8%;
-    --secondary-hover: 40 46% 52%;
+    --secondary-hover: 39 48% 52%;
 
     --muted: 210 25% 15%;
-    --muted-foreground: 40 15% 65%;
+    --muted-foreground: 38 15% 65%;
 
-    --accent: 40 46% 47%;
+    --accent: 39 48% 47%;
     --accent-foreground: 210 35% 8%;
 
-    --destructive: 0 70% 55%;
-    --destructive-foreground: 40 29% 93%;
-    --success: 140 50% 45%;
-    --success-foreground: 40 29% 93%;
+    --destructive: 0 65% 50%;
+    --destructive-foreground: 38 29% 94%;
+    --success: 140 45% 40%;
+    --success-foreground: 38 29% 94%;
 
     --border: 210 25% 20%;
     --input: 210 25% 20%;
-    --ring: 40 29% 93%;
+    --ring: 38 29% 94%;
 
-    /* Dark gradients */
+    /* Dark gradients con brand exactos */
     --gradient-primary: linear-gradient(135deg, hsl(210 35% 8%), hsl(210 35% 12%));
-    --gradient-secondary: linear-gradient(135deg, hsl(40 46% 47%), hsl(40 46% 52%));
+    --gradient-secondary: linear-gradient(135deg, hsl(39 48% 47%), hsl(39 48% 52%));
     --gradient-subtle: linear-gradient(180deg, hsl(210 35% 8%), hsl(210 30% 6%));
-    --gradient-hero: linear-gradient(135deg, hsl(210 35% 8% / 0.8), hsl(40 46% 47% / 0.1));
+    --gradient-hero: linear-gradient(135deg, hsl(210 35% 8% / 0.8), hsl(39 48% 47% / 0.1));
 
     /* Dark shadows */
     --shadow-sm: 0 2px 8px hsl(210 35% 5% / 0.5);
