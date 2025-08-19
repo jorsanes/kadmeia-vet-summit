@@ -7,7 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import i18n from "@/i18n/config";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import Home from "@/pages/Home";
+import Home from "@/pages/Index";
 import Contact from "@/pages/Contact";
 import Services from "@/pages/Services";
 import Cases from "@/pages/Cases";
