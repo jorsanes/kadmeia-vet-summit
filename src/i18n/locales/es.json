@@ -1,0 +1,79 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "services": "Servicios",
+    "cases": "Casos",
+    "blog": "Blog",
+    "about": "Sobre",
+    "contact": "Contacto",
+    "cta": "Contactar"
+  },
+  "hero": {
+    "title": "Consultoría y tecnología veterinaria que une evidencia, claridad e impacto",
+    "subtitle": "Puenteamos ciencia, negocio y tecnología para clínicas y fabricantes en Iberia y Europa",
+    "cta_primary": "Hablemos",
+    "cta_secondary": "Ver servicios"
+  },
+  "whatWeDo": {
+    "title": "Qué hacemos",
+    "subtitle": "Tres pilares que transforman su negocio veterinario",
+    "bridge": {
+      "title": "Puente ciencia-negocio-tecnología",
+      "description": "Conectamos evidencia científica con oportunidades de negocio y soluciones tecnológicas prácticas"
+    },
+    "ai": {
+      "title": "IA y software para clínicas",
+      "description": "Implementamos y distribuimos soluciones de inteligencia artificial que optimizan la gestión clínica"
+    },
+    "automation": {
+      "title": "Automatización No-Code",
+      "description": "Creamos flujos automatizados con Make y n8n que liberan tiempo para lo que realmente importa"
+    }
+  },
+  "sectors": {
+    "title": "Sectores que transformamos",
+    "clinics": "Clínicas de pequeños animales",
+    "distributors": "Distribuidores especializados",
+    "corporate": "Grupos corporativos veterinarios"
+  },
+  "cases": {
+    "title": "Casos e impacto",
+    "viewAll": "Ver todos los casos"
+  },
+  "testimonials": {
+    "title": "Confían en nosotros"
+  },
+  "finalCta": {
+    "title": "¿Listo para transformar su negocio veterinario?",
+    "subtitle": "Conversemos sobre cómo podemos ayudarle a crecer con evidencia y tecnología",
+    "cta": "Iniciar conversación"
+  },
+  "footer": {
+    "description": "Consultoría y tecnología veterinaria con base científica y visión práctica.",
+    "address": "Camino de los Malatones, 63 - J3<br>28119 Algete, Madrid, España",
+    "email": "info@kadmeia.com",
+    "links": {
+      "privacy": "Privacidad",
+      "legal": "Aviso legal",
+      "cookies": "Cookies"
+    },
+    "newsletter": {
+      "title": "Newsletter",
+      "placeholder": "Su email",
+      "cta": "Suscribirse"
+    }
+  },
+  "contact": {
+    "title": "Contacto",
+    "subtitle": "Hablemos de su proyecto",
+    "form": {
+      "name": "Nombre completo",
+      "email": "Email",
+      "company": "Empresa",
+      "phone": "Teléfono",
+      "message": "Mensaje",
+      "consent": "Acepto el tratamiento de mis datos personales según la política de privacidad",
+      "submit": "Enviar mensaje"
+    }
+  }
+}

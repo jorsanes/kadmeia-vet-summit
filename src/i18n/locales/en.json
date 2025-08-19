@@ -1,0 +1,79 @@
+{
+  "nav": {
+    "home": "Home",
+    "services": "Services",
+    "cases": "Cases",
+    "blog": "Blog",
+    "about": "About",
+    "contact": "Contact",
+    "cta": "Contact us"
+  },
+  "hero": {
+    "title": "Veterinary consulting and technology that unites evidence, clarity and impact",
+    "subtitle": "We bridge science, business and technology for clinics and manufacturers in Iberia and Europe",
+    "cta_primary": "Let's talk",
+    "cta_secondary": "View services"
+  },
+  "whatWeDo": {
+    "title": "What we do",
+    "subtitle": "Three pillars that transform your veterinary business",
+    "bridge": {
+      "title": "Science-business-technology bridge",
+      "description": "We connect scientific evidence with business opportunities and practical technological solutions"
+    },
+    "ai": {
+      "title": "AI and software for clinics",
+      "description": "We implement and distribute artificial intelligence solutions that optimize clinical management"
+    },
+    "automation": {
+      "title": "No-Code automation",
+      "description": "We create automated workflows with Make and n8n that free up time for what really matters"
+    }
+  },
+  "sectors": {
+    "title": "Sectors we transform",
+    "clinics": "Small animal clinics",
+    "distributors": "Specialized distributors",
+    "corporate": "Veterinary corporate groups"
+  },
+  "cases": {
+    "title": "Cases and impact",
+    "viewAll": "View all cases"
+  },
+  "testimonials": {
+    "title": "They trust us"
+  },
+  "finalCta": {
+    "title": "Ready to transform your veterinary business?",
+    "subtitle": "Let's talk about how we can help you grow with evidence and technology",
+    "cta": "Start conversation"
+  },
+  "footer": {
+    "description": "Veterinary consulting and technology with scientific basis and practical vision.",
+    "address": "Camino de los Malatones, 63 - J3<br>28119 Algete, Madrid, Spain",
+    "email": "info@kadmeia.com",
+    "links": {
+      "privacy": "Privacy",
+      "legal": "Legal notice",
+      "cookies": "Cookies"
+    },
+    "newsletter": {
+      "title": "Newsletter",
+      "placeholder": "Your email",
+      "cta": "Subscribe"
+    }
+  },
+  "contact": {
+    "title": "Contact",
+    "subtitle": "Let's talk about your project",
+    "form": {
+      "name": "Full name",
+      "email": "Email",
+      "company": "Company",
+      "phone": "Phone",
+      "message": "Message",
+      "consent": "I accept the processing of my personal data according to the privacy policy",
+      "submit": "Send message"
+    }
+  }
+}

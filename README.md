@@ -1,73 +1,224 @@
-# Welcome to your Lovable project
+# KADMEIA - Consultoría y Tecnología Veterinaria
 
-## Project info
+Sitio web corporativo premium desarrollado con React + Vite, diseñado para consultoría y tecnología en el sector veterinario.
 
-**URL**: https://lovable.dev/projects/c6b63036-1f1a-4a33-8416-5dc6cf2fdaad
+## 🚀 Stack Tecnológico
 
-## How can I edit this code?
+- **React 18** + **TypeScript** - Desarrollo modular y tipado estricto
+- **Vite** - Build tool rápido y optimizado
+- **Tailwind CSS** - Sistema de diseño corporativo premium
+- **shadcn/ui** - Componentes UI elegantes y customizables
+- **Framer Motion** - Microinteracciones sutiles y profesionales
+- **React i18next** - Internacionalización ES/EN
+- **React Router** - Navegación SPA
 
-There are several ways of editing your application.
+## 🎨 Identidad Visual
 
-**Use Lovable**
+### Colores Corporativos
+- **Primario**: #1E2A38 (Azul Profundo) - Texto, enlaces, acentos
+- **Secundario**: #B38A3F (Oro Clásico) - Acentos e íconos sutiles  
+- **Fondo**: #F5F1EA (Marfil Claro) - Fondo principal
+- **Neutros**: Generados automáticamente con contraste AA/AAA
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/c6b63036-1f1a-4a33-8416-5dc6cf2fdaad) and start prompting.
+### Tipografías
+- **Inter**: Texto general y navegación
+- **Playfair Display**: Titulares y elementos display
 
-Changes made via Lovable will be committed automatically to this repo.
+### Estilo
+- Sobrio, aireado, grid limpio
+- Bordes redondeados 12px (radius: 0.75rem)
+- Sombras suaves y elegantes
+- Microinteracciones discretas
 
-**Use your preferred IDE**
+## 📁 Estructura del Proyecto
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+src/
+├── components/
+│   ├── layout/          # Header, Footer
+│   └── ui/              # shadcn components
+├── pages/               # Páginas principales
+│   ├── Home.tsx         # Landing con hero y secciones
+│   ├── Services.tsx     # 3 servicios principales
+│   ├── Cases.tsx        # Casos de éxito
+│   ├── Blog.tsx         # Blog corporativo
+│   ├── About.tsx        # Sobre nosotros (5 C)
+│   └── Contact.tsx      # Formulario de contacto
+├── i18n/                # Internacionalización
+│   ├── config.ts        # Configuración i18n
+│   └── locales/         # Traducciones ES/EN
+├── assets/              # Imágenes generadas
+└── lib/                 # Utilidades
 ```
 
-**Edit a file directly in GitHub**
+## 🌐 Internacionalización
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Idiomas Soportados
+- **Español (ES)** - Idioma por defecto
+- **Inglés (EN)** - Mercado europeo
 
-**Use GitHub Codespaces**
+### Gestión de Contenido
+- Archivos JSON en `src/i18n/locales/`
+- Selector de idioma en header
+- URLs limpias (/ para ES, /en para EN)
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Añadir/Editar Traducciones
+1. Editar `src/i18n/locales/es.json` y `en.json`
+2. Usar claves descriptivas: `"hero.title": "Texto"`
+3. Reiniciar servidor para aplicar cambios
 
-## What technologies are used for this project?
+## 📝 Gestión de Contenido
 
-This project is built with:
+### Blog y Casos
+Los contenidos están actualmente como datos estáticos en los componentes. Para un CMS real, recomendamos:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+1. **MDX Files**: Crear `/content/blog/` y `/content/cases/`
+2. **Frontmatter**: Metadatos como title, date, excerpt, cover
+3. **Build Process**: Generar páginas estáticas
 
-## How can I deploy this project?
+### Estructura Sugerida de MDX
+```yaml
+---
+title: "Título del post"
+date: "2024-03-15"
+author: "KADMEIA Team"
+excerpt: "Descripción breve"
+category: "Tecnología"
+tags: ["IA", "Veterinaria"]
+cover: "/images/post-cover.jpg"
+---
 
-Simply open [Lovable](https://lovable.dev/projects/c6b63036-1f1a-4a33-8416-5dc6cf2fdaad) and click on Share -> Publish.
+Contenido en Markdown...
+```
 
-## Can I connect a custom domain to my Lovable project?
+## 🔧 Comandos de Desarrollo
 
-Yes, you can!
+### Instalación
+```bash
+npm install
+# o
+pnpm install
+```
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### Desarrollo
+```bash
+npm run dev
+# Servidor en http://localhost:5173
+```
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+### Build de Producción
+```bash
+npm run build
+npm run preview  # Preview del build
+```
+
+### Linting y Formato
+```bash
+npm run lint     # ESLint
+```
+
+## 📧 Configuración de Contacto
+
+### Variables de Entorno
+Crear `.env.local` en la raíz:
+
+```env
+VITE_CONTACT_EMAIL=info@kadmeia.com
+VITE_FORMSPREE_ID=your_formspree_id
+```
+
+### Formulario de Contacto
+- Validación en frontend con HTML5 + React
+- Consentimiento RGPD obligatorio
+- Fallback a Formspree configurado
+- Toast notifications para feedback
+
+## 🚀 Despliegue
+
+### Vercel (Recomendado)
+1. Conectar repositorio GitHub
+2. Build Command: `npm run build`
+3. Output Directory: `dist`
+4. Configurar variables de entorno
+
+### Netlify
+```bash
+npm run build
+# Subir carpeta dist/
+```
+
+## 🎯 SEO y Performance
+
+### SEO Implementado
+- Meta tags optimizados por página
+- Títulos descriptivos (<60 caracteres)
+- Meta descriptions (<160 caracteres)
+- HTML semántico (header, main, section, article)
+- Alt tags en todas las imágenes
+- Structured data básico
+
+### Performance
+- Lazy loading de imágenes
+- Tree shaking automático
+- Code splitting por rutas
+- Preload de fuentes críticas
+- Compresión de assets
+
+### Robots y Sitemap
+- `public/robots.txt` configurado
+- Sitemap.xml a implementar (recomendamos plugin)
+
+## 🔒 Consideraciones de Seguridad
+
+- No hay datos sensibles en el frontend
+- Formularios con validación y sanitización
+- HTTPS obligatorio en producción
+- Políticas CSP recomendadas
+
+## 📱 Responsividad
+
+Breakpoints de Tailwind:
+- **sm**: 640px+ (móvil horizontal)
+- **md**: 768px+ (tablet)
+- **lg**: 1024px+ (desktop)
+- **xl**: 1280px+ (desktop grande)
+- **2xl**: 1536px+ (desktop XL)
+
+## 🎨 Customización del Design System
+
+### Colores
+Editar `src/index.css` variables CSS:
+```css
+:root {
+  --primary: 210 33% 17%;    /* Azul Profundo */
+  --secondary: 40 46% 47%;   /* Oro Clásico */
+  --background: 40 29% 93%;  /* Marfil Claro */
+}
+```
+
+### Componentes
+Los componentes shadcn están en `src/components/ui/` y son completamente customizables.
+
+### Tipografías
+Configuradas en `tailwind.config.ts`:
+```js
+fontFamily: {
+  'display': ['Playfair Display', 'Georgia', 'serif'],
+  'body': ['Inter', 'sans-serif']
+}
+```
+
+## 📞 Información de Contacto
+
+**Empresa**: KADMEIA  
+**Dirección**: Camino de los Malatones, 63 - J3, 28119 Algete, Madrid, España  
+**Email**: info@kadmeia.com  
+**Sitio**: kadmeia.com  
+
+## 📄 Licencia
+
+© 2024 KADMEIA. Todos los derechos reservados.
+
+---
+
+**Nota**: Este README incluye toda la información necesaria para desarrollo, mantenimiento y despliegue. Para modificaciones del design system o contenido, consultar las secciones correspondientes.
