@@ -4,23 +4,38 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Globe } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLocale } from '@/i18n/LocaleProvider';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const location = useLocation();
+  const { locale, switchLocale } = useLocale();
 
   const toggleLanguage = () => {
-    const newLang = i18n.language === 'es' ? 'en' : 'es';
-    i18n.changeLanguage(newLang);
+    const newLang = locale === 'es' ? 'en' : 'es';
+    switchLocale(newLang);
+  };
+
+  const getLocalizedHref = (path: string) => {
+    return locale === 'en' ? `/en${path}` : path;
   };
 
   const navigation = [
-    { name: t('nav.home'), href: '/' },
-    { name: t('nav.services'), href: '/servicios' },
-    { name: t('nav.cases'), href: '/casos' },
-    { name: t('nav.blog'), href: '/blog' },
-    { name: t('nav.about'), href: '/sobre' },
+    { name: t('nav.home'), href: getLocalizedHref('/') },
+    { 
+      name: t('nav.services'), 
+      href: getLocalizedHref(locale === 'en' ? '/services' : '/servicios') 
+    },
+    { 
+      name: t('nav.cases'), 
+      href: getLocalizedHref(locale === 'en' ? '/cases' : '/casos') 
+    },
+    { name: t('nav.blog'), href: getLocalizedHref('/blog') },
+    { 
+      name: t('nav.about'), 
+      href: getLocalizedHref(locale === 'en' ? '/about' : '/sobre') 
+    },
   ];
 
   return (
@@ -62,10 +77,12 @@ const Header = () => {
               className="gap-2"
             >
               <Globe className="h-4 w-4" />
-              {i18n.language.toUpperCase()}
+              {locale.toUpperCase()}
             </Button>
             <Button asChild className="btn-primary">
-              <Link to="/contacto">{t('nav.cta')}</Link>
+              <Link to={getLocalizedHref(locale === 'en' ? '/contact' : '/contacto')}>
+                {t('nav.cta')}
+              </Link>
             </Button>
           </div>
 
@@ -118,10 +135,13 @@ const Header = () => {
                   className="gap-2"
                 >
                   <Globe className="h-4 w-4" />
-                  {i18n.language.toUpperCase()}
+                  {locale.toUpperCase()}
                 </Button>
                 <Button asChild className="btn-primary flex-1">
-                  <Link to="/contacto" onClick={() => setIsMenuOpen(false)}>
+                  <Link 
+                    to={getLocalizedHref(locale === 'en' ? '/contact' : '/contacto')} 
+                    onClick={() => setIsMenuOpen(false)}
+                  >
                     {t('nav.cta')}
                   </Link>
                 </Button>

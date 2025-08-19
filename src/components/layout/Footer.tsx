@@ -1,11 +1,17 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useLocale } from '@/i18n/LocaleProvider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Mail, MapPin, Linkedin, Twitter } from 'lucide-react';
 
 const Footer = () => {
   const { t } = useTranslation();
+  const { locale } = useLocale();
+
+  const getLocalizedHref = (path: string) => {
+    return locale === 'en' ? `/en${path}` : path;
+  };
 
   return (
     <footer className="bg-primary text-primary-foreground">
@@ -49,7 +55,7 @@ const Footer = () => {
             <ul className="space-y-3">
               <li>
                 <Link 
-                  to="/servicios"
+                  to={getLocalizedHref(locale === 'en' ? '/services' : '/servicios')}
                   className="text-sm text-primary-foreground/80 hover:text-secondary transition-colors"
                 >
                   {t('nav.services')}
@@ -57,7 +63,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link 
-                  to="/casos"
+                  to={getLocalizedHref(locale === 'en' ? '/cases' : '/casos')}
                   className="text-sm text-primary-foreground/80 hover:text-secondary transition-colors"
                 >
                   {t('nav.cases')}
@@ -65,7 +71,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link 
-                  to="/blog"
+                  to={getLocalizedHref('/blog')}
                   className="text-sm text-primary-foreground/80 hover:text-secondary transition-colors"
                 >
                   {t('nav.blog')}
@@ -73,7 +79,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link 
-                  to="/sobre"
+                  to={getLocalizedHref(locale === 'en' ? '/about' : '/sobre')}
                   className="text-sm text-primary-foreground/80 hover:text-secondary transition-colors"
                 >
                   {t('nav.about')}
@@ -130,19 +136,19 @@ const Footer = () => {
             </p>
             <div className="flex gap-6">
               <Link 
-                to="/privacidad"
+                to={getLocalizedHref(locale === 'en' ? '/privacy' : '/privacidad')}
                 className="text-sm text-primary-foreground/60 hover:text-secondary transition-colors"
               >
                 {t('footer.links.privacy')}
               </Link>
               <Link 
-                to="/aviso-legal"
+                to={getLocalizedHref(locale === 'en' ? '/legal' : '/aviso-legal')}
                 className="text-sm text-primary-foreground/60 hover:text-secondary transition-colors"
               >
                 {t('footer.links.legal')}
               </Link>
               <Link 
-                to="/cookies"
+                to={getLocalizedHref('/cookies')}
                 className="text-sm text-primary-foreground/60 hover:text-secondary transition-colors"
               >
                 {t('footer.links.cookies')}
