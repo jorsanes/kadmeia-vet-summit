@@ -20,6 +20,7 @@ import { OrganizationJsonLd } from "@/components/seo/SeoJsonLd";
 import { useLocale } from "@/i18n/LocaleProvider";
 import SmartImage from "@/components/ui/SmartImage";
 import BrandWatermark from "@/components/brand/BrandWatermark";
+import BrandDivider from "@/components/brand/BrandDivider";
 import heroImage from "@/assets/hero-kadmeia.jpg";
 import logoLarge from "@/assets/kadmeia-logo-large.png";
 
@@ -136,6 +137,9 @@ const Home = () => {
           </motion.div>
         </div>
       </section>
+
+      {/* Brand Divider */}
+      <BrandDivider />
 
       {/* What We Do Section */}
       <section className="py-24 bg-background">
@@ -268,6 +272,9 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Brand Divider */}
+      <BrandDivider />
+
       {/* Cases Section */}
       <section className="py-24 bg-background">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -386,6 +393,9 @@ const Home = () => {
           </motion.div>
         </div>
       </section>
+
+      {/* Brand Divider */}
+      <BrandDivider />
 
       {/* Final CTA */}
       <section className="py-24 bg-primary text-primary-foreground">
