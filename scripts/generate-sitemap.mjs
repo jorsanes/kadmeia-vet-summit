@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /**
  * Generate sitemap.xml for KADMEIA
- * - Usa SITE_URL si existe; si no, cae a https://kadmeia.com
- * - Incluye rutas estáticas ES/EN + contenidos MDX (blog/casos)
- * - Evita duplicados, ordena y pone lastmod razonable
+ * - Usa SITE_URL si existe; si no, https://kadmeia.com
+ * - Salta en PREVIEW (lovable.app o SITE_ENV=preview)
+ * - Incluye rutas ES/EN + MDX (blog/casos), sin duplicados
  */
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync, statSync } from "node:fs";
@@ -13,6 +13,12 @@ import matter from "gray-matter";
 
 // -------- Config --------
 const BASE_URL = (process.env.SITE_URL || "https://kadmeia.com").replace(/\/+$/, "");
+const IS_PREVIEW = process.env.SITE_ENV === "preview" || BASE_URL.includes(".lovable.app");
+
+if (IS_PREVIEW) {
+  console.log("[sitemap] Preview build detected — skipping sitemap generation");
+  process.exit(0);
+}
 
 // Rutas estáticas (ajusta si cambias paths)
 const STATIC = [
