@@ -4,6 +4,7 @@ import { useLocale } from '@/i18n/LocaleProvider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Mail, MapPin, Linkedin, Twitter } from 'lucide-react';
+import SmartImage from '@/components/ui/SmartImage';
 
 const Footer = () => {
   const { t } = useTranslation();
@@ -19,22 +20,30 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="col-span-1 lg:col-span-2">
-            <div className="mb-4">
-              <span className="font-display text-2xl font-semibold">
-                KADMEIA
-              </span>
+            <div className="flex items-center gap-3 mb-4">
+              <SmartImage
+                src="/assets/brand/logo-kad-mark-gold.png"
+                alt=""
+                width={20}
+                height={20}
+                loading="lazy"
+                decoding="async"
+                className="w-5 h-5"
+              />
+              <div>
+                <div className="font-display text-lg font-semibold text-primary-foreground">
+                  KADMEIA SLU — ES-B821932926
+                </div>
+                <div className="text-sm text-primary-foreground/80">
+                  Camino de los Malatones, 63 - J3<br />
+                  28119 Algete (Madrid), España
+                </div>
+              </div>
             </div>
             <p className="text-primary-foreground/80 mb-6 max-w-md">
               {t('footer.description')}
             </p>
             <div className="space-y-3">
-              <div className="flex items-start gap-3">
-                <MapPin className="h-5 w-5 text-secondary mt-0.5 flex-shrink-0" />
-                <div 
-                  className="text-sm text-primary-foreground/80"
-                  dangerouslySetInnerHTML={{ __html: t('footer.address') }}
-                />
-              </div>
               <div className="flex items-center gap-3">
                 <Mail className="h-5 w-5 text-secondary" />
                 <a 
