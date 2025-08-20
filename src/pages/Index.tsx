@@ -1,8 +1,9 @@
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
 import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from '@/components/ui/card';
-import { motion } from 'framer-motion';
 import { 
   ArrowRight, 
   Network, 
@@ -14,11 +15,12 @@ import {
   Star,
   CheckCircle
 } from 'lucide-react';
-import { PageSeo } from '@/components/seo/PageSeo';
-import { OrganizationJsonLd } from '@/components/seo/SeoJsonLd';
+import { PageSeo } from "@/components/seo/PageSeo";
+import { OrganizationJsonLd } from "@/components/seo/SeoJsonLd";
 import { useLocale } from '@/i18n/LocaleProvider';
-import heroImage from '@/assets/hero-kadmeia.jpg';
-import logoLarge from '@/assets/kadmeia-logo-large.png';
+import SmartImage from "@/components/ui/SmartImage";
+import heroImage from "@/assets/hero-kadmeia.jpg";
+import logoLarge from "@/assets/kadmeia-logo-large.png";
 
 const Home = () => {
   const { t } = useTranslation();
@@ -62,19 +64,24 @@ const Home = () => {
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-hero">
         <div className="absolute inset-0">
-          <img
+          <SmartImage
             src={heroImage}
             alt="KADMEIA - Veterinary Consulting"
             className="w-full h-full object-cover opacity-10"
+            priority={true}
+            width={1920}
+            height={1080}
           />
         </div>
         
         {/* Large logo decoration */}
         <div className="absolute right-8 top-1/2 -translate-y-1/2 opacity-5 hidden xl:block">
-          <img 
+          <SmartImage 
             src={logoLarge} 
             alt="" 
             className="w-80 h-80 object-contain"
+            width={320}
+            height={320}
           />
         </div>
         
