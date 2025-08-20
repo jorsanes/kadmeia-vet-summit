@@ -25,20 +25,28 @@ jobs:
         with:
           version: 9
 
-      - uses: actions/setup-node@v4
+      # Usa cache de pnpm SOLO si existe pnpm-lock.yaml
+      - name: Setup Node with pnpm cache (if lockfile exists)
+        if: ${{ hashFiles('pnpm-lock.yaml') != '' }}
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
 
-      - run: pnpm install --frozen-lockfile=false
+      - name: Setup Node (no cache)
+        if: ${{ hashFiles('pnpm-lock.yaml') == '' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
+      - run: pnpm install --frozen-lockfile=false
       - run: pnpm run lint
 
   build:
     runs-on: ubuntu-latest
     needs: lint
-    # En main hacemos 'prod' (genera sitemap), en el resto 'preview' (lo salta)
     env:
+      # Tu script de sitemap saltará en preview
       SITE_ENV: ${{ github.ref == 'refs/heads/main' && 'prod' || 'preview' }}
       SITE_URL: https://kadmeia.com
     steps:
@@ -48,17 +56,24 @@ jobs:
         with:
           version: 9
 
-      - uses: actions/setup-node@v4
+      # Usa cache de pnpm SOLO si existe pnpm-lock.yaml
+      - name: Setup Node with pnpm cache (if lockfile exists)
+        if: ${{ hashFiles('pnpm-lock.yaml') != '' }}
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
 
-      - run: pnpm install --frozen-lockfile=false
+      - name: Setup Node (no cache)
+        if: ${{ hashFiles('pnpm-lock.yaml') == '' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-      # Build normal
+      - run: pnpm install --frozen-lockfile=false
       - run: pnpm run build
 
-      # (Opcional) Analizar bundle si lo pides al lanzar manualmente
+      # Analizador del bundle si lo lanzas manualmente con analyze=true
       - name: Bundle analyze
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.analyze == true }}
         run: pnpm run analyze
@@ -78,7 +93,7 @@ jobs:
           path: public/sitemap.xml
           if-no-files-found: ignore
 
-      # En ramas que no sean main, sube el 'dist' para revisar el preview
+      # En ramas ≠ main sube dist como artefacto para revisar el preview
       - name: Upload dist (preview branches)
         if: ${{ github.ref != 'refs/heads/main' }}
         uses: actions/upload-artifact@v4
