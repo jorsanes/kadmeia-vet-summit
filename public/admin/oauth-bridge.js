@@ -51,30 +51,47 @@
   async function persistToken(token) {
     if (!token) return;
 
+    console.log("🔄 Persistiendo token y datos de usuario...");
     const userObj = await buildUserPayload(token);
     const userStr = JSON.stringify(userObj);
     const authStr = JSON.stringify({ token, provider: "github" });
 
     try {
-      // Variantes que consultan distintas builds
+      // Limpiar datos anteriores para evitar conflictos
+      const oldKeys = Object.keys(localStorage).filter(k => 
+        k.includes('netlify-cms') || k.includes('decap-cms')
+      );
+      oldKeys.forEach(k => localStorage.removeItem(k));
+
+      // Guardar datos frescos
       localStorage.setItem("netlify-cms-user", userStr);
       localStorage.setItem("netlify-cms.user", userStr);
       localStorage.setItem("decap-cms.user", userStr);
-
       localStorage.setItem("netlify-cms-auth", authStr);
       localStorage.setItem("decap-cms-auth", authStr);
 
-      // Notifica cambios
+      console.log("✅ Credenciales guardadas:", { 
+        user: userObj.user.login, 
+        token: token.substring(0, 12) + "..." 
+      });
+
+      // Notificar cambios vía storage events
       ["netlify-cms-user", "netlify-cms.user", "decap-cms.user"].forEach((k) =>
         fireStorage(k, userStr)
       );
+
+      // Enviar mensaje de autorización a Decap CMS
+      const authMessage = `${LEGACY_PREFIX}${token}`;
+      window.postMessage(authMessage, window.location.origin);
+      console.log("📤 Mensaje de autorización enviado a Decap CMS");
+
     } catch (e) {
-      console.error("[OAuthBridge] No se pudo guardar la credencial:", e);
+      console.error("[OAuthBridge] Error guardando credencial:", e);
       return;
     }
 
-    // Reload suave por si la UI no avanza sola
-    setTimeout(() => location.reload(), 400);
+    // NO hacer reload automático - dejar que el autotest maneje la carga
+    console.log("🎯 Token persistido sin reload - esperando autotest...");
   }
 
   window.addEventListener("message", (e) => {
