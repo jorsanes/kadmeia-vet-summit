@@ -21,8 +21,7 @@ import { useLocale } from "@/i18n/LocaleProvider";
 import SmartImage from "@/components/ui/SmartImage";
 import BrandWatermark from "@/components/brand/BrandWatermark";
 import BrandDivider from "@/components/brand/BrandDivider";
-import heroImage from "@/assets/hero-kadmeia.jpg";
-import logoLarge from "@/assets/kadmeia-logo-large.png";
+// Using existing brand assets
 
 const Home = () => {
   const { t } = useTranslation();
@@ -65,25 +64,16 @@ const Home = () => {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-hero">
-        <div className="absolute inset-0">
-          <SmartImage
-            src={heroImage}
-            alt="KADMEIA - Veterinary Consulting"
-            className="w-full h-full object-cover opacity-10"
-            priority={true}
-            width={1920}
-            height={1080}
-          />
-        </div>
+        <div className="absolute inset-0 bg-gradient-hero opacity-50"></div>
         
-        {/* Large logo decoration */}
+        {/* Brand logo decoration */}
         <div className="absolute right-8 top-1/2 -translate-y-1/2 opacity-5 hidden xl:block">
           <SmartImage 
-            src={logoLarge} 
+            src="/assets/brand/logo-kad-mark-gold-256.png" 
             alt="" 
             className="w-80 h-80 object-contain"
-            width={320}
-            height={320}
+            width={256}
+            height={256}
           />
         </div>
         
