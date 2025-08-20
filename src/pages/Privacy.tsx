@@ -123,7 +123,7 @@ const Privacy = () => {
                   <h4 className="font-semibold text-foreground mb-2">Datos de contacto del responsable:</h4>
                   <ul className="text-sm text-muted-foreground space-y-1">
                     <li><strong>Razón social:</strong> KADMEIA SLU</li>
-                    <li><strong>CIF:</strong> B821932926</li>
+                    <li><strong>CIF:</strong> B21932926</li>
                     <li><strong>Dirección:</strong> Camino de los Malatones, 63 - J3, 28119 Algete (Madrid), España</li>
                     <li><strong>Email:</strong> info@kadmeia.com</li>
                   </ul>
