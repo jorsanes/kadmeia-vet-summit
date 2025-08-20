@@ -97,17 +97,22 @@ const Home = () => {
             animate="animate"
             variants={staggerContainer}
           >
-            <motion.h1 
+            <motion.h1
               className="font-display text-4xl font-semibold tracking-tight text-foreground sm:text-6xl lg:text-7xl"
+              style={{ marginBottom: '-3px' }}
               variants={fadeInUp}
             >
-              {t('hero.title')}
+              <p>Consultoría </p>
+              <p>y tecnología </p>
+              <p>veterinaria.</p>
             </motion.h1>
-            <motion.p 
+            <motion.p
               className="mt-6 text-lg leading-8 text-muted-foreground sm:text-xl max-w-3xl mx-auto"
               variants={fadeInUp}
             >
-              {t('hero.subtitle')}
+              <p>Diagnóstico más fiable, </p>
+              <p>operaciones más eficientes, </p>
+              <p>clientes más satisfechos</p>
             </motion.p>
             <motion.div 
               className="mt-10 flex items-center justify-center gap-4 flex-wrap"
@@ -138,9 +143,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Brand Divider */}
-      <BrandDivider />
-
       {/* What We Do Section */}
       <section className="py-24 bg-background">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -155,7 +157,7 @@ const Home = () => {
               {t('whatWeDo.title')}
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
-              {t('whatWeDo.subtitle')}
+              <p>Tres pilares que transforman tu negocio veterinario</p>
             </p>
           </motion.div>
 
@@ -172,11 +174,11 @@ const Home = () => {
                   <div className="flex items-center justify-center w-12 h-12 bg-secondary/10 rounded-xl mb-6">
                     <Network className="h-6 w-6 text-secondary" />
                   </div>
-                  <h3 className="font-display text-xl font-semibold text-foreground mb-4">
-                    {t('whatWeDo.bridge.title')}
+                  <h3 className="font-display text-xl font-semibold text-foreground mb-4 text-left">
+                    <p>Puente ciencia-tecnología-negocio.</p>
                   </h3>
                   <p className="text-muted-foreground">
-                    {t('whatWeDo.bridge.description')}
+                    <p>Conectamos innovación, soluciones tecnológicas prácticas, y oportunidades de negocio </p>
                   </p>
                 </CardContent>
               </Card>
@@ -189,10 +191,10 @@ const Home = () => {
                     <Brain className="h-6 w-6 text-secondary" />
                   </div>
                   <h3 className="font-display text-xl font-semibold text-foreground mb-4">
-                    {t('whatWeDo.ai.title')}
+                    <p>Software y aplicaciones basados en IA para clínicas veterinarias.</p>
                   </h3>
                   <p className="text-muted-foreground">
-                    {t('whatWeDo.ai.description')}
+                    <p>Distribuimos soluciones de inteligencia artificial que optimizan el diagnóstico y gestión clínica</p>
                   </p>
                 </CardContent>
               </Card>
@@ -205,10 +207,10 @@ const Home = () => {
                     <Workflow className="h-6 w-6 text-secondary" />
                   </div>
                   <h3 className="font-display text-xl font-semibold text-foreground mb-4">
-                    {t('whatWeDo.automation.title')}
+                    <p>Automatización de procesos e integraciones.</p>
                   </h3>
                   <p className="text-muted-foreground">
-                    {t('whatWeDo.automation.description')}
+                    <p>Creamos flujos automatizados personalizados que liberan tiempo para lo que realmente importa</p>
                   </p>
                 </CardContent>
               </Card>
@@ -271,9 +273,6 @@ const Home = () => {
           </motion.div>
         </div>
       </section>
-
-      {/* Brand Divider */}
-      <BrandDivider />
 
       {/* Cases Section */}
       <section className="py-24 bg-background">
