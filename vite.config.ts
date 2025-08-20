@@ -12,10 +12,10 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
   },
   plugins: [
-    react(),
     mdx({
       remarkPlugins: [remarkGfm],
     }),
+    react(),
     mode === 'development' &&
     componentTagger(),
   ].filter(Boolean),
