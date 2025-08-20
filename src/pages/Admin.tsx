@@ -4,7 +4,7 @@ const Admin = () => {
   useEffect(() => {
     // Redirect to the static admin page immediately
     const redirectToAdmin = () => {
-      const adminUrl = window.location.origin + '/admin/';
+      const adminUrl = window.location.origin + '/admin/index.html';
       window.location.replace(adminUrl);
     };
     
@@ -24,12 +24,8 @@ const Admin = () => {
         <p className="text-muted-foreground text-sm">
           Si no se redirige automáticamente, 
           <a 
-            href="/admin/" 
+            href="/admin/index.html" 
             className="text-primary hover:underline ml-1"
-            onClick={(e) => {
-              e.preventDefault();
-              window.location.replace('/admin/');
-            }}
           >
             haga clic aquí
           </a>
