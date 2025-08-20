@@ -174,11 +174,11 @@ const Home = () => {
                   <div className="flex items-center justify-center w-12 h-12 bg-secondary/10 rounded-xl mb-6">
                     <Network className="h-6 w-6 text-secondary" />
                   </div>
-                  <h3 className="font-display text-xl font-semibold text-foreground mb-4">
-                    {t('whatWeDo.bridge.title')}
+                  <h3 className="font-display text-xl font-semibold text-foreground mb-4 text-left">
+                    <p>Puente ciencia-tecnología-negocio.</p>
                   </h3>
                   <p className="text-muted-foreground">
-                    {t('whatWeDo.bridge.description')}
+                    <p>Conectamos innovación, soluciones tecnológicas prácticas, y oportunidades de negocio </p>
                   </p>
                 </CardContent>
               </Card>
