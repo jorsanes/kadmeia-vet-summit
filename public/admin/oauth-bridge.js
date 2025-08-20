@@ -94,14 +94,28 @@
     console.log("🎯 Token persistido sin reload - esperando autotest...");
   }
 
+  let lastTokenProcessed = null;
+
   window.addEventListener("message", (e) => {
+    // Ignorar mensajes que vienen de la propia ventana para evitar bucles
+    if (e.source === window) {
+      return;
+    }
+
     try {
       const d = e.data;
+      let token = null;
+
       if (typeof d === "string" && d.indexOf(LEGACY_PREFIX) === 0) {
-        return persistToken(d.slice(LEGACY_PREFIX.length));
+        token = d.slice(LEGACY_PREFIX.length);
+      } else if (d && typeof d === "object" && d.token && d.provider === "github") {
+        token = String(d.token);
       }
-      if (d && typeof d === "object" && d.token && d.provider === "github") {
-        return persistToken(String(d.token));
+
+      // Evitar procesar el mismo token repetidamente
+      if (token && token !== lastTokenProcessed) {
+        lastTokenProcessed = token;
+        return persistToken(token);
       }
     } catch (err) {
       console.error("[OAuthBridge] Error procesando el mensaje:", err);
