@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { PageSeo } from "@/components/seo/PageSeo";
 import { OrganizationJsonLd } from "@/components/seo/SeoJsonLd";
-import { useLocale } from '@/i18n/LocaleProvider';
+import { useLocale } from "@/i18n/LocaleProvider";
 import SmartImage from "@/components/ui/SmartImage";
 import heroImage from "@/assets/hero-kadmeia.jpg";
 import logoLarge from "@/assets/kadmeia-logo-large.png";
