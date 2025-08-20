@@ -34,7 +34,6 @@ const App = () => (
             <Sonner />
             <BrowserRouter>
               <LocaleProvider>
-                <HrefLangLinks />
                 {/* Skip to main content link for accessibility */}
                 <a 
                   href="#main" 
