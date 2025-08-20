@@ -20,6 +20,7 @@ import Privacy from "@/pages/Privacy";
 import Legal from "@/pages/Legal";
 import Cookies from "@/pages/Cookies";
 import BlogPost from "@/pages/BlogPost";
+import Admin from "@/pages/Admin";
 import NotFound from "./pages/NotFound";
 import ServerError from "./pages/ServerError";
 
@@ -57,6 +58,9 @@ const App = () => (
                       <Route path="/privacidad" element={<Privacy />} />
                       <Route path="/aviso-legal" element={<Legal />} />
                       <Route path="/cookies" element={<Cookies />} />
+                      
+                      {/* Admin route */}
+                      <Route path="/admin" element={<Admin />} />
                       
                       {/* English routes */}
                       <Route path="/en" element={<Home />} />
