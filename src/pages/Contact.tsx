@@ -9,6 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { motion } from 'framer-motion';
 import { Mail, MapPin, Phone, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import BrandWatermark from '@/components/brand/BrandWatermark';
 
 const Contact = () => {
   const { t } = useTranslation();
@@ -106,7 +107,10 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen py-24 bg-background">
+    <div className="min-h-screen py-24 bg-background relative">
+      {/* Brand Watermark */}
+      <BrandWatermark className="top-8 right-8 rotate-12" />
+      
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <motion.div 
           className="mx-auto max-w-2xl text-center mb-16"

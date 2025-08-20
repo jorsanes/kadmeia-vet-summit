@@ -19,6 +19,7 @@ import { PageSeo } from "@/components/seo/PageSeo";
 import { OrganizationJsonLd } from "@/components/seo/SeoJsonLd";
 import { useLocale } from "@/i18n/LocaleProvider";
 import SmartImage from "@/components/ui/SmartImage";
+import BrandWatermark from "@/components/brand/BrandWatermark";
 import heroImage from "@/assets/hero-kadmeia.jpg";
 import logoLarge from "@/assets/kadmeia-logo-large.png";
 
@@ -84,6 +85,9 @@ const Home = () => {
             height={320}
           />
         </div>
+        
+        {/* Brand Watermark */}
+        <BrandWatermark className="top-16 left-8 -rotate-12" />
         
         <div className="relative mx-auto max-w-7xl px-6 py-24 lg:px-8 lg:py-32">
           <motion.div 
