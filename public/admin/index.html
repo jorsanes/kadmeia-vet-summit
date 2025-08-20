@@ -6,13 +6,16 @@
     <title>KADMEIA CMS</title>
   </head>
   <body>
-    <!-- Forzamos Manual Init para usar decap-config.js -->
+    <!-- 1) Bridge: escucha el postMessage del provider y persiste el token -->
+    <script src="./oauth-bridge.js"></script>
+
+    <!-- 2) Manual Init (cargamos config desde JS, no YAML) -->
     <script>window.CMS_MANUAL_INIT = true;</script>
 
-    <!-- Decap CMS -->
+    <!-- 3) Decap CMS -->
     <script src="https://unpkg.com/decap-cms@^3/dist/decap-cms.js"></script>
 
-    <!-- Config -->
+    <!-- 4) Config -->
     <script src="./decap-config.js"></script>
   </body>
 </html>
