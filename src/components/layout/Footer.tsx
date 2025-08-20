@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocale } from '@/i18n/LocaleProvider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Mail, MapPin, Linkedin, Twitter } from 'lucide-react';
+import { Mail, Linkedin, Twitter } from 'lucide-react';
 import SmartImage from '@/components/ui/SmartImage';
 
 const Footer = () => {
@@ -119,20 +119,22 @@ const Footer = () => {
             
             {/* Social Media */}
             <div className="flex gap-4 mt-6">
-              <a 
-                href="#" 
+              <button 
+                type="button"
+                aria-disabled="true"
                 className="text-primary-foreground/60 hover:text-secondary transition-colors"
                 aria-label="LinkedIn"
               >
                 <Linkedin className="h-5 w-5" />
-              </a>
-              <a 
-                href="#" 
+              </button>
+              <button 
+                type="button"
+                aria-disabled="true"
                 className="text-primary-foreground/60 hover:text-secondary transition-colors"
                 aria-label="Twitter"
               >
                 <Twitter className="h-5 w-5" />
-              </a>
+              </button>
             </div>
           </div>
         </div>

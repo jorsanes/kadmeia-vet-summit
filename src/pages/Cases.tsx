@@ -32,7 +32,7 @@ const Cases = () => {
     ? 'Casos reales de implementación exitosa de IA y automatización en clínicas veterinarias. Resultados medibles y lecciones aprendidas.'
     : 'Real cases of successful implementation of AI and automation in veterinary clinics. Measurable results and lessons learned.';
 
-  const caseEntries = listEntries('casos').filter(entry => entry.lang === locale);
+  const caseEntries = listEntries(import.meta.glob<any>("/src/content/casos/**/*.mdx", { eager: true })).filter(entry => entry.lang === locale);
   const fadeInUp = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
