@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Menu, X, Globe } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocale } from '@/i18n/LocaleProvider';
+import SmartImage from '@/components/ui/SmartImage';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -44,7 +45,22 @@ const Header = () => {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex lg:flex-1">
-            <Link to="/" className="-m-1.5 p-1.5">
+            <Link 
+              to="/" 
+              className="-m-1.5 p-1.5 flex items-center gap-2"
+              aria-label="KADMEIA — Inicio"
+            >
+              <SmartImage
+                src="/assets/brand/logo-kad-mark-gold.png"
+                alt=""
+                width={24}
+                height={24}
+                priority
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
+                className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8"
+              />
               <span className="font-display text-2xl font-semibold text-primary">
                 KADMEIA
               </span>
