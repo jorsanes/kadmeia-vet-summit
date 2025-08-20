@@ -143,9 +143,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Brand Divider */}
-      <BrandDivider />
-
       {/* What We Do Section */}
       <section className="py-24 bg-background">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
