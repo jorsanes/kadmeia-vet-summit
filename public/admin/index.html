@@ -5,10 +5,80 @@
     <meta name="robots" content="noindex,nofollow">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>KADMEIA · Admin</title>
-    <!-- Carga del bundle del CMS -->
-    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+    <style>
+      body { font-family: system-ui, sans-serif; margin: 0; padding: 20px; }
+      .loading { text-align: center; margin-top: 50px; }
+      .error { color: #dc2626; background: #fef2f2; padding: 15px; border-radius: 8px; margin: 20px 0; }
+      .spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; }
+      @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
   </head>
   <body>
-    <!-- El CMS se monta solo -->
+    <div id="loading" class="loading">
+      <div class="spinner"></div>
+      <p>Cargando panel de administración...</p>
+    </div>
+    <div id="error" style="display: none;"></div>
+    <div id="nc-root"></div>
+
+    <script>
+      // Función para mostrar errores
+      function showError(message) {
+        const errorDiv = document.getElementById('error');
+        const loadingDiv = document.getElementById('loading');
+        errorDiv.innerHTML = '<div class="error"><strong>Error:</strong> ' + message + '</div>';
+        errorDiv.style.display = 'block';
+        loadingDiv.style.display = 'none';
+      }
+
+      // Verificar que el config.yml es accesible
+      fetch('/admin/config.yml')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('No se pudo cargar config.yml (status: ' + response.status + ')');
+          }
+          return response.text();
+        })
+        .then(configText => {
+          if (!configText.trim()) {
+            throw new Error('config.yml está vacío');
+          }
+          console.log('✓ Config validado correctamente');
+          initializeCMS();
+        })
+        .catch(error => {
+          showError('No se pudo validar la configuración: ' + error.message);
+        });
+
+      function initializeCMS() {
+        // Cargar Decap CMS con versión específica
+        const script = document.createElement('script');
+        script.src = 'https://unpkg.com/decap-cms@3.3.3/dist/decap-cms.js';
+        script.onload = function() {
+          try {
+            // Verificar que CMS se cargó
+            if (typeof CMS === 'undefined') {
+              throw new Error('Decap CMS no se cargó correctamente');
+            }
+            
+            // Inicializar manualmente
+            CMS.init();
+            
+            // Ocultar loading después de un momento
+            setTimeout(() => {
+              document.getElementById('loading').style.display = 'none';
+            }, 2000);
+            
+            console.log('✓ Decap CMS inicializado correctamente');
+          } catch (error) {
+            showError('Error al inicializar CMS: ' + error.message);
+          }
+        };
+        script.onerror = function() {
+          showError('No se pudo cargar el script de Decap CMS');
+        };
+        document.head.appendChild(script);
+      }
+    </script>
   </body>
 </html>

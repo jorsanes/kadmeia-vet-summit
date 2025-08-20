@@ -2,14 +2,14 @@ import { useEffect } from 'react';
 
 const Admin = () => {
   useEffect(() => {
-    // Redirect to the static admin page immediately
+    // Redirect to the static admin page with longer delay
     const redirectToAdmin = () => {
       const adminUrl = window.location.origin + '/admin/index.html';
       window.location.replace(adminUrl);
     };
     
-    // Small delay to avoid potential routing conflicts
-    const timeoutId = setTimeout(redirectToAdmin, 100);
+    // Longer delay to ensure complete page load
+    const timeoutId = setTimeout(redirectToAdmin, 500);
     
     return () => clearTimeout(timeoutId);
   }, []);
