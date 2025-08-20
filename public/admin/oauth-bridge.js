@@ -1,67 +1,41 @@
-/*  KADMEIA OAuth Bridge
-    - Acepta formato objeto { token, provider:'github' } y string legacy "authorization:github:success:<token>"
-    - Persiste credencial donde Decap/Netlify CMS la esperan
-    - Corta la propagación del evento para evitar errores en listeners internos
-    - Recarga el /admin para completar login
-*/
-
 (function () {
   function storeToken(token) {
     if (!token || typeof token !== "string") return;
     const payload = JSON.stringify({ token, provider: "github" });
-
-    // Claves aceptadas por Decap (compat con Netlify CMS)
     try {
       localStorage.setItem("decap-cms-auth", payload);
       localStorage.setItem("netlify-cms-auth", payload);
     } catch (e) {
-      console.error("No se pudo guardar la credencial en localStorage:", e);
+      console.error("No se pudo guardar la credencial:", e);
       return;
     }
-
-    // Limpia residuos de sesiones antiguas
-    try {
-      sessionStorage.removeItem("netlify-cms.lastLogin");
-    } catch (_) {}
-
-    // Recarga para que Decap coja la credencial
-    location.reload();
+    try { sessionStorage.removeItem("netlify-cms.lastLogin"); } catch (_) {}
+    // No forzamos reload inmediato: dejamos que Decap procese primero.
+    // Si no cambiara de vista en 1.2s, recargamos.
+    setTimeout(() => {
+      if (!document.querySelector('[data-testid="collection-page"]')) location.reload();
+    }, 1200);
   }
 
-  window.addEventListener(
-    "message",
-    (e) => {
-      try {
-        // Evita que otros listeners (los de Decap) procesen este mismo evento y lloren en consola
-        if (e && typeof e.stopImmediatePropagation === "function") {
-          e.stopImmediatePropagation();
-        }
-
-        const data = e.data;
-
-        // 1) Objeto moderno { token, provider:'github' }
-        if (data && typeof data === "object" && data.token && data.provider === "github") {
-          storeToken(String(data.token));
-          return;
-        }
-
-        // 2) Cadena legacy "authorization:github:success:<token>"
-        if (typeof data === "string" && data.indexOf("authorization:github:success:") === 0) {
-          const token = data.slice("authorization:github:success:".length);
-          storeToken(token);
-          return;
-        }
-      } catch (err) {
-        console.error("OAuth bridge error:", err);
+  window.addEventListener("message", (e) => {
+    try {
+      const data = e.data;
+      // 1) Legacy string (principal en esta versión)
+      if (typeof data === "string" && data.indexOf("authorization:github:success:") === 0) {
+        const token = data.slice("authorization:github:success:".length);
+        storeToken(token);
+        return;
       }
-    },
-    // useCapture=true para interceptar antes que otros listeners
-    true
-  );
+      // 2) Objeto moderno (por si en algún momento volvemos a enviarlo)
+      if (data && typeof data === "object" && data.token && data.provider === "github") {
+        storeToken(String(data.token));
+        return;
+      }
+    } catch (err) {
+      console.error("OAuth bridge error:", err);
+    }
+  });
 
-  console.log(
-    "%cKADMEIA OAuth Bridge listo",
-    "color:#1E2A38;font-weight:bold",
-    "- esperando token desde el provider…"
-  );
+  console.log("%cKADMEIA OAuth Bridge listo", "color:#1E2A38;font-weight:bold", "- esperando token…");
 })();
+
