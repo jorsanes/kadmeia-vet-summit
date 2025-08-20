@@ -16,7 +16,7 @@ import {
 import { Link } from 'react-router-dom';
 import { PageSeo } from '@/components/seo/PageSeo';
 import { useLocale } from '@/i18n/LocaleProvider';
-import { listEntries } from '@/lib/mdx';
+import { listEntries, blogModules } from '@/lib/mdx';
 
 const Blog = () => {
   const { t } = useTranslation();
@@ -30,7 +30,7 @@ const Blog = () => {
     ? 'Descubre las últimas tendencias en tecnología veterinaria, IA aplicada y casos de éxito en consultoría clínica.'
     : 'Discover the latest trends in veterinary technology, applied AI and success stories in clinical consulting.';
 
-  const allBlogPosts = listEntries('blog').filter(post => post.lang === locale);
+  const allBlogPosts = listEntries(blogModules).filter(post => post.lang === locale);
   const fadeInUp = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
@@ -173,9 +173,9 @@ const Blog = () => {
           </motion.div>
 
           {/* Featured Post */}
-          {samplePosts.filter(post => post.featured).slice(0, 1).map((post, index) => (
+          {(allBlogPosts.length > 0 ? allBlogPosts.filter(post => post.slug === 'ia-veterinaria-2024') : samplePosts.filter(post => post.featured)).slice(0, 1).map((post, index) => (
             <motion.div
-              key={post.id}
+              key={post.id || post.slug}
               className="mb-16"
               initial="initial"
               animate="animate"
@@ -184,12 +184,12 @@ const Blog = () => {
               <Card className="card-premium overflow-hidden">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
                   <div className="bg-gradient-hero p-12 flex items-center justify-center">
-                    <post.icon className="h-24 w-24 text-secondary" />
+                    {post.icon ? <post.icon className="h-24 w-24 text-secondary" /> : <Brain className="h-24 w-24 text-secondary" />}
                   </div>
                   <div>
                     <CardHeader className="pb-4">
                       <div className="flex items-center gap-3 mb-4">
-                        <Badge variant="secondary">{post.category}</Badge>
+                        <Badge variant="secondary">{post.category || 'Tecnología'}</Badge>
                         <Badge variant="outline">{locale === 'es' ? 'Destacado' : 'Featured'}</Badge>
                       </div>
                       <CardTitle className="font-display text-2xl text-foreground leading-tight">
@@ -204,7 +204,7 @@ const Blog = () => {
                       <div className="flex items-center gap-6 text-sm text-muted-foreground mb-6">
                         <div className="flex items-center gap-2">
                           <User className="h-4 w-4" />
-                          {post.author}
+                          {post.author || 'KADMEIA Team'}
                         </div>
                         <div className="flex items-center gap-2">
                           <Calendar className="h-4 w-4" />
@@ -212,22 +212,24 @@ const Blog = () => {
                         </div>
                         <div className="flex items-center gap-2">
                           <Clock className="h-4 w-4" />
-                          {post.readTime}
+                          {post.readTime || '8 min'}
                         </div>
                       </div>
 
                       <div className="flex flex-wrap gap-2 mb-6">
-                        {post.tags.map((tag, tagIndex) => (
+                        {(post.tags || ['IA', 'Diagnóstico']).map((tag, tagIndex) => (
                           <Badge key={tagIndex} variant="outline" className="text-xs">
                             {tag}
                           </Badge>
                         ))}
                       </div>
 
-                      <Button className="btn-primary">
-                        {locale === 'es' ? 'Leer artículo completo' : 'Read full article'}
-                        <ArrowRight className="h-4 w-4 ml-2" />
-                      </Button>
+                      <Link to={`${locale === 'es' ? '/blog' : '/en/blog'}/${post.slug || 'ia-veterinaria-2024'}`}>
+                        <Button className="btn-primary">
+                          {locale === 'es' ? 'Leer artículo completo' : 'Read full article'}
+                          <ArrowRight className="h-4 w-4 ml-2" />
+                        </Button>
+                      </Link>
                     </CardContent>
                   </div>
                 </div>
@@ -242,13 +244,13 @@ const Blog = () => {
             animate="animate"
             variants={staggerContainer}
           >
-            {samplePosts.filter(post => !post.featured).slice(0, 6).map((post, index) => (
-              <motion.div key={post.id} variants={fadeInUp}>
+            {(allBlogPosts.length > 0 ? allBlogPosts.filter(post => post.slug !== 'ia-veterinaria-2024') : samplePosts.filter(post => !post.featured)).slice(0, 6).map((post, index) => (
+              <motion.div key={post.id || post.slug} variants={fadeInUp}>
                 <Card className="card-premium h-full group hover:shadow-elegant transition-all duration-300">
                   <CardHeader className="pb-4">
                     <div className="flex items-center justify-between mb-4">
-                      <Badge variant="secondary">{post.category}</Badge>
-                      <post.icon className="h-6 w-6 text-secondary" />
+                      <Badge variant="secondary">{post.category || 'Tecnología'}</Badge>
+                      {post.icon ? <post.icon className="h-6 w-6 text-secondary" /> : <Brain className="h-6 w-6 text-secondary" />}
                     </div>
                     <CardTitle className="font-display text-lg text-foreground leading-tight group-hover:text-primary transition-colors">
                       {post.title}
@@ -267,27 +269,29 @@ const Blog = () => {
                         </div>
                         <div className="flex items-center gap-1">
                           <Clock className="h-3 w-3" />
-                          {post.readTime}
+                          {post.readTime || '8 min'}
                         </div>
                       </div>
 
                       <div className="flex flex-wrap gap-1">
-                        {post.tags.slice(0, 2).map((tag, tagIndex) => (
+                        {(post.tags || ['Tecnología']).slice(0, 2).map((tag, tagIndex) => (
                           <Badge key={tagIndex} variant="outline" className="text-xs">
                             {tag}
                           </Badge>
                         ))}
-                        {post.tags.length > 2 && (
+                        {(post.tags || []).length > 2 && (
                           <Badge variant="outline" className="text-xs">
-                            +{post.tags.length - 2}
+                            +{(post.tags || []).length - 2}
                           </Badge>
                         )}
                       </div>
 
-                      <Button variant="ghost" size="sm" className="w-full justify-between p-0 h-auto font-medium text-primary hover:bg-transparent">
-                        {locale === 'es' ? 'Leer más' : 'Read more'}
-                        <ArrowRight className="h-4 w-4" />
-                      </Button>
+                      <Link to={`${locale === 'es' ? '/blog' : '/en/blog'}/${post.slug || `sample-post-${post.id}`}`} className="w-full">
+                        <Button variant="ghost" size="sm" className="w-full justify-between p-0 h-auto font-medium text-primary hover:bg-transparent">
+                          {locale === 'es' ? 'Leer más' : 'Read more'}
+                          <ArrowRight className="h-4 w-4" />
+                        </Button>
+                      </Link>
                     </div>
                   </CardContent>
                 </Card>

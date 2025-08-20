@@ -19,6 +19,7 @@ import About from "@/pages/About";
 import Privacy from "@/pages/Privacy";
 import Legal from "@/pages/Legal";
 import Cookies from "@/pages/Cookies";
+import BlogPost from "@/pages/BlogPost";
 import NotFound from "./pages/NotFound";
 import ServerError from "./pages/ServerError";
 
@@ -50,6 +51,7 @@ const App = () => (
                       <Route path="/servicios" element={<Services />} />
                       <Route path="/casos" element={<Cases />} />
                       <Route path="/blog" element={<Blog />} />
+                      <Route path="/blog/:slug" element={<BlogPost />} />
                       <Route path="/sobre" element={<About />} />
                       <Route path="/contacto" element={<Contact />} />
                       <Route path="/privacidad" element={<Privacy />} />
@@ -61,6 +63,7 @@ const App = () => (
                       <Route path="/en/services" element={<Services />} />
                       <Route path="/en/cases" element={<Cases />} />
                       <Route path="/en/blog" element={<Blog />} />
+                      <Route path="/en/blog/:slug" element={<BlogPost />} />
                       <Route path="/en/about" element={<About />} />
                       <Route path="/en/contact" element={<Contact />} />
                       <Route path="/en/privacy" element={<Privacy />} />
