@@ -6,98 +6,13 @@
     <title>KADMEIA CMS</title>
   </head>
   <body>
-    <div id="kadmeia-loading" style="
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: #F5F1EA; display: flex; align-items: center; justify-content: center;
-      font-family: Inter, system-ui, sans-serif; color: #1E2A38; z-index: 9999;
-    ">
-      <div style="text-align: center;">
-        <div style="
-          width: 40px; height: 40px; border: 3px solid #B38A3F;
-          border-radius: 50%; border-top-color: transparent;
-          animation: spin 1s linear infinite; margin: 0 auto 16px;
-        "></div>
-        <h2 style="margin: 0 0 8px; font-size: 18px; font-weight: 600;">KADMEIA CMS</h2>
-        <p id="loading-status" style="margin: 0 0 16px; font-size: 14px; opacity: 0.7;">Cargando sistema...</p>
-        <div id="debug-actions" style="display: none; margin-top: 16px;">
-          <button onclick="window.kadmeiaAuth?.resendToken()" style="
-            background: #B38A3F; color: white; border: none; padding: 8px 16px;
-            border-radius: 4px; font-size: 12px; cursor: pointer; margin-right: 8px;
-          ">Reenviar Token</button>
-          <button onclick="window.kadmeiaAuth?.clearAuth()" style="
-            background: #dc2626; color: white; border: none; padding: 8px 16px;
-            border-radius: 4px; font-size: 12px; cursor: pointer;
-          ">Reset Sesión</button>
-        </div>
-      </div>
-    </div>
-    
-    <style>
-      @keyframes spin { to { transform: rotate(360deg); } }
-      #kadmeia-loading.hidden { display: none !important; }
-    </style>
-
-    <!-- Puente OAuth: escucha postMessage y persiste token antes de iniciar Decap -->
-    <script src="./oauth-bridge.js"></script>
-
-    <!-- Forzamos inicialización manual (no usa config.yml) -->
+    <!-- Forzamos Manual Init para usar decap-config.js -->
     <script>window.CMS_MANUAL_INIT = true;</script>
 
     <!-- Decap CMS -->
     <script src="https://unpkg.com/decap-cms@^3/dist/decap-cms.js"></script>
 
-    <!-- Config en JS -->
+    <!-- Config -->
     <script src="./decap-config.js"></script>
-    
-    <script>
-      // Actualizar estado de carga
-      function updateLoadingStatus(message) {
-        const status = document.getElementById('loading-status');
-        if (status) status.textContent = message;
-        console.log('📋 Estado:', message);
-      }
-      
-      // Ocultar loading cuando Decap esté listo
-      function hideLoading() {
-        const loading = document.getElementById('kadmeia-loading');
-        if (loading) {
-          loading.classList.add('hidden');
-          console.log('✅ Loading oculto, CMS listo');
-        }
-      }
-      
-      // Monitor de inicialización
-      let initAttempts = 0;
-      const maxAttempts = 30; // 15 segundos máximo
-      
-      function checkCMSReady() {
-        initAttempts++;
-        
-        // Verificar si Decap está montado
-        if (document.querySelector('[data-testid="collection-page"]') || 
-            document.querySelector('.nc-auth-login') ||
-            document.querySelector('#nc-root')) {
-          hideLoading();
-          return;
-        }
-        
-        if (initAttempts < maxAttempts) {
-          setTimeout(checkCMSReady, 500);
-          updateLoadingStatus(`Inicializando... (${initAttempts}/${maxAttempts})`);
-        } else {
-          updateLoadingStatus('⚠️ Error: CMS no responde');
-          console.error('❌ Decap CMS no se inicializó correctamente');
-          // Mostrar botones de debug
-          const debugActions = document.getElementById('debug-actions');
-          if (debugActions) debugActions.style.display = 'block';
-        }
-      }
-      
-      // Iniciar monitoreo
-      setTimeout(() => {
-        updateLoadingStatus('Conectando con GitHub...');
-        checkCMSReady();
-      }, 1000);
-    </script>
   </body>
 </html>
