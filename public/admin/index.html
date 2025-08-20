@@ -2,83 +2,64 @@
 <html lang="es">
   <head>
     <meta charset="utf-8" />
-    <meta name="robots" content="noindex,nofollow">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>KADMEIA · Admin</title>
     <style>
-      body { font-family: system-ui, sans-serif; margin: 0; padding: 20px; }
-      .loading { text-align: center; margin-top: 50px; }
-      .error { color: #dc2626; background: #fef2f2; padding: 15px; border-radius: 8px; margin: 20px 0; }
-      .spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; }
-      @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, sans-serif; margin: 0; }
+      .msg { padding: 12px 16px; margin: 12px; border-radius: 8px; }
+      .err { background:#fee; color:#900; border:1px solid #fbb; }
+      .ok  { background:#eefaf1; color:#094; border:1px solid #bde5c8; }
+      .muted { color:#666; font-size: 14px; }
     </style>
   </head>
   <body>
-    <div id="loading" class="loading">
-      <div class="spinner"></div>
-      <p>Cargando panel de administración...</p>
-    </div>
-    <div id="error" style="display: none;"></div>
-    <div id="nc-root"></div>
+    <div id="status" class="msg ok muted">Cargando Decap CMS…</div>
 
     <script>
-      // Función para mostrar errores
-      function showError(message) {
-        const errorDiv = document.getElementById('error');
-        const loadingDiv = document.getElementById('loading');
-        errorDiv.innerHTML = '<div class="error"><strong>Error:</strong> ' + message + '</div>';
-        errorDiv.style.display = 'block';
-        loadingDiv.style.display = 'none';
-      }
+      (function () {
+        // Pinea una versión estable (evita 3.3.3)
+        const V = "3.3.1";
+        const SOURCES = [
+          `https://unpkg.com/decap-cms@${V}/dist/decap-cms.js`,
+          `https://cdn.jsdelivr.net/npm/decap-cms@${V}/dist/decap-cms.js`,
+        ];
 
-      // Verificar que el config.yml es accesible
-      fetch('/admin/config.yml')
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('No se pudo cargar config.yml (status: ' + response.status + ')');
-          }
-          return response.text();
-        })
-        .then(configText => {
-          if (!configText.trim()) {
-            throw new Error('config.yml está vacío');
-          }
-          console.log('✓ Config validado correctamente');
-          initializeCMS();
-        })
-        .catch(error => {
-          showError('No se pudo validar la configuración: ' + error.message);
-        });
+        const $status = document.getElementById("status");
 
-      function initializeCMS() {
-        // Cargar Decap CMS con versión específica
-        const script = document.createElement('script');
-        script.src = 'https://unpkg.com/decap-cms@3.3.3/dist/decap-cms.js';
-        script.onload = function() {
-          try {
-            // Verificar que CMS se cargó
-            if (typeof CMS === 'undefined') {
-              throw new Error('Decap CMS no se cargó correctamente');
-            }
-            
-            // Inicializar manualmente
-            CMS.init();
-            
-            // Ocultar loading después de un momento
-            setTimeout(() => {
-              document.getElementById('loading').style.display = 'none';
-            }, 2000);
-            
-            console.log('✓ Decap CMS inicializado correctamente');
-          } catch (error) {
-            showError('Error al inicializar CMS: ' + error.message);
+        function setMsg(html, cls) {
+          $status.className = `msg ${cls}`;
+          $status.innerHTML = html;
+        }
+
+        function loadFrom(i) {
+          if (i >= SOURCES.length) {
+            setMsg(
+              'Error: No se pudo cargar Decap CMS desde los CDNs. ' +
+              'Revisa tu conexión/CSP o prueba más tarde.',
+              'err'
+            );
+            return;
           }
-        };
-        script.onerror = function() {
-          showError('No se pudo cargar el script de Decap CMS');
-        };
-        document.head.appendChild(script);
-      }
+          const src = SOURCES[i];
+          const s = document.createElement("script");
+          s.src = src;
+          s.onload = function () {
+            setMsg(`Decap CMS cargado desde <code>${src}</code>`, "ok muted");
+          };
+          s.onerror = function () {
+            setMsg(`Fallo cargando <code>${src}</code>. Probando alternativa…`, "err");
+            // intenta el siguiente CDN
+            loadFrom(i + 1);
+          };
+          document.body.appendChild(s);
+        }
+
+        loadFrom(0);
+      })();
     </script>
+    <noscript>
+      <div class="msg err">Necesitas JavaScript habilitado para usar el CMS.</div>
+    </noscript>
   </body>
 </html>
