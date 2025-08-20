@@ -2,30 +2,23 @@ backend:
   name: github
   repo: jorsanes/kadmeia-vet-summit
   branch: main
-  base_url: https://kadmeia-oauth.vercel.app   # OAuth provider (Vercel)
+  base_url: https://kadmeia-oauth.vercel.app
   auth_endpoint: api/auth
 
-# En producción usa OAuth:
 local_backend: false
 
 site_url: https://www.kadmeia.com
 display_url: https://www.kadmeia.com
 
-media_folder: "public/images/uploads"   # Carpeta en el repo
-public_folder: "/images/uploads"        # Ruta pública en la web
+media_folder: "public/images/uploads"
+public_folder: "/images/uploads"
 
-publish_mode: editorial_workflow        # Draft → Review → Publish
+publish_mode: editorial_workflow
 editor:
   preview: false
 
-# Slugs limpios para ES/EN
-slug:
-  encoding: "unicode"
-  clean_accents: true
-  sanitize_replacement: "-"
-
 collections:
-  # BLOG ES
+  # (tus 4 colecciones tal cual)
   - name: "blog_es"
     label: "Blog (ES)"
     folder: "src/content/blog/es"
@@ -33,11 +26,6 @@ collections:
     slug: "{{slug}}"
     extension: "mdx"
     format: "frontmatter"
-    sortable_fields: ["date", "title"]
-    view_filters:
-      - label: "Borradores"
-        field: "draft"
-        pattern: true
     fields:
       - { label: "Título", name: "title", widget: "string" }
       - { label: "Fecha", name: "date", widget: "datetime", format: "YYYY-MM-DD", time_format: false }
@@ -48,7 +36,6 @@ collections:
       - { label: "Borrador", name: "draft", widget: "boolean", default: false }
       - { label: "Contenido (MDX)", name: "body", widget: "markdown" }
 
-  # BLOG EN
   - name: "blog_en"
     label: "Blog (EN)"
     folder: "src/content/blog/en"
@@ -56,11 +43,6 @@ collections:
     slug: "{{slug}}"
     extension: "mdx"
     format: "frontmatter"
-    sortable_fields: ["date", "title"]
-    view_filters:
-      - label: "Drafts"
-        field: "draft"
-        pattern: true
     fields:
       - { label: "Title", name: "title", widget: "string" }
       - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", time_format: false }
@@ -71,7 +53,6 @@ collections:
       - { label: "Draft", name: "draft", widget: "boolean", default: false }
       - { label: "Content (MDX)", name: "body", widget: "markdown" }
 
-  # CASOS ES
   - name: "cases_es"
     label: "Casos (ES)"
     folder: "src/content/casos/es"
@@ -79,11 +60,6 @@ collections:
     slug: "{{slug}}"
     extension: "mdx"
     format: "frontmatter"
-    sortable_fields: ["date", "title"]
-    view_filters:
-      - label: "Borradores"
-        field: "draft"
-        pattern: true
     fields:
       - { label: "Título", name: "title", widget: "string" }
       - { label: "Fecha", name: "date", widget: "datetime", format: "YYYY-MM-DD", time_format: false }
@@ -94,7 +70,6 @@ collections:
       - { label: "Borrador", name: "draft", widget: "boolean", default: false }
       - { label: "Contenido (MDX)", name: "body", widget: "markdown" }
 
-  # CASES EN
   - name: "cases_en"
     label: "Cases (EN)"
     folder: "src/content/casos/en"
@@ -102,11 +77,6 @@ collections:
     slug: "{{slug}}"
     extension: "mdx"
     format: "frontmatter"
-    sortable_fields: ["date", "title"]
-    view_filters:
-      - label: "Drafts"
-        field: "draft"
-        pattern: true
     fields:
       - { label: "Title", name: "title", widget: "string" }
       - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", time_format: false }
