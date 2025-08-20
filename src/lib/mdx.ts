@@ -1,48 +1,67 @@
-// src/lib/mdx.ts
-import type { ComponentType } from "react";
+import { ComponentType } from 'react';
 
-export type Frontmatter = {
+export interface MDXFrontmatter {
   title: string;
-  date: string; // YYYY-MM-DD
-  excerpt?: string;
-  cover?: string;
-  lang: "es" | "en";
-  tags?: string[];
-  draft?: boolean;
-};
+  date: string;
+  excerpt: string;
+  cover: string;
+  lang: 'es' | 'en';
+  tags: string[];
+}
 
-export type MdxModule = {
-  default: ComponentType;
-  frontmatter: Frontmatter;
-};
-
-export type Entry = Frontmatter & {
+export interface MDXEntry extends MDXFrontmatter {
   path: string;
   slug: string;
   Component: ComponentType;
-};
-
-// Globs tipados (MDX con frontmatter)
-export const blogModules = import.meta.glob<MdxModule>("/src/content/blog/**/*.mdx", {
-  eager: true,
-});
-export const casesModules = import.meta.glob<MdxModule>("/src/content/casos/**/*.mdx", {
-  eager: true,
-});
-
-function toEntry([modPath, mod]: [string, MdxModule]): Entry {
-  const slug = modPath.split("/").pop()!.replace(/\.mdx$/, "");
-  return {
-    path: modPath,
-    slug,
-    Component: mod.default,
-    ...mod.frontmatter,
-  };
 }
 
-export function listEntries(mods: Record<string, MdxModule>): Entry[] {
-  return Object.entries(mods)
-    .map(toEntry)
-    .filter((e) => !e.draft)
+// Blog modules
+export const blogModules = import.meta.glob('/src/content/blog/**/*.mdx', { eager: true });
+
+// Cases modules
+export const casesModules = import.meta.glob('/src/content/casos/**/*.mdx', { eager: true });
+
+export function listEntries(modules: any): MDXEntry[] {
+  return Object.entries(modules)
+    .map(([path, mod]: [string, any]) => {
+      const slug = path.split('/').pop()?.replace('.mdx', '') || '';
+      return {
+        path,
+        slug,
+        ...mod.frontmatter,
+        Component: mod.default
+      };
+    })
     .sort((a, b) => (a.date > b.date ? -1 : 1));
+}
+
+export function getBlogPosts(lang: 'es' | 'en' = 'es'): MDXEntry[] {
+  const entries = listEntries(blogModules);
+  return entries.filter(entry => entry.lang === lang);
+}
+
+export function getCases(lang: 'es' | 'en' = 'es'): MDXEntry[] {
+  const entries = listEntries(casesModules);
+  return entries.filter(entry => entry.lang === lang);
+}
+
+export function getBlogPost(slug: string, lang: 'es' | 'en' = 'es'): MDXEntry | undefined {
+  return getBlogPosts(lang).find(post => post.slug === slug);
+}
+
+export function getCase(slug: string, lang: 'es' | 'en' = 'es'): MDXEntry | undefined {
+  return getCases(lang).find(caseItem => caseItem.slug === slug);
+}
+
+export function paginateEntries<T>(entries: T[], page: number, pageSize: number = 6) {
+  const start = (page - 1) * pageSize;
+  const end = start + pageSize;
+  
+  return {
+    entries: entries.slice(start, end),
+    totalPages: Math.ceil(entries.length / pageSize),
+    currentPage: page,
+    hasNext: end < entries.length,
+    hasPrev: page > 1
+  };
 }

@@ -30,7 +30,7 @@ const Blog = () => {
     ? 'Descubre las últimas tendencias en tecnología veterinaria, IA aplicada y casos de éxito en consultoría clínica.'
     : 'Discover the latest trends in veterinary technology, applied AI and success stories in clinical consulting.';
 
-  const allBlogPosts = listEntries(import.meta.glob<any>("/src/content/blog/**/*.mdx", { eager: true })).filter(post => post.lang === locale);
+  const allBlogPosts = listEntries('blog').filter(post => post.lang === locale);
   const fadeInUp = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },

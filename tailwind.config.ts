@@ -61,7 +61,11 @@ export default {
 				warning: {
 					DEFAULT: 'hsl(var(--warning))',
 					foreground: 'hsl(var(--warning-foreground))'
-				}
+				},
+				// KADMEIA Brand Colors Exactos
+				'kadmeia-blue': '#1E2A38',
+				'kadmeia-gold': '#B38A3F', 
+				'kadmeia-cream': '#F5F1EA'
 			},
 			fontFamily: {
 				'display': ['Playfair Display', 'Georgia', 'serif'],
