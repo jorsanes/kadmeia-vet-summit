@@ -1,142 +1,96 @@
 import { Link } from 'react-router-dom';
-import { Card, CardContent } from '@/components/ui/card';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import { motion } from 'framer-motion';
-import { 
-  AlertTriangle, 
-  Home, 
-  ArrowRight,
-  Search
-} from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { FileQuestion, Home, ArrowLeft } from 'lucide-react';
+import { PageSeo } from '@/components/seo/PageSeo';
 
 const NotFound = () => {
-  const fadeInUp = {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.6 }
-  };
-
-  const staggerContainer = {
-    animate: {
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const suggestedLinks = [
-    { path: '/', label: 'Inicio', desc: 'Página principal de KADMEIA' },
-    { path: '/servicios', label: 'Servicios', desc: 'Consultoría y tecnología veterinaria' },
-    { path: '/casos', label: 'Casos', desc: 'Proyectos y resultados reales' },
-    { path: '/blog', label: 'Blog', desc: 'Análisis y artículos especializados' },
-    { path: '/contacto', label: 'Contacto', desc: 'Hablemos de su proyecto' }
-  ];
+  const { t } = useTranslation();
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center">
-      <div className="mx-auto max-w-2xl px-6 text-center">
-        <motion.div
-          initial="initial"
-          animate="animate"
-          variants={staggerContainer}
-        >
-          {/* Error Icon and Message */}
-          <motion.div 
-            className="mb-12"
-            variants={fadeInUp}
-          >
-            <div className="flex items-center justify-center mb-8">
-              <div className="flex items-center justify-center w-24 h-24 bg-destructive/10 rounded-2xl">
-                <AlertTriangle className="h-12 w-12 text-destructive" />
-              </div>
+    <div className="min-h-screen bg-gradient-subtle flex items-center justify-center p-6">
+      <PageSeo 
+        title="Página no encontrada - KADMEIA"
+        description="La página que buscas no existe o ha sido movida. Regresa al inicio para encontrar lo que necesitas."
+      />
+      
+      <div className="w-full max-w-md">
+        <Card className="card-premium text-center">
+          <CardContent className="pt-8 pb-8">
+            <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+              <FileQuestion className="w-8 h-8 text-primary" />
             </div>
             
-            <h1 className="font-display text-6xl font-semibold text-foreground mb-4">
+            <h1 className="text-4xl font-display font-bold text-primary mb-2">
               404
             </h1>
-            <h2 className="font-display text-2xl font-medium text-foreground mb-4">
-              Página no encontrada
+            
+            <h2 className="text-xl font-display font-semibold text-foreground mb-4">
+              {t('error.notFound.title', 'Página no encontrada')}
             </h2>
-            <p className="text-lg text-muted-foreground max-w-md mx-auto">
-              Lo sentimos, la página que busca no existe o ha sido movida. 
-              Le ayudamos a encontrar lo que necesita.
+            
+            <p className="text-muted-foreground mb-8 leading-relaxed">
+              {t('error.notFound.description', 'La página que buscas no existe o ha sido movida. Verifica la URL o regresa al inicio para encontrar lo que necesitas.')}
             </p>
-          </motion.div>
-
-          {/* Quick Actions */}
-          <motion.div 
-            className="mb-12"
-            variants={fadeInUp}
-          >
-            <Card className="card-premium">
-              <CardContent className="p-8">
-                <div className="flex items-center justify-center gap-3 mb-6">
-                  <Search className="h-6 w-6 text-secondary" />
-                  <h3 className="font-display text-xl font-semibold text-foreground">
-                    ¿Qué estaba buscando?
-                  </h3>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                  {suggestedLinks.map((link, index) => (
-                    <Link
-                      key={index}
-                      to={link.path}
-                      className="group p-4 rounded-xl border border-border/50 hover:border-primary/40 hover:bg-muted/30 transition-all focus-ring-kadmeia"
-                    >
-                      <div className="text-left">
-                        <h4 className="font-semibold text-foreground group-hover:text-primary transition-colors">
-                          {link.label}
-                        </h4>
-                        <p className="text-sm text-muted-foreground">
-                          {link.desc}
-                        </p>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button asChild className="btn-primary">
-                    <Link to="/" className="gap-2">
-                      <Home className="h-4 w-4" />
-                      Volver al inicio
-                    </Link>
-                  </Button>
-                  <Button asChild variant="outline" className="hover:bg-primary hover:text-primary-foreground">
-                    <Link to="/contacto" className="gap-2">
-                      ¿Necesita ayuda?
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Technical Info */}
-          <motion.div
-            variants={fadeInUp}
-          >
-            <Card className="card-outline">
-              <CardContent className="p-6">
-                <p className="text-sm text-muted-foreground mb-3">
-                  Si llegó aquí a través de un enlace de nuestro sitio web, por favor{' '}
-                  <Link 
-                    to="/contacto" 
-                    className="text-primary hover:text-primary-hover transition-colors underline"
-                  >
-                    infórmenos del error
-                  </Link>
-                  {' '}para que podamos solucionarlo.
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Error 404 - Página no encontrada • KADMEIA
-                </p>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </motion.div>
+            
+            <div className="space-y-3">
+              <Button 
+                asChild 
+                className="w-full btn-primary"
+                size="lg"
+              >
+                <Link to="/">
+                  <Home className="w-4 h-4 mr-2" />
+                  {t('error.goHome', 'Ir al Inicio')}
+                </Link>
+              </Button>
+              
+              <Button 
+                onClick={() => window.history.back()}
+                variant="outline"
+                className="w-full"
+                size="lg"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                {t('error.goBack', 'Volver atrás')}
+              </Button>
+            </div>
+            
+            <div className="mt-8 pt-6 border-t border-border">
+              <p className="text-sm text-muted-foreground mb-4">
+                {t('error.suggestions', '¿Buscas algo específico? Prueba con:')}
+              </p>
+              
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <Link 
+                  to="/servicios" 
+                  className="text-primary hover:underline"
+                >
+                  {t('nav.services', 'Servicios')}
+                </Link>
+                <Link 
+                  to="/casos" 
+                  className="text-primary hover:underline"
+                >
+                  {t('nav.cases', 'Casos')}
+                </Link>
+                <Link 
+                  to="/blog" 
+                  className="text-primary hover:underline"
+                >
+                  {t('nav.blog', 'Blog')}
+                </Link>
+                <Link 
+                  to="/contacto" 
+                  className="text-primary hover:underline"
+                >
+                  {t('nav.contact', 'Contacto')}
+                </Link>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
