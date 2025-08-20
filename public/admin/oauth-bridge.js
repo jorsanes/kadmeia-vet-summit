@@ -1,37 +1,28 @@
-// KADMEIA OAuth Bridge — versión completa
-// 1) Recibe el token del provider por postMessage
-// 2) Obtiene el perfil del usuario en GitHub
-// 3) Persiste en TODAS las claves que Decap/Netlify usan con el "user object" completo
-
+// KADMEIA OAuth Bridge — compat máxima con Decap/Netlify
 (function () {
   const LEGACY_PREFIX = "authorization:github:success:";
 
   async function buildUserPayload(token) {
     try {
-      // Pedimos datos mínimos del usuario (login, name, avatar)
-      const res = await fetch("https://api.github.com/user", {
+      const r = await fetch("https://api.github.com/user", {
         headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json" },
       });
-      if (!res.ok) throw new Error(`GitHub user fetch failed: ${res.status}`);
-      const u = await res.json();
-
-      // Formato que Decap/Netlify CMS reconocen como sesión
+      const u = r.ok ? await r.json() : {};
       return {
-        token,                         // el gho_****
+        token,
         provider: "github",
-        login: "github",               // <- importante
-        backendName: "github",         // <- importante
+        login: "github",
+        backendName: "github",
         user: {
           login: u.login || "",
           name: u.name || u.login || "",
           avatar_url: u.avatar_url || "",
           html_url: u.html_url || "",
-          id: u.id || undefined,
+          id: u.id,
         },
         use_open_authoring: false,
       };
-    } catch (e) {
-      console.warn("[OAuthBridge] No se pudo obtener el perfil, se usará mínimo:", e);
+    } catch {
       return {
         token,
         provider: "github",
@@ -43,48 +34,57 @@
     }
   }
 
-  async function persistToken(token) {
-    if (!token || typeof token !== "string") return;
+  function fireStorage(key, value) {
+    try {
+      window.dispatchEvent(
+        new StorageEvent("storage", {
+          key,
+          newValue: value,
+          oldValue: null,
+          storageArea: window.localStorage,
+          url: window.location.href,
+        })
+      );
+    } catch {}
+  }
 
-    const full = await buildUserPayload(token);
-    const userStr = JSON.stringify(full);
+  async function persistToken(token) {
+    if (!token) return;
+
+    const userObj = await buildUserPayload(token);
+    const userStr = JSON.stringify(userObj);
     const authStr = JSON.stringify({ token, provider: "github" });
 
     try {
-      // Claves que miran distintas versiones de Decap/Netlify
+      // Variantes que consultan distintas builds
       localStorage.setItem("netlify-cms-user", userStr);
+      localStorage.setItem("netlify-cms.user", userStr);
+      localStorage.setItem("decap-cms.user", userStr);
+
       localStorage.setItem("netlify-cms-auth", authStr);
       localStorage.setItem("decap-cms-auth", authStr);
+
+      // Notifica cambios
+      ["netlify-cms-user", "netlify-cms.user", "decap-cms.user"].forEach((k) =>
+        fireStorage(k, userStr)
+      );
     } catch (e) {
       console.error("[OAuthBridge] No se pudo guardar la credencial:", e);
       return;
     }
 
-    try { sessionStorage.removeItem("netlify-cms.lastLogin"); } catch (_) {}
-
-    // Opcional: notificar como si viniera del popup (algunas builds lo escuchan)
-    try {
-      window.postMessage(`${LEGACY_PREFIX}${token}`, window.origin);
-    } catch {}
-
-    // Si la UI no avanza sola, recarga
-    setTimeout(() => {
-      if (!document.querySelector('[data-testid="collection-page"]')) location.reload();
-    }, 800);
+    // Reload suave por si la UI no avanza sola
+    setTimeout(() => location.reload(), 400);
   }
 
   window.addEventListener("message", (e) => {
     try {
-      const { data } = e;
-
-      if (typeof data === "string" && data.indexOf(LEGACY_PREFIX) === 0) {
-        const token = data.slice(LEGACY_PREFIX.length);
-        persistToken(token);
-        return;
+      const d = e.data;
+      if (typeof d === "string" && d.indexOf(LEGACY_PREFIX) === 0) {
+        return persistToken(d.slice(LEGACY_PREFIX.length));
       }
-      if (data && typeof data === "object" && data.token && data.provider === "github") {
-        persistToken(String(data.token));
-        return;
+      if (d && typeof d === "object" && d.token && d.provider === "github") {
+        return persistToken(String(d.token));
       }
     } catch (err) {
       console.error("[OAuthBridge] Error procesando el mensaje:", err);
