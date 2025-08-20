@@ -38,27 +38,53 @@ const Contact = () => {
     setIsSubmitting(true);
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Formspree integration
+      const formspreeId = import.meta.env.VITE_FORMSPREE_ID || 'xeoqqkpa'; // Default form ID
+      const formElement = e.target as HTMLFormElement;
+      const formDataToSend = new FormData(formElement);
       
-      toast({
-        title: "Mensaje enviado",
-        description: "Nos pondremos en contacto con usted en breve",
+      // Add form data manually to FormData (in case form elements don't have proper names)
+      formDataToSend.set('name', formData.name);
+      formDataToSend.set('email', formData.email);
+      formDataToSend.set('company', formData.company);
+      formDataToSend.set('phone', formData.phone);
+      formDataToSend.set('message', formData.message);
+      formDataToSend.set('_subject', `Nuevo contacto de ${formData.name} - KADMEIA`);
+
+      const response = await fetch(`https://formspree.io/f/${formspreeId}`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json'
+        },
+        body: formDataToSend
       });
 
-      // Reset form
-      setFormData({
-        name: '',
-        email: '',
-        company: '',
-        phone: '',
-        message: '',
-        consent: false
-      });
+      if (response.ok) {
+        toast({
+          title: "Mensaje enviado",
+          description: "Nos pondremos en contacto con usted en breve",
+        });
+
+        // Reset form
+        setFormData({
+          name: '',
+          email: '',
+          company: '',
+          phone: '',
+          message: '',
+          consent: false
+        });
+      } else {
+        // If Formspree fails, show error but don't expose technical details
+        throw new Error('Formspree submission failed');
+      }
     } catch (error) {
+      console.error('Error sending form:', error);
+      
+      // Fallback error message
       toast({
         title: "Error",
-        description: "Ha ocurrido un error al enviar el mensaje",
+        description: "Ha ocurrido un error al enviar el mensaje. Por favor, intente nuevamente o contacte directamente a info@kadmeia.com",
         variant: "destructive"
       });
     } finally {
@@ -173,6 +199,7 @@ const Contact = () => {
                       </label>
                       <Input
                         id="name"
+                        name="name"
                         type="text"
                         required
                         value={formData.name}
@@ -187,6 +214,7 @@ const Contact = () => {
                       </label>
                       <Input
                         id="email"
+                        name="email"
                         type="email"
                         required
                         value={formData.email}
@@ -203,6 +231,7 @@ const Contact = () => {
                       </label>
                       <Input
                         id="company"
+                        name="company"
                         type="text"
                         value={formData.company}
                         onChange={(e) => handleChange('company', e.target.value)}
@@ -216,6 +245,7 @@ const Contact = () => {
                       </label>
                       <Input
                         id="phone"
+                        name="phone"
                         type="tel"
                         value={formData.phone}
                         onChange={(e) => handleChange('phone', e.target.value)}
@@ -230,6 +260,7 @@ const Contact = () => {
                     </label>
                     <Textarea
                       id="message"
+                      name="message"
                       rows={6}
                       required
                       value={formData.message}
