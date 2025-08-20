@@ -138,14 +138,139 @@
       // Ejecutar autotest y cargar CMS solo si pasa
       runRepositoryTest().then(success => {
         if (success) {
-          // Cargar Decap CMS
+          console.log('✅ Todos los tests pasaron, cargando Decap CMS...');
+          hideBanners();
+          
+          // Cargar Decap CMS con configuración inline para evitar problemas con config.yml
           const script = document.createElement('script');
           script.src = 'https://unpkg.com/decap-cms@^3/dist/decap-cms.js';
           script.onload = () => {
-            // Cargar config después de que CMS esté listo
-            const configScript = document.createElement('script');
-            configScript.src = './decap-config.js';
-            document.head.appendChild(configScript);
+            console.log('📦 Decap CMS cargado, configurando...');
+            
+            // Configurar Decap directamente sin archivo externo
+            if (window.CMS && window.CMS.init) {
+              window.CMS.init({
+                config: {
+                  backend: {
+                    name: 'github',
+                    repo: 'jorsanes/kadmeia-vet-summit',
+                    branch: 'main',
+                    auth_type: 'oauth2'
+                  },
+                  site_url: 'https://www.kadmeia.com',
+                  display_url: 'https://www.kadmeia.com',
+                  media_folder: 'public/uploads',
+                  public_folder: '/uploads',
+                  publish_mode: 'editorial_workflow',
+                  slug: {
+                    encoding: 'ascii',
+                    clean_accents: true,
+                    sanitize_replacement: '-'
+                  },
+                  collections: [
+                    {
+                      name: 'blog_es',
+                      label: 'Blog (Español)',
+                      folder: 'src/content/blog/es',
+                      slug: '{{slug}}',
+                      extension: 'mdx',
+                      format: 'frontmatter',
+                      create: true,
+                      sortable_fields: ['title', 'date', 'draft'],
+                      view_filters: [
+                        { label: 'Borradores', field: 'draft', pattern: true },
+                        { label: 'Publicados', field: 'draft', pattern: false }
+                      ],
+                      fields: [
+                        { label: 'Título', name: 'title', widget: 'string' },
+                        { label: 'Fecha', name: 'date', widget: 'datetime', format: 'YYYY-MM-DD' },
+                        { label: 'Resumen', name: 'excerpt', widget: 'string' },
+                        { label: 'Imagen de portada', name: 'cover', widget: 'image', required: false },
+                        { label: 'Idioma', name: 'lang', widget: 'hidden', default: 'es' },
+                        { label: 'Etiquetas', name: 'tags', widget: 'list', default: [] },
+                        { label: 'Borrador', name: 'draft', widget: 'boolean', default: false },
+                        { label: 'Contenido', name: 'body', widget: 'markdown' }
+                      ]
+                    },
+                    {
+                      name: 'blog_en',
+                      label: 'Blog (English)',
+                      folder: 'src/content/blog/en',
+                      slug: '{{slug}}',
+                      extension: 'mdx',
+                      format: 'frontmatter',
+                      create: true,
+                      sortable_fields: ['title', 'date', 'draft'],
+                      view_filters: [
+                        { label: 'Drafts', field: 'draft', pattern: true },
+                        { label: 'Published', field: 'draft', pattern: false }
+                      ],
+                      fields: [
+                        { label: 'Title', name: 'title', widget: 'string' },
+                        { label: 'Date', name: 'date', widget: 'datetime', format: 'YYYY-MM-DD' },
+                        { label: 'Excerpt', name: 'excerpt', widget: 'string' },
+                        { label: 'Cover image', name: 'cover', widget: 'image', required: false },
+                        { label: 'Language', name: 'lang', widget: 'hidden', default: 'en' },
+                        { label: 'Tags', name: 'tags', widget: 'list', default: [] },
+                        { label: 'Draft', name: 'draft', widget: 'boolean', default: false },
+                        { label: 'Content', name: 'body', widget: 'markdown' }
+                      ]
+                    },
+                    {
+                      name: 'cases_es',
+                      label: 'Casos (Español)',
+                      folder: 'src/content/casos/es',
+                      slug: '{{slug}}',
+                      extension: 'mdx',
+                      format: 'frontmatter',
+                      create: true,
+                      sortable_fields: ['title', 'date', 'draft'],
+                      view_filters: [
+                        { label: 'Borradores', field: 'draft', pattern: true },
+                        { label: 'Publicados', field: 'draft', pattern: false }
+                      ],
+                      fields: [
+                        { label: 'Título', name: 'title', widget: 'string' },
+                        { label: 'Fecha', name: 'date', widget: 'datetime', format: 'YYYY-MM-DD' },
+                        { label: 'Resumen', name: 'excerpt', widget: 'string' },
+                        { label: 'Imagen de portada', name: 'cover', widget: 'image', required: false },
+                        { label: 'Idioma', name: 'lang', widget: 'hidden', default: 'es' },
+                        { label: 'Etiquetas', name: 'tags', widget: 'list', default: [] },
+                        { label: 'Borrador', name: 'draft', widget: 'boolean', default: false },
+                        { label: 'Contenido', name: 'body', widget: 'markdown' }
+                      ]
+                    },
+                    {
+                      name: 'cases_en',
+                      label: 'Cases (English)',
+                      folder: 'src/content/casos/en',
+                      slug: '{{slug}}',
+                      extension: 'mdx',
+                      format: 'frontmatter',
+                      create: true,
+                      sortable_fields: ['title', 'date', 'draft'],
+                      view_filters: [
+                        { label: 'Drafts', field: 'draft', pattern: true },
+                        { label: 'Published', field: 'draft', pattern: false }
+                      ],
+                      fields: [
+                        { label: 'Title', name: 'title', widget: 'string' },
+                        { label: 'Date', name: 'date', widget: 'datetime', format: 'YYYY-MM-DD' },
+                        { label: 'Excerpt', name: 'excerpt', widget: 'string' },
+                        { label: 'Cover image', name: 'cover', widget: 'image', required: false },
+                        { label: 'Language', name: 'lang', widget: 'hidden', default: 'en' },
+                        { label: 'Tags', name: 'tags', widget: 'list', default: [] },
+                        { label: 'Draft', name: 'draft', widget: 'boolean', default: false },
+                        { label: 'Content', name: 'body', widget: 'markdown' }
+                      ]
+                    }
+                  ]
+                }
+              });
+              console.log('🎯 Decap CMS inicializado con configuración inline');
+            } else {
+              console.error('❌ window.CMS no disponible');
+            }
           };
           document.head.appendChild(script);
         }
