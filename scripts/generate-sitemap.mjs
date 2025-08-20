@@ -1,120 +1,119 @@
 #!/usr/bin/env node
+/**
+ * Generate sitemap.xml for KADMEIA
+ * - Usa SITE_URL si existe; si no, cae a https://kadmeia.com
+ * - Incluye rutas estáticas ES/EN + contenidos MDX (blog/casos)
+ * - Evita duplicados, ordena y pone lastmod razonable
+ */
 
-import fs from 'fs';
-import path from 'path';
-import { glob } from 'fast-glob';
-import matter from 'gray-matter';
+import { existsSync, mkdirSync, readFileSync, writeFileSync, statSync } from "node:fs";
+import * as path from "node:path";
+import fg from "fast-glob";
+import matter from "gray-matter";
 
-const baseUrl = 'https://kadmeia.com';
+// -------- Config --------
+const BASE_URL = (process.env.SITE_URL || "https://kadmeia.com").replace(/\/+$/, "");
 
-// Static routes for both languages
-const staticRoutes = [
-  { es: '/', en: '/en' },
-  { es: '/servicios', en: '/en/services' },
-  { es: '/casos', en: '/en/cases' },
-  { es: '/blog', en: '/en/blog' },
-  { es: '/sobre', en: '/en/about' },
-  { es: '/contacto', en: '/en/contact' },
-  { es: '/privacidad', en: '/en/privacy' },
-  { es: '/aviso-legal', en: '/en/legal' },
-  { es: '/cookies', en: '/en/cookies' }
+// Rutas estáticas (ajusta si cambias paths)
+const STATIC = [
+  { es: "/",            en: "/en" },
+  { es: "/servicios",   en: "/en/services" },
+  { es: "/casos",       en: "/en/cases" },
+  { es: "/blog",        en: "/en/blog" },
+  { es: "/sobre",       en: "/en/about" },
+  { es: "/contacto",    en: "/en/contact" },
+  { es: "/privacidad",  en: "/en/privacy" },
+  { es: "/aviso-legal", en: "/en/legal" },
+  { es: "/cookies",     en: "/en/cookies" }
 ];
 
-async function generateSitemap() {
-  console.log('Generating sitemap...');
-  
-  let urls = [];
-  
-  // Add static routes
-  for (const route of staticRoutes) {
-    // Spanish route
-    urls.push({
-      loc: `${baseUrl}${route.es}`,
-      lastmod: new Date().toISOString().split('T')[0],
-      changefreq: 'weekly',
-      priority: route.es === '/' ? '1.0' : '0.8'
-    });
-    
-    // English route
-    urls.push({
-      loc: `${baseUrl}${route.en}`,
-      lastmod: new Date().toISOString().split('T')[0],
-      changefreq: 'weekly',
-      priority: route.en === '/en' ? '1.0' : '0.8'
-    });
-  }
-  
-  // Add MDX blog posts
-  const blogFiles = await glob('src/content/blog/**/*.mdx');
-  for (const file of blogFiles) {
-    try {
-      const content = fs.readFileSync(file, 'utf8');
-      const { data } = matter(content);
-      
-      if (data.title && data.date && data.lang) {
-        const slug = path.basename(file, '.mdx');
-        const blogPath = data.lang === 'en' ? `/en/blog/${slug}` : `/blog/${slug}`;
-        
-        urls.push({
-          loc: `${baseUrl}${blogPath}`,
-          lastmod: new Date(data.date).toISOString().split('T')[0],
-          changefreq: 'monthly',
-          priority: '0.7'
-        });
-      }
-    } catch (error) {
-      console.warn(`Warning: Could not process blog file ${file}:`, error.message);
-    }
-  }
-  
-  // Add MDX case studies
-  const caseFiles = await glob('src/content/casos/**/*.mdx');
-  for (const file of caseFiles) {
-    try {
-      const content = fs.readFileSync(file, 'utf8');
-      const { data } = matter(content);
-      
-      if (data.title && data.date && data.lang) {
-        const slug = path.basename(file, '.mdx');
-        const casePath = data.lang === 'en' ? `/en/cases/${slug}` : `/casos/${slug}`;
-        
-        urls.push({
-          loc: `${baseUrl}${casePath}`,
-          lastmod: new Date(data.date).toISOString().split('T')[0],
-          changefreq: 'monthly',
-          priority: '0.7'
-        });
-      }
-    } catch (error) {
-      console.warn(`Warning: Could not process case file ${file}:`, error.message);
-    }
-  }
-  
-  // Generate XML
-  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map(url => `  <url>
-    <loc>${url.loc}</loc>
-    <lastmod>${url.lastmod}</lastmod>
-    <changefreq>${url.changefreq}</changefreq>
-    <priority>${url.priority}</priority>
-  </url>`).join('\n')}
-</urlset>`;
-  
-  // Ensure public directory exists
-  const publicDir = 'public';
-  if (!fs.existsSync(publicDir)) {
-    fs.mkdirSync(publicDir, { recursive: true });
-  }
-  
-  // Write sitemap
-  fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), sitemap);
-  
-  console.log(`✅ Sitemap generated with ${urls.length} URLs`);
-  console.log('📁 Saved to: public/sitemap.xml');
+// -------- Helpers --------
+function addUrl(list, pathname, { lastmod = new Date(), changefreq = "weekly", priority = "0.7" } = {}) {
+  const clean = pathname.startsWith("/") ? pathname : `/${pathname}`;
+  list.push({
+    loc: `${BASE_URL}${clean}`,
+    lastmod: new Date(lastmod).toISOString().split("T")[0],
+    changefreq,
+    priority
+  });
 }
 
-generateSitemap().catch(error => {
-  console.error('❌ Error generating sitemap:', error);
+async function collectMdxEntries() {
+  const entries = [];
+  const files = await fg([
+    "src/content/blog/{es,en}/**/*.mdx",
+    "src/content/casos/{es,en}/**/*.mdx"
+  ], { dot: false });
+
+  for (const file of files) {
+    try {
+      const raw = readFileSync(file, "utf8");
+      const { data } = matter(raw);
+      if (data?.draft) continue; // permite ocultar borradores
+
+      const slug = path.basename(file, ".mdx");
+      const segs = file.split(path.sep);
+      const sectionIdx = segs.findIndex(s => s === "blog" || s === "casos");
+      const section = segs[sectionIdx];             // blog | casos
+      const lang = (data.lang ?? segs[sectionIdx + 1] ?? "es").toLowerCase();
+
+      const route =
+        section === "blog"
+          ? (lang === "en" ? `/en/blog/${slug}`  : `/blog/${slug}`)
+          : (lang === "en" ? `/en/cases/${slug}` : `/casos/${slug}`);
+
+      const lm = data.date || statSync(file).mtime;
+      entries.push({
+        loc: `${BASE_URL}${route}`,
+        lastmod: new Date(lm).toISOString().split("T")[0],
+        changefreq: "monthly",
+        priority: "0.7"
+      });
+    } catch (err) {
+      console.warn(`[sitemap] Warning: cannot parse ${file} → ${String(err.message || err)}`);
+    }
+  }
+  return entries;
+}
+
+// -------- Main --------
+async function main() {
+  console.log(`[sitemap] Generating for base: ${BASE_URL}`);
+
+  // 1) Estáticas ES/EN
+  let urls = [];
+  for (const r of STATIC) {
+    addUrl(urls, r.es, { priority: r.es === "/" ? "1.0" : "0.8" });
+    addUrl(urls, r.en, { priority: r.en === "/en" ? "1.0" : "0.8" });
+  }
+
+  // 2) MDX dinámico
+  const dynamic = await collectMdxEntries();
+  urls = urls.concat(dynamic);
+
+  // 3) De-dup + orden
+  const map = new Map();
+  for (const u of urls) map.set(u.loc, u);
+  urls = Array.from(map.values()).sort((a, b) => a.loc.localeCompare(b.loc));
+
+  // 4) XML
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls.map(u => `  <url>
+    <loc>${u.loc}</loc>
+    <lastmod>${u.lastmod}</lastmod>
+    <changefreq>${u.changefreq}</changefreq>
+    <priority>${u.priority}</priority>
+  </url>`).join("\n")}
+</urlset>`;
+
+  if (!existsSync("public")) mkdirSync("public", { recursive: true });
+  writeFileSync(path.join("public", "sitemap.xml"), xml, "utf8");
+
+  console.log(`✅ Sitemap generated: ${urls.length} URLs → public/sitemap.xml`);
+}
+
+main().catch(err => {
+  console.error("❌ Error generating sitemap:", err);
   process.exit(1);
 });
