@@ -191,10 +191,10 @@ const Home = () => {
                     <Brain className="h-6 w-6 text-secondary" />
                   </div>
                   <h3 className="font-display text-xl font-semibold text-foreground mb-4">
-                    {t('whatWeDo.ai.title')}
+                    <p>Software y aplicaciones basados en IA para clínicas veterinarias.</p>
                   </h3>
                   <p className="text-muted-foreground">
-                    {t('whatWeDo.ai.description')}
+                    <p>Distribuimos soluciones de inteligencia artificial que optimizan el diagnóstico y gestión clínica</p>
                   </p>
                 </CardContent>
               </Card>
@@ -306,7 +306,7 @@ const Home = () => {
           >
             {/* Placeholder Cases */}
             {[
-              { title: "Optimización de flujos clínicos", metric: "40% reducción tiempo", sector: "Clínica veterinaria" },
+              { title: "Optimización de flujos cl��nicos", metric: "40% reducción tiempo", sector: "Clínica veterinaria" },
               { title: "IA para diagnóstico por imagen", metric: "95% precisión", sector: "Red de clínicas" },
               { title: "Automatización de inventario", metric: "30% ahorro costes", sector: "Distribuidor" }
             ].map((caseItem, index) => (
