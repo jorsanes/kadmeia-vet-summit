@@ -10,7 +10,6 @@ import i18n from "@/i18n/config";
 import { LocaleProvider } from "@/i18n/LocaleProvider";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import HrefLangLinks from "@/components/layout/HrefLangLinks";
 import Home from "@/pages/Index";
 import Contact from "@/pages/Contact";
 import Services from "@/pages/Services";
