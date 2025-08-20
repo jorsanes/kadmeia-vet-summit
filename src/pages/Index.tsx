@@ -207,10 +207,10 @@ const Home = () => {
                     <Workflow className="h-6 w-6 text-secondary" />
                   </div>
                   <h3 className="font-display text-xl font-semibold text-foreground mb-4">
-                    {t('whatWeDo.automation.title')}
+                    <p>Automatización de procesos e integraciones.</p>
                   </h3>
                   <p className="text-muted-foreground">
-                    {t('whatWeDo.automation.description')}
+                    <p>Creamos flujos automatizados personalizados que liberan tiempo para lo que realmente importa</p>
                   </p>
                 </CardContent>
               </Card>
@@ -306,7 +306,7 @@ const Home = () => {
           >
             {/* Placeholder Cases */}
             {[
-              { title: "Optimización de flujos cl��nicos", metric: "40% reducción tiempo", sector: "Clínica veterinaria" },
+              { title: "Optimización de flujos clínicos", metric: "40% reducción tiempo", sector: "Clínica veterinaria" },
               { title: "IA para diagnóstico por imagen", metric: "95% precisión", sector: "Red de clínicas" },
               { title: "Automatización de inventario", metric: "30% ahorro costes", sector: "Distribuidor" }
             ].map((caseItem, index) => (
