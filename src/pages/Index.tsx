@@ -160,7 +160,7 @@ const Home = () => {
               {t('whatWeDo.title')}
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
-              {t('whatWeDo.subtitle')}
+              <p>Tres pilares que transforman tu negocio veterinario</p>
             </p>
           </motion.div>
 
