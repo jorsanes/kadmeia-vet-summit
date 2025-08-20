@@ -86,3 +86,61 @@
       },
       {
         name: "cases_en",
+        label: "Cases (EN)",
+        folder: "src/content/casos/en",
+        create: true,
+        slug: "{{slug}}",
+        extension: "mdx",
+        format: "frontmatter",
+        sortable_fields: ["date", "title"],
+        view_filters: [{ label: "Drafts", field: "draft", pattern: true }],
+        fields: [
+          { label: "Title", name: "title", widget: "string" },
+          { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", time_format: false },
+          { label: "Excerpt", name: "excerpt", widget: "text", required: false },
+          { label: "Cover", name: "cover", widget: "image", required: false },
+          { label: "Lang", name: "lang", widget: "hidden", default: "en" },
+          { label: "Tags", name: "tags", widget: "list", required: false },
+          { label: "Draft", name: "draft", widget: "boolean", default: false },
+          { label: "Content (MDX)", name: "body", widget: "markdown" }
+        ]
+      }
+    ]
+  };
+
+  // Inicializar Decap CMS cuando esté listo
+  function initDecapCMS() {
+    console.log("%cKADMEIA CMS: Iniciando Decap", "color:#1E2A38;font-weight:bold");
+    
+    if (!window.CMS) {
+      console.error("❌ Decap CMS no está disponible en window.CMS");
+      return;
+    }
+
+    try {
+      window.CMS.init({ config });
+      console.log("✅ Decap CMS inicializado correctamente");
+    } catch (error) {
+      console.error("❌ Error al inicializar Decap CMS:", error);
+    }
+  }
+
+  // Esperar a que Decap esté disponible
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDecapCMS);
+  } else {
+    // Si ya está cargado, intentar inicializar
+    if (window.CMS) {
+      initDecapCMS();
+    } else {
+      // Esperar un poco más para que se cargue Decap
+      setTimeout(() => {
+        if (window.CMS) {
+          initDecapCMS();
+        } else {
+          console.error("❌ Decap CMS no se pudo cargar después de esperar");
+        }
+      }, 1000);
+    }
+  }
+})();
