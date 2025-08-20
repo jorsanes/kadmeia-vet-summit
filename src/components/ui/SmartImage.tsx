@@ -6,7 +6,10 @@ interface SmartImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   alt: string;
   width?: number;
   height?: number;
+  /** Si true: eager + fetchPriority=high */
   priority?: boolean;
+  /** Hint de layout responsive (mejora LCP/CLS) */
+  sizes?: string;
   className?: string;
 }
 
@@ -16,6 +19,7 @@ const SmartImage: React.FC<SmartImageProps> = ({
   width,
   height,
   priority = false,
+  sizes = "100vw",
   className,
   ...props
 }) => {
@@ -27,6 +31,8 @@ const SmartImage: React.FC<SmartImageProps> = ({
       height={height}
       loading={priority ? 'eager' : 'lazy'}
       decoding={priority ? 'sync' : 'async'}
+      fetchPriority={priority ? ('high' as any) : undefined}
+      sizes={sizes}
       className={cn(className)}
       {...props}
     />
