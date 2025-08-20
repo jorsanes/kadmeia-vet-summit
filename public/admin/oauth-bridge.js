@@ -36,16 +36,38 @@
       console.log("🗑️ Limpiado sessionStorage");
     } catch (_) {}
 
-    // Si Decap no navega solo, recargamos en ~1.5s
-    console.log("⏳ Esperando a que Decap procese el token...");
-    setTimeout(() => {
-      if (!document.querySelector('[data-testid="collection-page"]')) {
-        console.log("🔄 Recargando página para activar sesión");
-        location.reload();
-      } else {
-        console.log("✅ Decap ya mostró la interfaz del CMS");
+    // Re-enviar el mensaje a Decap para que procese el token
+    console.log("📤 Re-enviando mensaje de autorización a Decap CMS...");
+    const authMessage = `authorization:github:success:${token}`;
+    window.postMessage(authMessage, window.location.origin);
+    
+    // También disparar evento personalizado por si Decap lo escucha
+    window.dispatchEvent(new CustomEvent('decap-cms-auth', { 
+      detail: { token, provider: "github" } 
+    }));
+    
+    console.log("✅ Token procesado, Decap debería iniciar sesión automáticamente");
+  }
+
+  function resendExistingToken() {
+    try {
+      const existingAuth = localStorage.getItem("decap-cms-auth");
+      if (existingAuth) {
+        const parsed = JSON.parse(existingAuth);
+        if (parsed.token && parsed.provider === "github") {
+          console.log("🔄 Re-enviando token existente a Decap...");
+          const authMessage = `authorization:github:success:${parsed.token}`;
+          window.postMessage(authMessage, window.location.origin);
+          window.dispatchEvent(new CustomEvent('decap-cms-auth', { 
+            detail: parsed 
+          }));
+          return true;
+        }
       }
-    }, 1500);
+    } catch (e) {
+      console.log("🔍 Error procesando token existente:", e);
+    }
+    return false;
   }
 
   window.addEventListener("message", (e) => {
@@ -82,15 +104,33 @@
   // Diagnóstico inicial
   console.log("%cKADMEIA OAuth Bridge listo", "color:#1E2A38;font-weight:bold", "- esperando token…");
   
-  // Verificar si ya hay un token guardado
+  // Verificar si ya hay un token guardado y re-enviarlo
   try {
     const existingAuth = localStorage.getItem("decap-cms-auth");
     if (existingAuth) {
       console.log("🔍 Token existente encontrado:", existingAuth.substring(0, 50) + "...");
+      // Re-enviar token existente después de un pequeño delay
+      setTimeout(() => {
+        if (resendExistingToken()) {
+          console.log("🚀 Token existente re-enviado a Decap CMS");
+        }
+      }, 500);
     } else {
       console.log("🔍 No hay token previo en localStorage");
     }
   } catch (e) {
     console.log("🔍 Error leyendo localStorage:", e);
   }
+
+  // Exponer funciones para debug
+  window.kadmeiaAuth = {
+    resendToken: resendExistingToken,
+    clearAuth: () => {
+      localStorage.removeItem("decap-cms-auth");
+      localStorage.removeItem("netlify-cms-auth");
+      sessionStorage.removeItem("netlify-cms.lastLogin");
+      console.log("🗑️ Autenticación limpiada");
+      location.reload();
+    }
+  };
 })();

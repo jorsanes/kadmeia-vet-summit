@@ -18,7 +18,17 @@
           animation: spin 1s linear infinite; margin: 0 auto 16px;
         "></div>
         <h2 style="margin: 0 0 8px; font-size: 18px; font-weight: 600;">KADMEIA CMS</h2>
-        <p id="loading-status" style="margin: 0; font-size: 14px; opacity: 0.7;">Cargando sistema...</p>
+        <p id="loading-status" style="margin: 0 0 16px; font-size: 14px; opacity: 0.7;">Cargando sistema...</p>
+        <div id="debug-actions" style="display: none; margin-top: 16px;">
+          <button onclick="window.kadmeiaAuth?.resendToken()" style="
+            background: #B38A3F; color: white; border: none; padding: 8px 16px;
+            border-radius: 4px; font-size: 12px; cursor: pointer; margin-right: 8px;
+          ">Reenviar Token</button>
+          <button onclick="window.kadmeiaAuth?.clearAuth()" style="
+            background: #dc2626; color: white; border: none; padding: 8px 16px;
+            border-radius: 4px; font-size: 12px; cursor: pointer;
+          ">Reset Sesión</button>
+        </div>
       </div>
     </div>
     
@@ -77,6 +87,9 @@
         } else {
           updateLoadingStatus('⚠️ Error: CMS no responde');
           console.error('❌ Decap CMS no se inicializó correctamente');
+          // Mostrar botones de debug
+          const debugActions = document.getElementById('debug-actions');
+          if (debugActions) debugActions.style.display = 'block';
         }
       }
       
