@@ -1,14 +1,16 @@
-// Config de Decap vía "Manual Init" (evita problemas de YAML/Content-Type)
-
+// public/admin/decap-config.js
 (function () {
+  // --- Configuración Decap para GitHub + OAuth server propio ---
   const config = {
     backend: {
       name: "github",
-      repo: "jorsanes/kadmeia-vet-summit",
-      branch: "main",
+      repo: "jorsanes/kadmeia-vet-summit",   // <- MUY IMPORTANTE
+      branch: "main",                       // <- MUY IMPORTANTE
       base_url: "https://kadmeia-oauth.vercel.app",
-      auth_endpoint: "api/auth"
+      auth_endpoint: "api/auth",
+      api_root: "https://api.github.com"    // explícito, evita sorpresas
     },
+
     site_url: "https://www.kadmeia.com",
     display_url: "https://www.kadmeia.com",
 
@@ -16,19 +18,14 @@
     public_folder: "/images/uploads",
 
     publish_mode: "editorial_workflow",
+    local_backend: false,
     editor: { preview: false },
 
     slug: { encoding: "unicode", clean_accents: true, sanitize_replacement: "-" },
 
     collections: [
-      {
-        name: "blog_es",
-        label: "Blog (ES)",
-        folder: "src/content/blog/es",
-        create: true,
-        slug: "{{slug}}",
-        extension: "mdx",
-        format: "frontmatter",
+      { name: "blog_es", label: "Blog (ES)", folder: "src/content/blog/es", create: true,
+        slug: "{{slug}}", extension: "mdx", format: "frontmatter",
         sortable_fields: ["date", "title"],
         view_filters: [{ label: "Borradores", field: "draft", pattern: true }],
         fields: [
@@ -42,14 +39,8 @@
           { label: "Contenido (MDX)", name: "body", widget: "markdown" }
         ]
       },
-      {
-        name: "blog_en",
-        label: "Blog (EN)",
-        folder: "src/content/blog/en",
-        create: true,
-        slug: "{{slug}}",
-        extension: "mdx",
-        format: "frontmatter",
+      { name: "blog_en", label: "Blog (EN)", folder: "src/content/blog/en", create: true,
+        slug: "{{slug}}", extension: "mdx", format: "frontmatter",
         sortable_fields: ["date", "title"],
         view_filters: [{ label: "Drafts", field: "draft", pattern: true }],
         fields: [
@@ -63,14 +54,8 @@
           { label: "Content (MDX)", name: "body", widget: "markdown" }
         ]
       },
-      {
-        name: "cases_es",
-        label: "Casos (ES)",
-        folder: "src/content/casos/es",
-        create: true,
-        slug: "{{slug}}",
-        extension: "mdx",
-        format: "frontmatter",
+      { name: "cases_es", label: "Casos (ES)", folder: "src/content/casos/es", create: true,
+        slug: "{{slug}}", extension: "mdx", format: "frontmatter",
         sortable_fields: ["date", "title"],
         view_filters: [{ label: "Borradores", field: "draft", pattern: true }],
         fields: [
@@ -84,14 +69,8 @@
           { label: "Contenido (MDX)", name: "body", widget: "markdown" }
         ]
       },
-      {
-        name: "cases_en",
-        label: "Cases (EN)",
-        folder: "src/content/casos/en",
-        create: true,
-        slug: "{{slug}}",
-        extension: "mdx",
-        format: "frontmatter",
+      { name: "cases_en", label: "Cases (EN)", folder: "src/content/casos/en", create: true,
+        slug: "{{slug}}", extension: "mdx", format: "frontmatter",
         sortable_fields: ["date", "title"],
         view_filters: [{ label: "Drafts", field: "draft", pattern: true }],
         fields: [
@@ -108,39 +87,10 @@
     ]
   };
 
-  // Inicializar Decap CMS cuando esté listo
-  function initDecapCMS() {
-    console.log("%cKADMEIA CMS: Iniciando Decap", "color:#1E2A38;font-weight:bold");
-    
-    if (!window.CMS) {
-      console.error("❌ Decap CMS no está disponible en window.CMS");
-      return;
-    }
-
-    try {
-      window.CMS.init({ config });
-      console.log("✅ Decap CMS inicializado correctamente");
-    } catch (error) {
-      console.error("❌ Error al inicializar Decap CMS:", error);
-    }
-  }
-
-  // Esperar a que Decap esté disponible
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initDecapCMS);
-  } else {
-    // Si ya está cargado, intentar inicializar
-    if (window.CMS) {
-      initDecapCMS();
-    } else {
-      // Esperar un poco más para que se cargue Decap
-      setTimeout(() => {
-        if (window.CMS) {
-          initDecapCMS();
-        } else {
-          console.error("❌ Decap CMS no se pudo cargar después de esperar");
-        }
-      }, 1000);
-    }
+  try {
+    CMS.init({ config });
+    console.log("✅ Decap CMS inicializado correctamente (config JS)");
+  } catch (e) {
+    console.error("❌ Error iniciando Decap CMS:", e);
   }
 })();
