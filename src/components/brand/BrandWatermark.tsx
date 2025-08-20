@@ -10,8 +10,8 @@ const BrandWatermark = ({ className, size = 256 }: BrandWatermarkProps) => {
   return (
     <div 
       className={cn(
-        "absolute pointer-events-none opacity-8 select-none",
-        "w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96",
+        "absolute pointer-events-none opacity-80 select-none",
+        "w-32 h-32 sm:w-64 sm:h-64 md:w-80 md:h-80",
         className
       )}
       aria-hidden="true"
@@ -23,7 +23,7 @@ const BrandWatermark = ({ className, size = 256 }: BrandWatermarkProps) => {
         height={size}
         loading="lazy"
         decoding="async"
-        className="w-full h-full object-contain opacity-60 sm:opacity-80"
+        className="w-full h-full object-contain"
       />
     </div>
   );
