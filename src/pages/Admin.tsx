@@ -1,25 +1,35 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 const Admin = () => {
-  const navigate = useNavigate();
-
   useEffect(() => {
-    // Redirect to the static admin page
-    window.location.href = '/admin/';
+    // Redirect to the static admin page immediately
+    const redirectToAdmin = () => {
+      const adminUrl = window.location.origin + '/admin/';
+      window.location.replace(adminUrl);
+    };
+    
+    // Small delay to avoid potential routing conflicts
+    const timeoutId = setTimeout(redirectToAdmin, 100);
+    
+    return () => clearTimeout(timeoutId);
   }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="text-center">
-        <h1 className="text-2xl font-semibold text-foreground mb-4">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+        <h1 className="text-xl font-semibold text-foreground mb-2">
           Redirigiendo al panel de administración...
         </h1>
-        <p className="text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Si no se redirige automáticamente, 
           <a 
             href="/admin/" 
             className="text-primary hover:underline ml-1"
+            onClick={(e) => {
+              e.preventDefault();
+              window.location.replace('/admin/');
+            }}
           >
             haga clic aquí
           </a>
