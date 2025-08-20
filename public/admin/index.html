@@ -2,25 +2,20 @@
 <html lang="es">
   <head>
     <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width,initial-scale=1,viewport-fit=cover"
-    />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
     <title>KADMEIA CMS</title>
   </head>
   <body>
-    <!-- Puente OAuth: escucha postMessage y persiste token ANTES de que Decap se inicialice -->
+    <!-- Puente OAuth: escucha postMessage y persiste token antes de iniciar Decap -->
     <script src="./oauth-bridge.js"></script>
 
-    <!-- Forzamos inicialización manual para NO leer config.yml -->
-    <script>
-      window.CMS_MANUAL_INIT = true;
-    </script>
+    <!-- Forzamos inicialización manual (no usa config.yml) -->
+    <script>window.CMS_MANUAL_INIT = true;</script>
 
     <!-- Decap CMS -->
     <script src="https://unpkg.com/decap-cms@^3/dist/decap-cms.js"></script>
 
-    <!-- Config en JS (evita problema de Content-Type YAML) -->
+    <!-- Config en JS -->
     <script src="./decap-config.js"></script>
   </body>
 </html>
