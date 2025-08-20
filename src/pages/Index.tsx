@@ -97,17 +97,22 @@ const Home = () => {
             animate="animate"
             variants={staggerContainer}
           >
-            <motion.h1 
+            <motion.h1
               className="font-display text-4xl font-semibold tracking-tight text-foreground sm:text-6xl lg:text-7xl"
+              style={{ marginBottom: '-3px' }}
               variants={fadeInUp}
             >
-              {t('hero.title')}
+              <p>Consultoría </p>
+              <p>y tecnología </p>
+              <p>veterinaria.</p>
             </motion.h1>
-            <motion.p 
+            <motion.p
               className="mt-6 text-lg leading-8 text-muted-foreground sm:text-xl max-w-3xl mx-auto"
               variants={fadeInUp}
             >
-              {t('hero.subtitle')}
+              <p>Diagnóstico más fiable, </p>
+              <p>operaciones más eficientes, </p>
+              <p>clientes más satisfechos</p>
             </motion.p>
             <motion.div 
               className="mt-10 flex items-center justify-center gap-4 flex-wrap"
