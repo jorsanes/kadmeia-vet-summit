@@ -1,25 +1,24 @@
 backend:
   name: github
-  repo: jorsanes/kadmeia-vet-summit   # repo de contenido
+  repo: jorsanes/kadmeia-vet-summit
   branch: main
-  base_url: https://kadmeia-oauth.vercel.app  # tu provider en Vercel
+  base_url: https://kadmeia-oauth.vercel.app
   auth_endpoint: api/auth
 
-# En local, si quieres evitar OAuth, cambia a true:
 local_backend: false
 
 site_url: https://www.kadmeia.com
 display_url: https://www.kadmeia.com
 
-media_folder: "public/images/uploads"   # dónde se guardan en el repo
-public_folder: "/images/uploads"        # cómo se referencian en la web
+media_folder: "public/images/uploads"
+public_folder: "/images/uploads"
 
-publish_mode: editorial_workflow        # borrador → revisión → publicado
+publish_mode: editorial_workflow
 editor:
-  preview: false                        # evita problemas con MDX complejo
+  preview: false
 
 collections:
-  # BLOG ES
+  # (tus 4 colecciones tal cual)
   - name: "blog_es"
     label: "Blog (ES)"
     folder: "src/content/blog/es"
@@ -37,7 +36,6 @@ collections:
       - { label: "Borrador", name: "draft", widget: "boolean", default: false }
       - { label: "Contenido (MDX)", name: "body", widget: "markdown" }
 
-  # BLOG EN
   - name: "blog_en"
     label: "Blog (EN)"
     folder: "src/content/blog/en"
@@ -55,7 +53,6 @@ collections:
       - { label: "Draft", name: "draft", widget: "boolean", default: false }
       - { label: "Content (MDX)", name: "body", widget: "markdown" }
 
-  # CASOS ES
   - name: "cases_es"
     label: "Casos (ES)"
     folder: "src/content/casos/es"
@@ -73,7 +70,6 @@ collections:
       - { label: "Borrador", name: "draft", widget: "boolean", default: false }
       - { label: "Contenido (MDX)", name: "body", widget: "markdown" }
 
-  # CASES EN
   - name: "cases_en"
     label: "Cases (EN)"
     folder: "src/content/casos/en"
@@ -90,4 +86,3 @@ collections:
       - { label: "Tags", name: "tags", widget: "list", required: false }
       - { label: "Draft", name: "draft", widget: "boolean", default: false }
       - { label: "Content (MDX)", name: "body", widget: "markdown" }
-
