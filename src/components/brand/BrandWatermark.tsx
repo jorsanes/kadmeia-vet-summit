@@ -10,8 +10,8 @@ const BrandWatermark = ({ className, size = 256 }: BrandWatermarkProps) => {
   return (
     <div 
       className={cn(
-        "absolute pointer-events-none opacity-80 select-none",
-        "w-32 h-32 sm:w-64 sm:h-64 md:w-80 md:h-80",
+        "absolute pointer-events-none opacity-30 select-none",
+        "w-20 h-20 sm:w-40 sm:h-40 md:w-48 md:h-48",
         className
       )}
       aria-hidden="true"
