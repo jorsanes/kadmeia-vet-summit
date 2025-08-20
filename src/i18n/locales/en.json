@@ -75,5 +75,43 @@
       "consent": "I accept the processing of my personal data according to the privacy policy",
       "submit": "Send message"
     }
+  },
+  "seo": {
+    "home": {
+      "title": "KADMEIA - Veterinary Consulting and Technology",
+      "description": "Veterinary consulting and technology that unites evidence, clarity and impact. We bridge science, business and technology for clinics and manufacturers."
+    },
+    "services": {
+      "title": "Services - KADMEIA",
+      "description": "Veterinary consulting services: Market bridge, AI for clinics and No-Code automation to optimize your veterinary business."
+    },
+    "cases": {
+      "title": "Success Cases - KADMEIA",
+      "description": "Success cases of AI and automation implementations in veterinary clinics. Measurable results and digital transformation."
+    },
+    "blog": {
+      "title": "Blog - KADMEIA",
+      "description": "Articles about veterinary technology, applied AI, process automation and trends in the veterinary sector."
+    },
+    "about": {
+      "title": "About Us - KADMEIA",
+      "description": "Meet the KADMEIA team, our experience in veterinary consulting and how we transform clinics with technology."
+    },
+    "contact": {
+      "title": "Contact - KADMEIA",
+      "description": "Contact our veterinary consulting team. Let's talk about your digital transformation project."
+    },
+    "legal": {
+      "title": "Legal Notice - KADMEIA",
+      "description": "Legal notice of KADMEIA SLU. Information about terms of use, intellectual property and applicable legislation."
+    },
+    "privacy": {
+      "title": "Privacy Policy - KADMEIA",
+      "description": "KADMEIA privacy policy. Information about personal data processing according to GDPR."
+    },
+    "cookies": {
+      "title": "Cookies Policy - KADMEIA",
+      "description": "KADMEIA cookies policy. Information about the use of cookies and similar technologies on our website."
+    }
   }
 }

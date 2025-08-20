@@ -75,5 +75,43 @@
       "consent": "Acepto el tratamiento de mis datos personales según la política de privacidad",
       "submit": "Enviar mensaje"
     }
+  },
+  "seo": {
+    "home": {
+      "title": "KADMEIA - Consultoría y Tecnología Veterinaria",
+      "description": "Consultoría y tecnología veterinaria que une evidencia, claridad e impacto. Puenteamos ciencia, negocio y tecnología para clínicas y fabricantes."
+    },
+    "services": {
+      "title": "Servicios - KADMEIA",
+      "description": "Servicios de consultoría veterinaria: Market bridge, IA para clínicas y automatización No-Code para optimizar su negocio veterinario."
+    },
+    "cases": {
+      "title": "Casos de Éxito - KADMEIA",
+      "description": "Casos de éxito de implementaciones de IA y automatización en clínicas veterinarias. Resultados medibles y transformación digital."
+    },
+    "blog": {
+      "title": "Blog - KADMEIA",
+      "description": "Artículos sobre tecnología veterinaria, IA aplicada, automatización de procesos y tendencias en el sector veterinario."
+    },
+    "about": {
+      "title": "Sobre Nosotros - KADMEIA",
+      "description": "Conoce el equipo de KADMEIA, nuestra experiencia en consultoría veterinaria y cómo transformamos clínicas con tecnología."
+    },
+    "contact": {
+      "title": "Contacto - KADMEIA",
+      "description": "Contacta con nuestro equipo de consultoría veterinaria. Hablemos de tu proyecto de transformación digital."
+    },
+    "legal": {
+      "title": "Aviso Legal - KADMEIA",
+      "description": "Aviso legal de KADMEIA SLU. Información sobre términos de uso, propiedad intelectual y legislación aplicable."
+    },
+    "privacy": {
+      "title": "Política de Privacidad - KADMEIA",
+      "description": "Política de privacidad de KADMEIA. Información sobre el tratamiento de datos personales según el RGPD."
+    },
+    "cookies": {
+      "title": "Política de Cookies - KADMEIA",
+      "description": "Política de cookies de KADMEIA. Información sobre el uso de cookies y tecnologías similares en nuestro sitio web."
+    }
   }
 }

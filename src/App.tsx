@@ -21,6 +21,7 @@ import Legal from "@/pages/Legal";
 import Cookies from "@/pages/Cookies";
 import BlogPost from "@/pages/BlogPost";
 import Admin from "@/pages/Admin";
+import ContentManager from "@/pages/ContentManager";
 import NotFound from "./pages/NotFound";
 import ServerError from "./pages/ServerError";
 
@@ -59,8 +60,9 @@ const App = () => (
                       <Route path="/aviso-legal" element={<Legal />} />
                       <Route path="/cookies" element={<Cookies />} />
                       
-                      {/* Admin route */}
+                      {/* Admin routes */}
                       <Route path="/admin" element={<Admin />} />
+                      <Route path="/content" element={<ContentManager />} />
                       
                       {/* English routes */}
                       <Route path="/en" element={<Home />} />
