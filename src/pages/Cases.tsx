@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { motion, AnimatePresence } from 'framer-motion';
 import { getAllCasesMeta } from "@/lib/content";
 import SmartImage from '@/components/ui/SmartImage';
 import Reveal from '@/components/ui/Reveal';
 import { TextCard } from '@/components/content/TextCard';
+import TagFilter from '@/components/content/TagFilter';
 
 export default function Cases() {
   let isEN = false;
@@ -15,8 +17,25 @@ export default function Cases() {
     isEN = false;
   }
   const lang = isEN ? 'en' : 'es';
-
-  const cases = getAllCasesMeta().filter(c => c.lang === lang);
+  
+  const allCases = getAllCasesMeta().filter(c => c.lang === lang);
+  
+  // Estado para filtros
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  
+  // Extraer tags únicos
+  const availableTags = useMemo(() => {
+    const allTags = allCases.flatMap(caseItem => caseItem.tags || []);
+    return [...new Set(allTags)].sort();
+  }, [allCases]);
+  
+  // Filtrar casos
+  const filteredCases = useMemo(() => {
+    if (selectedTags.length === 0) return allCases;
+    return allCases.filter(caseItem => 
+      selectedTags.some(tag => caseItem.tags?.includes(tag))
+    );
+  }, [allCases, selectedTags]);
 
   return (
     <div className="container py-12">
@@ -47,43 +66,72 @@ export default function Cases() {
         />
       </Reveal>
       
-      <Reveal>
-        <div className="mt-10 grid gap-8 sm:gap-10 lg:gap-12 sm:grid-cols-2 lg:grid-cols-3" role="list">
-          {cases.length > 0 ? (
-            cases.map((caseItem, index) => (
-              <Reveal key={caseItem.slug} delay={index * 0.1}>
-                <TextCard
-                  title={caseItem.title}
-                  date={new Date(caseItem.date).toLocaleDateString(lang === 'en' ? 'en-US' : 'es-ES')}
-                  href={caseItem.lang === "en" ? `/en/cases/${caseItem.slug}` : `/casos/${caseItem.slug}`}
-                  excerpt={caseItem.excerpt}
-                  cover={caseItem.cover}
-                  cta={lang === "en" ? "View case →" : "Ver caso →"}
-                />
-              </Reveal>
-            ))
-          ) : (
-            <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
-              <div className="max-w-md mx-auto">
-                <h3 className="text-xl font-serif text-foreground mb-3">
-                  {lang === "en" ? "Content coming soon" : "Pronto añadiremos contenido"}
-                </h3>
-                <p className="text-muted-foreground mb-6">
-                  {lang === "en" 
-                    ? "We're working on bringing you inspiring case studies from our veterinary consulting work."
-                    : "Estamos trabajando en traerte casos de éxito inspiradores de nuestro trabajo de consultoría veterinaria."}
-                </p>
-                <a 
-                  href={lang === "en" ? "/en/contact" : "/contact"}
-                  className="btn-primary"
-                >
-                  {lang === "en" ? "Contact us" : "Contactanos"}
-                </a>
-              </div>
+      <TagFilter 
+        availableTags={availableTags}
+        selectedTags={selectedTags}
+        onChange={setSelectedTags}
+      />
+      
+      <AnimatePresence mode="wait">
+        <motion.div 
+          key={selectedTags.join(',')}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.3 }}
+        >
+          <Reveal>
+            <div className="mt-10 grid gap-8 sm:gap-10 lg:gap-12 sm:grid-cols-2 lg:grid-cols-3" role="list">
+              {filteredCases.length > 0 ? (
+                filteredCases.map((caseItem, index) => (
+                  <Reveal key={`${caseItem.slug}-${selectedTags.join(',')}`} delay={index * 0.1}>
+                    <TextCard
+                      title={caseItem.title}
+                      date={new Date(caseItem.date).toLocaleDateString(lang === 'en' ? 'en-US' : 'es-ES')}
+                      href={caseItem.lang === "en" ? `/en/cases/${caseItem.slug}` : `/casos/${caseItem.slug}`}
+                      excerpt={caseItem.excerpt}
+                      cover={caseItem.cover}
+                      cta={lang === "en" ? "View case →" : "Ver caso →"}
+                    />
+                  </Reveal>
+                ))
+              ) : selectedTags.length > 0 ? (
+                <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
+                  <div className="max-w-md mx-auto">
+                    <h3 className="text-xl font-serif text-foreground mb-3">
+                      {lang === "en" ? "No cases found" : "No se encontraron casos"}
+                    </h3>
+                    <p className="text-muted-foreground mb-6">
+                      {lang === "en" 
+                        ? "Try removing some filters or browse all case studies."
+                        : "Prueba quitando algunos filtros o navega por todos los casos."}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
+                  <div className="max-w-md mx-auto">
+                    <h3 className="text-xl font-serif text-foreground mb-3">
+                      {lang === "en" ? "Content coming soon" : "Pronto añadiremos contenido"}
+                    </h3>
+                    <p className="text-muted-foreground mb-6">
+                      {lang === "en" 
+                        ? "We're working on bringing you inspiring case studies from our veterinary consulting work."
+                        : "Estamos trabajando en traerte casos de éxito inspiradores de nuestro trabajo de consultoría veterinaria."}
+                    </p>
+                    <a 
+                      href={lang === "en" ? "/en/contact" : "/contact"}
+                      className="btn-primary"
+                    >
+                      {lang === "en" ? "Contact us" : "Contactanos"}
+                    </a>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      </Reveal>
+          </Reveal>
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }
