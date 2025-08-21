@@ -1,5 +1,5 @@
 import React from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
 import { getCaseWithMDXBySlug } from "@/lib/content";
@@ -7,15 +7,17 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar } from "lucide-react";
 import { MDXProvider } from "@mdx-js/react";
-import { Prose } from "@/content/MDXComponents";
-import mdxComponents from "@/components/mdx/MDXComponents";
+import Prose from "@/components/typography/Prose";
+import { MDXComponents } from "@/components/typography/MDXComponents";
 import Reveal from "@/components/ui/Reveal";
 
 export default function CaseDetail() {
   const { slug = "" } = useParams();
   const { i18n } = useTranslation();
   const navigate = useNavigate();
-  const lang = (i18n.language as "es" | "en") ?? "es";
+  const location = useLocation();
+  const isEN = location.pathname.startsWith("/en/");
+  const lang = (isEN ? "en" : "es") as "en" | "es";
 
   const caseData = getCaseWithMDXBySlug(lang, slug);
 
@@ -140,11 +142,13 @@ export default function CaseDetail() {
         {/* Contenido principal */}
         <Reveal>
           <div className="max-w-4xl mx-auto">
-            <MDXProvider components={mdxComponents}>
+            {MDXComponent && (
               <Prose>
-                {MDXComponent && <MDXComponent />}
+                <MDXProvider components={MDXComponents}>
+                  <MDXComponent />
+                </MDXProvider>
               </Prose>
-            </MDXProvider>
+            )}
           </div>
         </Reveal>
 
