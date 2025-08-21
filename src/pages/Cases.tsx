@@ -2,6 +2,8 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
+import Reveal from '@/components/ui/Reveal';
+import SmartImage from '@/components/media/SmartImage';
 import { getAllCases } from '@/lib/content';
 
 export default function Cases() {
@@ -16,6 +18,17 @@ export default function Cases() {
         <meta name="description" content={isEN ? 'Measured outcomes from our projects.' : 'Resultados medibles de nuestros proyectos.'} />
       </Helmet>
       <h1 className="text-4xl font-serif mb-8">{isEN ? 'Case Studies' : 'Casos de éxito'}</h1>
+      
+      <Reveal>
+        <SmartImage
+          src="/images/illustrations/cases-collage.webp"
+          alt="Mosaico de proyectos y resultados medibles"
+          className="w-full max-w-4xl mx-auto mb-8 rounded-2xl"
+          width={1200}
+          height={800}
+        />
+      </Reveal>
+      
       <div className="grid md:grid-cols-2 gap-6">
         {cases.map(c => (
           <motion.div 

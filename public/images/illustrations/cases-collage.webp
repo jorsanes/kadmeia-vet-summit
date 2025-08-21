@@ -1,0 +1,9 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" fill="#F3F4F6"/>
+  <text x="600" y="400" text-anchor="middle" dominant-baseline="middle" font-family="system-ui" font-size="24" fill="#6B7280">
+    Mosaico de proyectos y resultados medibles
+  </text>
+  <text x="600" y="440" text-anchor="middle" dominant-baseline="middle" font-family="system-ui" font-size="16" fill="#9CA3AF">
+    1200×800 placeholder
+  </text>
+</svg>

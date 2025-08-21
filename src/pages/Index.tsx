@@ -19,6 +19,7 @@ import { PageSeo } from "@/components/seo/PageSeo";
 import { OrganizationJsonLd } from "@/components/seo/SeoJsonLd";
 import { useLocale } from "@/i18n/LocaleProvider";
 import SmartImage from "@/components/ui/SmartImage";
+import Reveal from "@/components/ui/Reveal";
 import BrandWatermark from "@/components/brand/BrandWatermark";
 import BrandDivider from "@/components/brand/BrandDivider";
 import heroImage from "@/assets/hero-kadmeia.jpg";
@@ -128,9 +129,20 @@ const Home = () => {
                   {t('hero.cta_secondary')}
                 </Link>
               </Button>
-            </motion.div>
-          </motion.div>
-        </div>
+             </motion.div>
+           </motion.div>
+           
+           <Reveal delay={0.1}>
+             <SmartImage
+               src="/images/illustrations/hero-vet-desk.webp"
+               alt="Veterinaria trabajando con paneles de IA"
+               className="w-full max-w-4xl mx-auto mt-8 shadow-lg rounded-2xl"
+               width={1200}
+               height={800}
+               priority
+             />
+           </Reveal>
+         </div>
       </section>
 
       {/* Brand Divider */}
@@ -146,12 +158,14 @@ const Home = () => {
             viewport={{ once: true }}
             variants={fadeInUp}
           >
+          <Reveal delay={0.05}>
             <h2 className="font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
               {t('whatWeDo.title')}
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
               {t('whatWeDo.subtitle')}
             </p>
+          </Reveal>
           </motion.div>
 
           <motion.div 
@@ -161,7 +175,7 @@ const Home = () => {
             viewport={{ once: true }}
             variants={staggerContainer}
           >
-            <motion.div variants={fadeInUp}>
+            <Reveal delay={0.1}>
               <Card className="card-premium h-full">
                 <CardContent className="p-8">
                   <div className="flex items-center justify-center w-12 h-12 bg-secondary/10 rounded-xl mb-6">
@@ -175,9 +189,9 @@ const Home = () => {
                   </p>
                 </CardContent>
               </Card>
-            </motion.div>
+            </Reveal>
 
-            <motion.div variants={fadeInUp}>
+            <Reveal delay={0.15}>
               <Card className="card-premium h-full">
                 <CardContent className="p-8">
                   <div className="flex items-center justify-center w-12 h-12 bg-secondary/10 rounded-xl mb-6">
@@ -191,9 +205,9 @@ const Home = () => {
                   </p>
                 </CardContent>
               </Card>
-            </motion.div>
+            </Reveal>
 
-            <motion.div variants={fadeInUp}>
+            <Reveal delay={0.2}>
               <Card className="card-premium h-full">
                 <CardContent className="p-8">
                   <div className="flex items-center justify-center w-12 h-12 bg-secondary/10 rounded-xl mb-6">
@@ -207,7 +221,7 @@ const Home = () => {
                   </p>
                 </CardContent>
               </Card>
-            </motion.div>
+            </Reveal>
           </motion.div>
         </div>
       </section>

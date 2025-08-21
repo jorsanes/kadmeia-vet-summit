@@ -15,6 +15,8 @@ import {
   Zap
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import Reveal from '@/components/ui/Reveal';
+import SmartImage from '@/components/media/SmartImage';
 
 const About = () => {
   const fadeInUp = {
@@ -200,6 +202,16 @@ const About = () => {
                   </span>
                 </li>
               </ul>
+              
+              <Reveal>
+                <SmartImage
+                  src="/images/illustrations/about-team.webp"
+                  alt="Equipo colaborando en implementación clínica"
+                  className="w-full max-w-3xl mx-auto my-8 rounded-2xl shadow"
+                  width={1200}
+                  height={800}
+                />
+              </Reveal>
             </div>
 
             <Card className="card-premium">

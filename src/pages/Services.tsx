@@ -14,6 +14,8 @@ import {
   Users
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import Reveal from '@/components/ui/Reveal';
+import SmartImage from '@/components/media/SmartImage';
 
 const Services = () => {
   const { t } = useTranslation();
@@ -111,6 +113,16 @@ const Services = () => {
           <p className="text-xl text-muted-foreground">
             Soluciones especializadas que transforman el sector veterinario a través de la ciencia, la tecnología y la innovación práctica.
           </p>
+          
+          <Reveal delay={0.1}>
+            <SmartImage
+              src="/images/illustrations/services-flow.webp"
+              alt="Flujo de automatización No-Code para clínica"
+              className="w-full max-w-3xl mx-auto mt-8 rounded-2xl border"
+              width={1200}
+              height={800}
+            />
+          </Reveal>
         </motion.div>
 
         {/* Services */}
