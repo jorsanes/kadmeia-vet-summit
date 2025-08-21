@@ -41,51 +41,51 @@ const App = () => (
               <Toaster />
               <Sonner />
               <BrowserRouter>
-              <LocaleProvider>
-                <div className="min-h-screen flex flex-col">
-                  <Header />
-                  <main id="main-content" tabIndex={-1} className="flex-1">
-                    <Routes>
-                      {/* Spanish routes (default) */}
-                      <Route path="/" element={<Home />} />
-                      <Route path="/servicios" element={<Services />} />
-                      <Route path="/casos" element={<Cases />} />
-                      <Route path="/blog" element={<Blog />} />
-                      <Route path="/blog/:slug" element={<PostDetail />} />
-                      <Route path="/casos/:slug" element={<CaseDetail />} />
-                      <Route path="/sobre" element={<About />} />
-                      <Route path="/contacto" element={<Contact />} />
-                      <Route path="/privacidad" element={<Privacy />} />
-                      <Route path="/aviso-legal" element={<Legal />} />
-                      <Route path="/cookies" element={<Cookies />} />
-                      
-                      <Route path="/content" element={<ContentManager />} />
-                      
-                      {/* English routes */}
-                      <Route path="/en" element={<Home />} />
-                      <Route path="/en/services" element={<Services />} />
-                      <Route path="/en/cases" element={<Cases />} />
-                      <Route path="/en/blog" element={<Blog />} />
-                      <Route path="/en/blog/:slug" element={<PostDetail />} />
-                      <Route path="/en/cases/:slug" element={<CaseDetail />} />
-                      <Route path="/en/about" element={<About />} />
-                      <Route path="/en/contact" element={<Contact />} />
-                      <Route path="/en/privacy" element={<Privacy />} />
-                      <Route path="/en/legal" element={<Legal />} />
-                      <Route path="/en/cookies" element={<Cookies />} />
-                      
-                      {/* Error pages */}
-                      <Route path="/404" element={<NotFound />} />
-                      <Route path="/500" element={<ServerError />} />
-                      
-                      {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </main>
-                  <Footer />
-                </div>
-              </LocaleProvider>
-            </BrowserRouter>
+                <LocaleProvider>
+                  <div className="min-h-screen flex flex-col">
+                    <Header />
+                    <main id="main-content" tabIndex={-1} className="flex-1">
+                      <Routes>
+                        {/* Spanish routes (default) */}
+                        <Route path="/" element={<Home />} />
+                        <Route path="/servicios" element={<Services />} />
+                        <Route path="/casos" element={<Cases />} />
+                        <Route path="/blog" element={<Blog />} />
+                        <Route path="/blog/:slug" element={<PostDetail />} />
+                        <Route path="/casos/:slug" element={<CaseDetail />} />
+                        <Route path="/sobre" element={<About />} />
+                        <Route path="/contacto" element={<Contact />} />
+                        <Route path="/privacidad" element={<Privacy />} />
+                        <Route path="/aviso-legal" element={<Legal />} />
+                        <Route path="/cookies" element={<Cookies />} />
+                        
+                        <Route path="/content" element={<ContentManager />} />
+                        
+                        {/* English routes */}
+                        <Route path="/en" element={<Home />} />
+                        <Route path="/en/services" element={<Services />} />
+                        <Route path="/en/cases" element={<Cases />} />
+                        <Route path="/en/blog" element={<Blog />} />
+                        <Route path="/en/blog/:slug" element={<PostDetail />} />
+                        <Route path="/en/cases/:slug" element={<CaseDetail />} />
+                        <Route path="/en/about" element={<About />} />
+                        <Route path="/en/contact" element={<Contact />} />
+                        <Route path="/en/privacy" element={<Privacy />} />
+                        <Route path="/en/legal" element={<Legal />} />
+                        <Route path="/en/cookies" element={<Cookies />} />
+                        
+                        {/* Error pages */}
+                        <Route path="/404" element={<NotFound />} />
+                        <Route path="/500" element={<ServerError />} />
+                        
+                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </main>
+                    <Footer />
+                  </div>
+                </LocaleProvider>
+              </BrowserRouter>
             </MDXProvider>
           </TooltipProvider>
         </QueryClientProvider>
