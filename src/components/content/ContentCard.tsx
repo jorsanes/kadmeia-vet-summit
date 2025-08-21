@@ -1,8 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { motion } from 'framer-motion';
 
 type ContentCardProps = {
@@ -20,16 +18,18 @@ export function ContentCard({
   title,
   excerpt,
   date,
-  tags,
+  tags = [],
   cover,
   locale = 'es'
 }: ContentCardProps) {
+  const [imgOk, setImgOk] = useState(true);
+
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString(locale === 'es' ? 'es-ES' : 'en-US', {
-      year: 'numeric',
+      day: '2-digit',
       month: 'long',
-      day: 'numeric'
+      year: 'numeric'
     });
   };
 
@@ -45,19 +45,20 @@ export function ContentCard({
         className="group block h-full focus-ring-kadmeia rounded-3xl"
       >
         <div className="overflow-hidden rounded-3xl shadow-elegant bg-card h-full flex flex-col transition-all duration-300 group-hover:shadow-lg">
-          {cover ? (
-            <div className="relative aspect-[16/9] overflow-hidden">
+          <div className="relative aspect-[16/10] overflow-hidden">
+            {cover && imgOk ? (
               <img
                 src={cover}
-                alt=""
+                alt={title}
                 className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
                 loading="lazy"
                 decoding="async"
+                onError={() => setImgOk(false)}
               />
-            </div>
-          ) : (
-            <div className="aspect-[16/9] bg-gradient-to-b from-muted/50 to-background" />
-          )}
+            ) : (
+              <div className="absolute inset-0 bg-gradient-to-b from-muted/50 to-background" />
+            )}
+          </div>
 
           <div className="p-5 flex-1 flex flex-col">
             <h3 className="font-display text-xl sm:text-2xl tracking-tight text-foreground group-hover:text-primary transition-colors duration-300 mb-2 leading-tight">
@@ -76,15 +77,15 @@ export function ContentCard({
               </p>
             )}
             
-            {tags && tags.length > 0 && (
+            {tags.length > 0 && (
               <div className="mt-3 flex flex-wrap gap-2 mb-4">
                 {tags.slice(0, 3).map(t => (
-                  <Badge key={t} variant="secondary" size="sm">
+                  <Badge key={t} variant="secondary" className="text-xs">
                     {t}
                   </Badge>
                 ))}
                 {tags.length > 3 && (
-                  <Badge variant="muted" size="sm">
+                  <Badge variant="muted" className="text-xs">
                     +{tags.length - 3}
                   </Badge>
                 )}

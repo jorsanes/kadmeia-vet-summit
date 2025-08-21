@@ -6,6 +6,9 @@ const toTitleFromSlug = (slug: string) =>
     .replace(/[-_]+/g, ' ')
     .replace(/\b\w/g, (m) => m.toUpperCase());
 
+const pickTitle = (data: any, slug: string) =>
+  (data?.title ?? data?.Title ?? data?.titulo ?? data?.name ?? toTitleFromSlug(slug)) as string;
+
 const normalizeTags = (tags: unknown): string[] => {
   if (!tags) return [];
   if (Array.isArray(tags)) return tags.map(String);
@@ -13,15 +16,18 @@ const normalizeTags = (tags: unknown): string[] => {
   return [];
 };
 
-const normalizeCover = (cover: unknown): string | undefined => {
-  if (!cover) return undefined;
+const normalizeCover = (cover: unknown, slug: string): string | undefined => {
+  if (!cover) {
+    // Try by convention: /images/cases/<slug>.(webp|jpg|png|jpeg)
+    return `/images/cases/${slug}.webp`;
+  }
   const c = String(cover).trim();
-  // Accept http(s), absolute and relative paths
-  if (c.startsWith('http')) return c;
-  if (c.startsWith('/')) return c;
-  // If relative, assume it's in /images/
+  if (c.startsWith('http') || c.startsWith('/')) return c;
   return `/images/${c}`;
 };
+
+const pickExcerpt = (data: any) =>
+  (data?.excerpt ?? data?.summary ?? data?.resumen) ? String(data?.excerpt ?? data?.summary ?? data?.resumen) : undefined;
 
 // 1) Index MDX files with Vite
 const blogModules = import.meta.glob<MDXModule>('/src/content/blog/**/**/*.mdx', { eager: true });
@@ -50,10 +56,10 @@ function moduleToPost(path: string, mod: MDXModule): Post {
   return {
     kind: 'post',
     slug: fm.slug ?? slug,
-    title: fm.title ?? toTitleFromSlug(slug),
-    date: fm.date ?? new Date().toISOString().slice(0, 10),
-    excerpt: fm.excerpt,
-    cover: normalizeCover(fm.cover),
+    title: pickTitle(fm, slug),
+    date: fm.date ? new Date(String(fm.date)).toISOString() : undefined,
+    excerpt: pickExcerpt(fm),
+    cover: normalizeCover(fm.cover, slug),
     lang: (fm.lang as any) ?? pathToLang(path),
     tags: normalizeTags(fm.tags),
     draft: !!fm.draft,
@@ -67,10 +73,10 @@ function moduleToCase(path: string, mod: MDXModule): CaseStudy {
   return {
     kind: 'case',
     slug: fm.slug ?? slug,
-    title: fm.title ?? toTitleFromSlug(slug),
-    date: fm.date ?? new Date().toISOString().slice(0, 10),
-    excerpt: fm.excerpt,
-    cover: normalizeCover(fm.cover),
+    title: pickTitle(fm, slug),
+    date: fm.date ? new Date(String(fm.date)).toISOString() : undefined,
+    excerpt: pickExcerpt(fm),
+    cover: normalizeCover(fm.cover, slug),
     lang: (fm.lang as any) ?? pathToLang(path),
     tags: normalizeTags(fm.tags),
     draft: !!fm.draft,
