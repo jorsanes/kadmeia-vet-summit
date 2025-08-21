@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
+import Reveal from '@/components/ui/Reveal';
 import { getAllPosts } from '@/lib/content';
 
 export default function Blog() {
@@ -15,7 +16,9 @@ export default function Blog() {
         <title>{isEN ? 'Blog | KADMEIA' : 'Blog | KADMEIA'}</title>
         <meta name="description" content={isEN ? 'Insights on veterinary AI and automation.' : 'Ideas sobre IA y automatización veterinaria.'} />
       </Helmet>
-      <h1 className="text-4xl font-serif mb-8">{isEN ? 'Blog' : 'Blog'}</h1>
+      <Reveal y={12}>
+        <h1 className="text-4xl font-serif mb-8">{isEN ? 'Blog' : 'Blog'}</h1>
+      </Reveal>
       <div className="grid md:grid-cols-2 gap-6">
         {posts.map(p => (
           <motion.div 
