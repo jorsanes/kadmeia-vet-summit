@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Reveal from '@/components/ui/Reveal';
 import { TextCard } from '@/components/content/TextCard';
@@ -87,10 +87,23 @@ export default function Blog() {
       </div>
       
       {blogPosts.filter(post => post.lang === lang).length === 0 && (
-        <div className="text-center py-16">
-          <p className="text-muted-foreground text-lg">
-            {isEN ? 'No blog posts available yet.' : 'Aún no hay artículos disponibles.'}
-          </p>
+        <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
+          <div className="max-w-md mx-auto">
+            <h3 className="text-xl font-serif text-foreground mb-3">
+              {lang === "en" ? "Content coming soon" : "Pronto añadiremos contenido"}
+            </h3>
+            <p className="text-muted-foreground mb-6">
+              {lang === "en" 
+                ? "We're preparing insightful articles about veterinary AI, consulting, and industry trends."
+                : "Estamos preparando artículos perspicaces sobre IA veterinaria, consultoría y tendencias del sector."}
+            </p>
+            <Link 
+              to={lang === "en" ? "/en/contact" : "/contact"}
+              className="btn-primary"
+            >
+              {lang === "en" ? "Contact us" : "Contactanos"}
+            </Link>
+          </div>
         </div>
       )}
     </div>
