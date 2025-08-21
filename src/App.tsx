@@ -43,16 +43,9 @@ const App = () => (
               <Sonner />
               <BrowserRouter>
               <LocaleProvider>
-                {/* Skip to main content link for accessibility */}
-                <a 
-                  href="#main" 
-                  className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                >
-                  Saltar al contenido
-                </a>
                 <div className="min-h-screen flex flex-col">
                   <Header />
-                  <main id="main" className="flex-1">
+                  <main id="main-content" tabIndex={-1} className="flex-1">
                     <Routes>
                       {/* Spanish routes (default) */}
                       <Route path="/" element={<Home />} />
