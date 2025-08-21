@@ -1,5 +1,5 @@
 import React from "react";
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { getAllCasesMeta } from "@/lib/content";
 import SmartImage from '@/components/ui/SmartImage';
@@ -47,21 +47,21 @@ export default function Cases() {
               <div className="h-40 bg-gradient-to-b from-white to-neutral-50" />
               <div className="p-5">
                 <h3 className="text-xl font-serif leading-tight">
-                  <Link to={caseItem.lang === "en" ? `/en/cases/${caseItem.slug}` : `/casos/${caseItem.slug}`} className="hover:text-primary">
+                  <a href={caseItem.lang === "en" ? `/en/cases/${caseItem.slug}` : `/casos/${caseItem.slug}`} className="hover:text-primary">
                     {caseItem.title}
-                  </Link>
+                  </a>
                 </h3>
                 {caseItem.excerpt && <p className="mt-2 text-neutral-600">{caseItem.excerpt}</p>}
                 <div className="mt-3 text-sm text-neutral-500">
                   {new Date(caseItem.date).toLocaleDateString(lang === 'en' ? 'en-US' : 'es-ES')}
                 </div>
                 <div className="mt-4">
-                  <Link 
-                    to={caseItem.lang === "en" ? `/en/cases/${caseItem.slug}` : `/casos/${caseItem.slug}`}
+                  <a 
+                    href={caseItem.lang === "en" ? `/en/cases/${caseItem.slug}` : `/casos/${caseItem.slug}`}
                     className="text-primary-700 hover:underline"
                   >
                     {lang === "en" ? "View case →" : "Ver caso →"}
-                  </Link>
+                  </a>
                 </div>
               </div>
             </article>
@@ -77,12 +77,12 @@ export default function Cases() {
                   ? "We're working on bringing you inspiring case studies from our veterinary consulting work."
                   : "Estamos trabajando en traerte casos de éxito inspiradores de nuestro trabajo de consultoría veterinaria."}
               </p>
-              <Link 
-                to={lang === "en" ? "/en/contact" : "/contact"}
+              <a 
+                href={lang === "en" ? "/en/contact" : "/contact"}
                 className="btn-primary"
               >
                 {lang === "en" ? "Contact us" : "Contactanos"}
-              </Link>
+              </a>
             </div>
           </div>
         )}

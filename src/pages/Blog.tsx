@@ -1,5 +1,5 @@
 import React from "react";
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { getAllPostsMeta } from "@/lib/content";
 import SmartImage from '@/components/ui/SmartImage';
@@ -46,21 +46,21 @@ export default function Blog() {
               <div className="h-40 bg-gradient-to-b from-white to-neutral-50" />
               <div className="p-5">
                 <h3 className="text-xl font-serif leading-tight">
-                  <Link to={post.lang === "en" ? `/en/blog/${post.slug}` : `/blog/${post.slug}`} className="hover:text-primary">
+                  <a href={post.lang === "en" ? `/en/blog/${post.slug}` : `/blog/${post.slug}`} className="hover:text-primary">
                     {post.title}
-                  </Link>
+                  </a>
                 </h3>
                 {post.excerpt && <p className="mt-2 text-neutral-600">{post.excerpt}</p>}
                 <div className="mt-3 text-sm text-neutral-500">
                   {new Date(post.date).toLocaleDateString(lang === 'en' ? 'en-US' : 'es-ES')}
                 </div>
                 <div className="mt-4">
-                  <Link 
-                    to={post.lang === "en" ? `/en/blog/${post.slug}` : `/blog/${post.slug}`}
+                  <a 
+                    href={post.lang === "en" ? `/en/blog/${post.slug}` : `/blog/${post.slug}`}
                     className="text-primary-700 hover:underline"
                   >
                     {lang === "en" ? "Read article →" : "Leer artículo →"}
-                  </Link>
+                  </a>
                 </div>
               </div>
             </article>
@@ -76,12 +76,12 @@ export default function Blog() {
                   ? "We're preparing insightful articles about veterinary AI, consulting, and industry trends."
                   : "Estamos preparando artículos perspicaces sobre IA veterinaria, consultoría y tendencias del sector."}
               </p>
-              <Link 
-                to={lang === "en" ? "/en/contact" : "/contact"}
+              <a 
+                href={lang === "en" ? "/en/contact" : "/contact"}
                 className="btn-primary"
               >
                 {lang === "en" ? "Contact us" : "Contactanos"}
-              </Link>
+              </a>
             </div>
           </div>
         )}
