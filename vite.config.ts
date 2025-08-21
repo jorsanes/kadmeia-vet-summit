@@ -100,13 +100,15 @@ export default defineConfig(({ mode, command }) => {
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
+        buffer: "buffer",
       },
     },
     define: {
       global: 'globalThis',
+      'process.env': {},
     },
     optimizeDeps: {
-      include: ['gray-matter']
+      include: ['buffer', 'gray-matter']
     },
     build: {
       rollupOptions: {
