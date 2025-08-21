@@ -11,6 +11,9 @@ import * as path from "node:path";
 import fg from "fast-glob";
 import matter from "gray-matter";
 
+// Detect output directory (dist for production builds, public for development)
+const outDir = existsSync('dist') ? 'dist' : 'public';
+
 // -------- Config --------
 const BASE_URL = (process.env.SITE_URL || "https://kadmeia.com").replace(/\/+$/, "");
 const IS_PREVIEW = process.env.SITE_ENV === "preview" || BASE_URL.includes(".lovable.app");
@@ -113,10 +116,10 @@ ${urls.map(u => `  <url>
   </url>`).join("\n")}
 </urlset>`;
 
-  if (!existsSync("public")) mkdirSync("public", { recursive: true });
-  writeFileSync(path.join("public", "sitemap.xml"), xml, "utf8");
+  if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true });
+  writeFileSync(path.join(outDir, "sitemap.xml"), xml, "utf8");
 
-  console.log(`✅ Sitemap generated: ${urls.length} URLs → public/sitemap.xml`);
+  console.log(`✅ Sitemap generated: ${urls.length} URLs → ${outDir}/sitemap.xml`);
 }
 
 main().catch(err => {

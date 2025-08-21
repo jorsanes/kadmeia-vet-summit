@@ -3,6 +3,9 @@ import path from 'path';
 import fg from 'fast-glob';
 import matter from 'gray-matter';
 
+// Detect output directory (dist for production builds, public for development)
+const outDir = fs.existsSync('dist') ? 'dist' : 'public';
+
 const site = 'https://www.kadmeia.com';
 
 function readDocs(pattern, baseUrl) {
@@ -46,6 +49,6 @@ const xml = `<?xml version="1.0" encoding="UTF-8" ?>
 </channel>
 </rss>`;
 
-fs.mkdirSync('public', { recursive: true });
-fs.writeFileSync('public/rss.xml', xml);
-console.log(`✅ RSS generado: public/rss.xml (${all.length} items)`);
+fs.mkdirSync(outDir, { recursive: true });
+fs.writeFileSync(path.join(outDir, 'rss.xml'), xml);
+console.log(`✅ RSS generado: ${outDir}/rss.xml (${all.length} items)`);
