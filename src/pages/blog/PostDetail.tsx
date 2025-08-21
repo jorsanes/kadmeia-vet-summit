@@ -4,8 +4,8 @@ import { MDXProvider } from '@mdx-js/react';
 import { Helmet } from 'react-helmet-async';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft } from 'lucide-react';
-import { MdxProse } from '@/components/mdx/MdxProse';
-import { MDXComponents } from '@/components/typography/MDXComponents';
+import EnhancedProse from '@/components/prose/EnhancedProse';
+import { enhancedMDXComponents } from '@/components/prose/MDXComponents';
 
 const modules = import.meta.glob("@/content/blog/**/*.{mdx,md}");
 
@@ -92,7 +92,7 @@ export default function PostDetail() {
   };
 
   return (
-    <div className="container max-w-4xl py-12">
+    <div className="container max-w-6xl py-12">
       <Helmet>
         <title>{title}</title>
         <meta name="description" content={desc} />
@@ -143,11 +143,13 @@ export default function PostDetail() {
         </header>
 
         {/* Content */}
-        <MDXProvider components={MDXComponents}>
-          <MdxProse>
-            <Comp />
-          </MdxProse>
-        </MDXProvider>
+        <div className="max-w-4xl mx-auto">
+          <MDXProvider components={enhancedMDXComponents}>
+            <EnhancedProse>
+              <Comp />
+            </EnhancedProse>
+          </MDXProvider>
+        </div>
       </article>
     </div>
   );
