@@ -21,7 +21,7 @@ import { useLocale } from "@/i18n/LocaleProvider";
 import SmartImage from "@/components/ui/SmartImage";
 import Reveal from "@/components/ui/Reveal";
 import BrandWatermark from "@/components/brand/BrandWatermark";
-import BrandDivider from "@/components/brand/BrandDivider";
+
 import heroImage from "@/assets/hero-kadmeia.jpg";
 import logoLarge from "@/assets/kadmeia-logo-large.png";
 
@@ -147,8 +147,6 @@ const Home = () => {
          </div>
       </section>
 
-      {/* Brand Divider */}
-      <BrandDivider />
 
       {/* What We Do Section */}
       <section className="py-24 bg-background">
@@ -283,8 +281,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Brand Divider */}
-      <BrandDivider />
 
       {/* Cases Section */}
       <section className="py-24 bg-background">
@@ -405,8 +401,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Brand Divider */}
-      <BrandDivider />
 
       {/* Final CTA */}
       <section className="py-24 bg-primary text-primary-foreground">
