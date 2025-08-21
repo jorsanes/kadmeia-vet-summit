@@ -44,6 +44,46 @@ export default function CaseDetail() {
   const title = `${meta?.title || slug} | KADMEIA`;
   const desc = meta?.excerpt ?? 'Caso de éxito KADMEIA';
   const url = typeof window !== 'undefined' ? window.location.href : '';
+  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://kadmeia.com';
+
+  // JSON-LD structured data for case study
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": meta?.title || slug,
+    "description": meta?.excerpt || desc,
+    "author": {
+      "@type": "Organization",
+      "name": "KADMEIA",
+      "url": siteUrl
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "KADMEIA", 
+      "url": siteUrl,
+      "logo": {
+        "@type": "ImageObject",
+        "url": `${siteUrl}/og.png`
+      }
+    },
+    "datePublished": meta?.date,
+    "dateModified": meta?.date,
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": url
+    },
+    "url": url,
+    "articleSection": "Case Study",
+    ...(meta?.cover && {
+      "image": {
+        "@type": "ImageObject",
+        "url": meta.cover
+      }
+    }),
+    ...(meta?.tags && {
+      "keywords": meta.tags.join(", ")
+    })
+  };
 
   // Extract key metrics and info for the card layout
   const keyMetrics = [
@@ -72,6 +112,9 @@ export default function CaseDetail() {
         <meta property="og:url" content={url} />
         {meta?.cover && <meta property="og:image" content={meta.cover} />}
         <link rel="canonical" href={url} />
+        <script type="application/ld+json">
+          {JSON.stringify(structuredData)}
+        </script>
       </Helmet>
 
       {/* Header Section */}

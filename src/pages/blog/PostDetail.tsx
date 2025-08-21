@@ -50,6 +50,45 @@ export default function PostDetail() {
   const title = `${meta?.title || slug} | KADMEIA`;
   const desc = meta?.excerpt ?? (isEN ? 'KADMEIA article' : 'Artículo de KADMEIA');
   const url = typeof window !== 'undefined' ? window.location.href : '';
+  const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://kadmeia.com';
+
+  // JSON-LD structured data for BlogPosting
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": meta?.title || slug,
+    "description": meta?.excerpt || desc,
+    "author": {
+      "@type": "Organization",
+      "name": "KADMEIA",
+      "url": siteUrl
+    },
+    "publisher": {
+      "@type": "Organization", 
+      "name": "KADMEIA",
+      "url": siteUrl,
+      "logo": {
+        "@type": "ImageObject",
+        "url": `${siteUrl}/og.png`
+      }
+    },
+    "datePublished": meta?.date,
+    "dateModified": meta?.date,
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": url
+    },
+    "url": url,
+    ...(meta?.cover && {
+      "image": {
+        "@type": "ImageObject", 
+        "url": meta.cover
+      }
+    }),
+    ...(meta?.tags && {
+      "keywords": meta.tags.join(", ")
+    })
+  };
 
   return (
     <div className="container max-w-4xl py-12">
@@ -62,6 +101,9 @@ export default function PostDetail() {
         <meta property="og:url" content={url} />
         {meta?.cover && <meta property="og:image" content={meta.cover} />}
         <link rel="canonical" href={url} />
+        <script type="application/ld+json">
+          {JSON.stringify(structuredData)}
+        </script>
       </Helmet>
 
       {/* Breadcrumb */}
