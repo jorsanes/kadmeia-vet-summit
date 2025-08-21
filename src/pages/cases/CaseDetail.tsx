@@ -6,32 +6,43 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { CheckCircle, Clock, Users, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { getCaseBySlug } from '@/lib/content';
-import MDXComponents from '@/components/mdx/MDXComponents';
+import { Prose, mdxComponents } from '@/content/MDXComponents';
 import Reveal from '@/components/ui/Reveal';
+
+const modules = import.meta.glob("@/content/casos/**/*.{mdx,md}");
 
 export default function CaseDetail() {
   const { slug = '' } = useParams();
   const isEN = useLocation().pathname.startsWith('/en/');
   const lang = isEN ? 'en' : 'es';
 
-  const data = getCaseBySlug(lang as any, slug);
-  if (!data) {
-    return (
-      <div className="container py-20 text-center">
-        <h1 className="text-2xl font-serif mb-4">Caso no encontrado</h1>
-        <Link to="/casos" className="text-primary hover:underline">
-          Volver a casos de éxito
-        </Link>
-      </div>
-    );
-  }
+  const key = Object.keys(modules).find(p => p.includes(`/casos/${lang}/${slug}.`));
+  const [Comp, setComp] = React.useState<React.ComponentType | null>(null);
+  // @ts-ignore
+  const [meta, setMeta] = React.useState<any>(null);
 
-  const { meta, mod } = data;
-  const MDX = mod.default;
+  React.useEffect(() => {
+    if (!key) return;
+    (async () => {
+      const mod: any = await modules[key]!();
+      setComp(() => mod.default);
+      setMeta(mod.meta || {});
+    })();
+  }, [key]);
 
-  const title = `${meta.title} | KADMEIA`;
-  const desc = meta.excerpt ?? 'Caso de éxito KADMEIA';
+  if (!key) return (
+    <div className="container py-20 text-center">
+      <h1 className="text-2xl font-serif mb-4">Caso no encontrado</h1>
+      <Link to={isEN ? "/en/cases" : "/casos"} className="text-primary hover:underline">
+        {isEN ? "Back to cases" : "Volver a casos de éxito"}
+      </Link>
+    </div>
+  );
+  
+  if (!Comp) return <div className="container py-16">Cargando…</div>;
+
+  const title = `${meta?.title || slug} | KADMEIA`;
+  const desc = meta?.excerpt ?? 'Caso de éxito KADMEIA';
   const url = typeof window !== 'undefined' ? window.location.href : '';
 
   // Extract key metrics and info for the card layout
@@ -42,7 +53,7 @@ export default function CaseDetail() {
     { label: '4 meses', description: 'tiempo de implementación', icon: '📅' }
   ];
 
-  const technologies = meta.tags || ['IA', 'Radiología', 'Automatización'];
+  const technologies = meta?.tags || ['IA', 'Radiología', 'Automatización'];
 
   const fadeInUp = {
     initial: { opacity: 0, y: 20 },
@@ -59,7 +70,7 @@ export default function CaseDetail() {
         <meta property="og:description" content={desc} />
         <meta property="og:type" content="article" />
         <meta property="og:url" content={url} />
-        {meta.cover && <meta property="og:image" content={meta.cover} />}
+        {meta?.cover && <meta property="og:image" content={meta.cover} />}
         <link rel="canonical" href={url} />
       </Helmet>
 
@@ -73,11 +84,11 @@ export default function CaseDetail() {
             className="mb-8"
           >
             <Link 
-              to="/casos" 
+              to={isEN ? "/en/cases" : "/casos"} 
               className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
             >
               <ArrowLeft className="h-4 w-4" />
-              Volver a casos
+              {isEN ? "Back to cases" : "Volver a casos"}
             </Link>
           </motion.div>
 
@@ -92,7 +103,7 @@ export default function CaseDetail() {
                   Clínica veterinaria
                 </Badge>
                 <h1 className="text-4xl md:text-5xl font-serif text-foreground leading-tight mb-6">
-                  {meta.title}
+                  {meta?.title || slug}
                 </h1>
                 <div className="flex items-center gap-6 text-muted-foreground mb-6">
                   <div className="flex items-center gap-2">
@@ -228,11 +239,11 @@ export default function CaseDetail() {
 
           {/* Detailed Content */}
           <div className="mt-16">
-            <article className="prose prose-lg max-w-none prose-headings:font-serif prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground prose-blockquote:border-l-primary prose-blockquote:text-muted-foreground">
-              <MDXProvider components={MDXComponents}>
-                <MDX />
-              </MDXProvider>
-            </article>
+            <MDXProvider components={mdxComponents}>
+              <Prose>
+                <Comp />
+              </Prose>
+            </MDXProvider>
           </div>
         </div>
       </section>

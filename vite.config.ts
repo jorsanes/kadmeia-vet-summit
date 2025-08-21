@@ -4,6 +4,8 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 import mdx from "@mdx-js/rollup";
 import remarkGfm from "remark-gfm";
+import remarkFrontmatter from "remark-frontmatter";
+import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import { visualizer } from "rollup-plugin-visualizer";
@@ -19,7 +21,11 @@ export default defineConfig(({ mode, command }) => ({
   },
   plugins: [
     mdx({
-      remarkPlugins: [remarkGfm],
+      remarkPlugins: [
+        remarkGfm,
+        remarkFrontmatter,
+        [remarkMdxFrontmatter, { name: 'meta' }],
+      ],
       rehypePlugins: [
         rehypeSlug,
         [rehypeAutolinkHeadings, { behavior: "append", properties: { className: ["mdx-anchor"] } }],
