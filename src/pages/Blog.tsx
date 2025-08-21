@@ -15,7 +15,7 @@ import {
   Lightbulb
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { PageSeo } from '@/components/seo/PageSeo';
+import { PageSeo } from '@/lib/seo';
 import { useLocale } from '@/i18n/LocaleProvider';
 import { blogIndex } from '@/lib/content-index';
 
@@ -30,6 +30,8 @@ const Blog = () => {
   const seoDescription = locale === 'es'
     ? 'Descubre las últimas tendencias en tecnología veterinaria, IA aplicada y casos de éxito en consultoría clínica.'
     : 'Discover the latest trends in veterinary technology, applied AI and success stories in clinical consulting.';
+  
+  const currentUrl = `https://kadmeia.com${locale === 'en' ? '/en' : ''}/blog`;
 
   const allBlogPosts = blogIndex.filter(post => post.locale === locale);
   const fadeInUp = {
@@ -131,7 +133,9 @@ const Blog = () => {
       <PageSeo 
         title={seoTitle}
         description={seoDescription}
-        ogType="website"
+        url={currentUrl}
+        type="website"
+        locale={locale}
       />
 
       {/* Header */}

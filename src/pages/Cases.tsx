@@ -15,7 +15,7 @@ import {
   Workflow
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { PageSeo } from '@/components/seo/PageSeo';
+import { PageSeo } from '@/lib/seo';
 import { ArticleJsonLd } from '@/components/seo/SeoJsonLd';
 import { useLocale } from '@/i18n/LocaleProvider';
 import { caseIndex } from '@/lib/content-index';
@@ -31,6 +31,8 @@ const Cases = () => {
   const seoDescription = locale === 'es'
     ? 'Casos reales de implementación exitosa de IA y automatización en clínicas veterinarias. Resultados medibles y lecciones aprendidas.'
     : 'Real cases of successful implementation of AI and automation in veterinary clinics. Measurable results and lessons learned.';
+  
+  const currentUrl = `https://kadmeia.com${locale === 'en' ? '/en' : ''}/casos`;
 
   const caseEntries = caseIndex.filter(entry => entry.locale === locale);
   const fadeInUp = {
@@ -124,7 +126,9 @@ const Cases = () => {
       <PageSeo 
         title={seoTitle}
         description={seoDescription}
-        ogType="website"
+        url={currentUrl}
+        type="website"
+        locale={locale}
       />
 
       {/* Generate Article JSON-LD for case studies */}
