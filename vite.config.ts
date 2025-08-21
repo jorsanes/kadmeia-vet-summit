@@ -1,53 +1,24 @@
-import { defineConfig } from "vite";
+import { defineConfig, type PluginOption } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 import mdx from "@mdx-js/rollup";
 import remarkGfm from "remark-gfm";
-import remarkFrontmatter from "remark-frontmatter";
-import remarkMdxFrontmatter from "remark-mdx-frontmatter";
-import rehypeSlug from "rehype-slug";
-import rehypeAutolinkHeadings from "rehype-autolink-headings";
-import rehypeRaw from "rehype-raw";
 import { visualizer } from "rollup-plugin-visualizer";
 import compression from "vite-plugin-compression";
 import { splitVendorChunkPlugin } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode, command }) => ({
-  server: {
-    host: "::",
-    port: 8080,
-  },
-  plugins: [
+export default defineConfig(({ mode, command }) => {
+  const plugins: any[] = [
     mdx({
-      remarkPlugins: [
-        remarkGfm,
-        remarkFrontmatter,
-        [remarkMdxFrontmatter, { name: 'meta' }],
-      ],
-      rehypePlugins: [
-        rehypeRaw,
-        rehypeSlug,
-        [rehypeAutolinkHeadings, { behavior: "append", properties: { className: ["mdx-anchor"] } }],
-      ],
+      remarkPlugins: [remarkGfm],
     }),
     react(),
-    mode === "development" && componentTagger(),
-    // Bundle analyzer - only in build mode
-    command === "build" &&
-      visualizer({
-        filename: "dist/stats.html",
-        open: false,
-        gzipSize: true,
-        brotliSize: true,
-      }),
-    // Precompresión
+    splitVendorChunkPlugin(),
     compression({ algorithm: "brotliCompress", ext: ".br", deleteOriginFile: false }),
     compression({ algorithm: "gzip", ext: ".gz", deleteOriginFile: false }),
-    splitVendorChunkPlugin(),
-    // PWA
     VitePWA({
       registerType: "autoUpdate",
       includeAssets: ["favicon.svg", "robots.txt", "apple-touch-icon.png"],
@@ -101,21 +72,46 @@ export default defineConfig(({ mode, command }) => ({
         ],
       },
     }),
-  ].filter(Boolean),
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
+  ];
+
+  // Agregar plugins de desarrollo
+  if (mode === "development") {
+    plugins.push(componentTagger());
+  }
+
+  // Agregar bundle analyzer solo en build
+  if (command === "build") {
+    plugins.push(
+      visualizer({
+        filename: "dist/stats.html",
+        open: false,
+        gzipSize: true,
+        brotliSize: true,
+      })
+    );
+  }
+
+  return {
+    server: {
+      host: "::",
+      port: 8080,
     },
-  },
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ["react", "react-dom"],
-          ui: ["@radix-ui/react-accordion", "@radix-ui/react-dialog", "@radix-ui/react-dropdown-menu"],
-          utils: ["clsx", "tailwind-merge", "class-variance-authority"],
+    plugins,
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "./src"),
+      },
+    },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            vendor: ["react", "react-dom"],
+            ui: ["@radix-ui/react-accordion", "@radix-ui/react-dialog", "@radix-ui/react-dropdown-menu"],
+            utils: ["clsx", "tailwind-merge", "class-variance-authority"],
+          },
         },
       },
     },
-  },
-}));
+  };
+});
