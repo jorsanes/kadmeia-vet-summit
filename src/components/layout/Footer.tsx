@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useLocale } from '@/i18n/LocaleProvider';
 import { Button } from '@/components/ui/button';
@@ -50,24 +49,24 @@ const Footer = () => {
             </h3>
             <ul className="space-y-3">
               <li>
-                <Link to={getLocalizedHref(locale === 'en' ? '/services' : '/servicios')} className="text-sm text-primary-foreground/80 hover:text-secondary transition-colors">
+                <a href={getLocalizedHref(locale === 'en' ? '/services' : '/servicios')} className="text-sm text-primary-foreground/80 hover:text-secondary transition-colors">
                   {t('nav.services')}
-                </Link>
+                </a>
               </li>
               <li>
-                <Link to={getLocalizedHref(locale === 'en' ? '/cases' : '/casos')} className="text-sm text-primary-foreground/80 hover:text-secondary transition-colors">
+                <a href={getLocalizedHref(locale === 'en' ? '/cases' : '/casos')} className="text-sm text-primary-foreground/80 hover:text-secondary transition-colors">
                   {t('nav.cases')}
-                </Link>
+                </a>
               </li>
               <li>
-                <Link to={getLocalizedHref('/blog')} className="text-sm text-primary-foreground/80 hover:text-secondary transition-colors">
+                <a href={getLocalizedHref('/blog')} className="text-sm text-primary-foreground/80 hover:text-secondary transition-colors">
                   {t('nav.blog')}
-                </Link>
+                </a>
               </li>
               <li>
-                <Link to={getLocalizedHref(locale === 'en' ? '/about' : '/sobre')} className="text-sm text-primary-foreground/80 hover:text-secondary transition-colors">
+                <a href={getLocalizedHref(locale === 'en' ? '/about' : '/sobre')} className="text-sm text-primary-foreground/80 hover:text-secondary transition-colors">
                   {t('nav.about')}
-                </Link>
+                </a>
               </li>
             </ul>
           </div>
@@ -103,15 +102,15 @@ const Footer = () => {
               © 2024 KADMEIA. Todos los derechos reservados.
             </p>
             <div className="flex gap-6">
-              <Link to={getLocalizedHref(locale === 'en' ? '/privacy' : '/privacidad')} className="text-sm text-primary-foreground/60 hover:text-secondary transition-colors">
+              <a href={getLocalizedHref(locale === 'en' ? '/privacy' : '/privacidad')} className="text-sm text-primary-foreground/60 hover:text-secondary transition-colors">
                 {t('footer.links.privacy')}
-              </Link>
-              <Link to={getLocalizedHref(locale === 'en' ? '/legal' : '/aviso-legal')} className="text-sm text-primary-foreground/60 hover:text-secondary transition-colors">
+              </a>
+              <a href={getLocalizedHref(locale === 'en' ? '/legal' : '/aviso-legal')} className="text-sm text-primary-foreground/60 hover:text-secondary transition-colors">
                 {t('footer.links.legal')}
-              </Link>
-              <Link to={getLocalizedHref('/cookies')} className="text-sm text-primary-foreground/60 hover:text-secondary transition-colors">
+              </a>
+              <a href={getLocalizedHref('/cookies')} className="text-sm text-primary-foreground/60 hover:text-secondary transition-colors">
                 {t('footer.links.cookies')}
-              </Link>
+              </a>
               <a href="/rss.xml" target="_blank" rel="noopener" className="text-sm text-primary-foreground/60 hover:text-secondary transition-colors">
                 RSS
               </a>

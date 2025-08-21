@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Globe, Search } from 'lucide-react';
@@ -48,8 +48,8 @@ const Header = () => {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex lg:flex-1">
-            <Link 
-              to="/" 
+            <a 
+              href="/" 
               className="-m-1.5 p-1.5 flex items-center gap-2"
               aria-label="KADMEIA — Inicio"
             >
@@ -67,15 +67,15 @@ const Header = () => {
               <span className="font-display text-2xl font-semibold text-primary">
                 KADMEIA
               </span>
-            </Link>
+            </a>
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex lg:gap-x-8">
             {navigation.map((item) => (
-              <Link
+              <a
                 key={item.name}
-                to={item.href}
+                href={item.href}
                 className={`text-sm font-medium transition-colors hover:text-primary ${
                   location.pathname === item.href 
                     ? 'text-primary' 
@@ -83,7 +83,7 @@ const Header = () => {
                 }`}
               >
                 {item.name}
-              </Link>
+              </a>
             ))}
           </div>
 
@@ -109,9 +109,9 @@ const Header = () => {
               {locale.toUpperCase()}
             </Button>
             <Button asChild className="btn-primary">
-              <Link to={getLocalizedHref(locale === 'en' ? '/contact' : '/contacto')}>
+              <a href={getLocalizedHref(locale === 'en' ? '/contact' : '/contacto')}>
                 {t('nav.cta')}
-              </Link>
+              </a>
             </Button>
           </div>
 
@@ -144,9 +144,9 @@ const Header = () => {
           >
             <div className="space-y-2 px-6 pb-6 pt-4">
               {navigation.map((item) => (
-                <Link
+                <a
                   key={item.name}
-                  to={item.href}
+                  href={item.href}
                   className={`block py-2 text-base font-medium transition-colors ${
                     location.pathname === item.href
                       ? 'text-primary'
@@ -155,7 +155,7 @@ const Header = () => {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
-                </Link>
+                </a>
               ))}
               <div className="flex items-center gap-4 pt-4">
                 <Button
@@ -167,12 +167,12 @@ const Header = () => {
                   {locale.toUpperCase()}
                 </Button>
                 <Button asChild className="btn-primary flex-1">
-                  <Link 
-                    to={getLocalizedHref(locale === 'en' ? '/contact' : '/contacto')} 
+                  <a 
+                    href={getLocalizedHref(locale === 'en' ? '/contact' : '/contacto')} 
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {t('nav.cta')}
-                  </Link>
+                  </a>
                 </Button>
               </div>
             </div>
