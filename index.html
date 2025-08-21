@@ -7,15 +7,19 @@
     <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#1E2A38" />
 
-    <!-- Preconnect Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Preconnect para mejorar latencia de fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <!-- Carga de fuentes (una sola hoja de estilo; evita duplicidades) -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <!-- Carga de fuentes con display=swap -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Opcional: preload del CSS de fuentes (útil si Lighthouse penaliza FOIT/FOUT)
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap">
+    </noscript>
+    -->
 
     <!-- Icons / PWA (sirven desde /public) -->
     <link rel="icon" href="/favicon.ico" sizes="16x16 32x32" />
