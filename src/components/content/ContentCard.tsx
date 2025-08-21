@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
 
@@ -23,6 +23,12 @@ export function ContentCard({
   locale = 'es'
 }: ContentCardProps) {
   const [imgOk, setImgOk] = useState(true);
+  const navigate = useNavigate();
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate(href);
+  };
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -39,10 +45,18 @@ export function ContentCard({
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
       className="h-full"
     >
-      <Link 
-        to={href} 
+      <div 
+        onClick={handleClick}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            navigate(href);
+          }
+        }}
         aria-label={`${locale === 'es' ? 'Abrir' : 'Open'} ${title}`} 
-        className="group block h-full focus-ring-kadmeia rounded-3xl"
+        className="group block h-full focus-ring-kadmeia rounded-3xl cursor-pointer"
       >
         <div className="overflow-hidden rounded-3xl shadow-elegant bg-card h-full flex flex-col transition-all duration-300 group-hover:shadow-lg">
           <div className="relative aspect-[16/10] overflow-hidden">
@@ -97,7 +111,7 @@ export function ContentCard({
             </div>
           </div>
         </div>
-      </Link>
+      </div>
     </motion.div>
   );
 }
