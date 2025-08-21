@@ -1,3 +1,68 @@
+import matter from "gray-matter";
+import { BaseContentSchema, type BaseContentMeta, type ContentCardMeta } from "@/content/schemas";
+
+function computeReadingTime(text: string) {
+  const words = (text || "").split(/\s+/).filter(Boolean).length;
+  const minutes = Math.max(1, Math.round(words / 200));
+  return `${minutes} min`;
+}
+
+export type ContentItem = BaseContentMeta & {
+  excerpt: string;
+  mdx: React.ComponentType<any>;
+  readingTime: string;
+  card: Required<ContentCardMeta>;
+};
+
+export function loadEntries(globResult: Record<string, any>, type: "case" | "post"): ContentItem[] {
+  const items = Object.entries(globResult).map(([path, mod]) => {
+    const raw = mod?.raw ?? "";
+    const mdx = mod?.default;
+    const fm = mod?.meta ?? matter(raw).data ?? {};
+    const body = mod?.body ?? ""; // si tenemos el cuerpo
+    const parsed = BaseContentSchema.safeParse({
+      ...fm,
+      slug: fm.slug ?? path.split("/").pop()?.replace(/\.(mdx|md)$/, ""),
+    });
+
+    if (!parsed.success) {
+      console.warn("Invalid meta for", path, parsed.error);
+      return null;
+    }
+
+    const meta = parsed.data;
+
+    // Fallbacks de tarjeta
+    const defaultCta = type === "case"
+      ? (meta.lang === "en" ? "View case →" : "Ver caso →")
+      : (meta.lang === "en" ? "Read article →" : "Leer artículo →");
+
+    const excerpt =
+      meta.excerpt?.trim() ||
+      (body ? body.replace(/[#>*`_]/g, "").slice(0, 180) + "…" : "");
+
+    const readingTime = computeReadingTime(body);
+
+    return {
+      ...meta,
+      excerpt,
+      mdx,
+      readingTime,
+      card: {
+        kicker: meta.card?.kicker,
+        badges: meta.card?.badges ?? meta.tags ?? [],
+        highlights:
+          meta.card?.highlights ??
+          (type === "post" ? [{ label: meta.lang === "en" ? "Read" : "Lectura", value: readingTime }] : undefined),
+        cta: meta.card?.cta ?? defaultCta,
+      },
+    } as ContentItem;
+  });
+
+  return items.filter(Boolean).filter((i: ContentItem) => i.draft !== true);
+}
+
+// Legacy API compatibility - keep existing functions working exactly the same
 import type { CaseStudy, Locale, MDXModule, Post } from '@/content/types';
 
 // Utilities for normalizing content metadata
@@ -109,7 +174,7 @@ for (const [path, mod] of Object.entries(caseModules)) {
   }
 }
 
-// 3) Public API
+// 3) Public API - keeping exact same functionality for backwards compatibility
 export function getAllPosts(lang: Locale): Post[] {
   return Object.values(POSTS)
     .map(v => v.meta)
