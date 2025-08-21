@@ -20,6 +20,7 @@ import { OrganizationJsonLd } from "@/components/seo/SeoJsonLd";
 import { useLocale } from "@/i18n/LocaleProvider";
 import SmartImage from "@/components/ui/SmartImage";
 import Reveal from "@/components/ui/Reveal";
+import MetricCounter from "@/components/ui/MetricCounter";
 import BrandWatermark from "@/components/brand/BrandWatermark";
 
 import heroImage from "@/assets/hero-kadmeia.jpg";
@@ -277,6 +278,73 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Results Section */}
+      <section className="py-24 bg-gradient-to-br from-secondary/5 via-background to-primary/5">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <Reveal>
+            <div className="mx-auto max-w-2xl text-center mb-16">
+              <h2 className="font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl mb-4">
+                Resultados obtenidos
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Métricas reales de nuestros proyectos de consultoría e implementación tecnológica
+              </p>
+            </div>
+          </Reveal>
+
+          <Reveal>
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+              <Reveal delay={0.1}>
+                <Card className="card-premium text-center">
+                  <CardContent className="p-8">
+                    <div className="text-4xl font-bold text-primary mb-2">
+                      <MetricCounter value={99.7} suffix="%" decimals={1} duration={1.2} />
+                    </div>
+                    <h3 className="font-semibold text-lg text-foreground mb-2">
+                      Tasa de éxito
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      En implementaciones de IA veterinaria
+                    </p>
+                  </CardContent>
+                </Card>
+              </Reveal>
+
+              <Reveal delay={0.15}>
+                <Card className="card-premium text-center">
+                  <CardContent className="p-8">
+                    <div className="text-4xl font-bold text-primary mb-2">
+                      <MetricCounter value={6.5} suffix=" semanas" decimals={1} duration={1.2} />
+                    </div>
+                    <h3 className="font-semibold text-lg text-foreground mb-2">
+                      Tiempo promedio
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      De proyecto a resultados medibles
+                    </p>
+                  </CardContent>
+                </Card>
+              </Reveal>
+
+              <Reveal delay={0.2}>
+                <Card className="card-premium text-center">
+                  <CardContent className="p-8">
+                    <div className="text-4xl font-bold text-primary mb-2">
+                      <MetricCounter value={150} suffix="+" duration={1.2} />
+                    </div>
+                    <h3 className="font-semibold text-lg text-foreground mb-2">
+                      Clínicas transformadas
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      En España, Portugal y Reino Unido
+                    </p>
+                  </CardContent>
+                </Card>
+              </Reveal>
+            </div>
+          </Reveal>
+        </div>
+      </section>
 
       {/* Cases Section */}
       <section className="py-24 bg-background">
@@ -304,9 +372,9 @@ const Home = () => {
             >
               {/* Placeholder Cases */}
               {[
-                { title: "Optimización de flujos clínicos", metric: "40% reducción tiempo", sector: "Clínica veterinaria" },
-                { title: "IA para diagnóstico por imagen", metric: "95% precisión", sector: "Red de clínicas" },
-                { title: "Automatización de inventario", metric: "30% ahorro costes", sector: "Distribuidor" }
+                { title: "Optimización de flujos clínicos", metric: 40, unit: "% reducción tiempo", sector: "Clínica veterinaria" },
+                { title: "IA para diagnóstico por imagen", metric: 95, unit: "% precisión", sector: "Red de clínicas" },
+                { title: "Automatización de inventario", metric: 30, unit: "% ahorro costes", sector: "Distribuidor" }
               ].map((caseItem, index) => (
                 <Reveal key={index} delay={index * 0.1}>
                   <Card className="card-premium h-full hover:shadow-elegant transition-shadow duration-300">
@@ -318,7 +386,7 @@ const Home = () => {
                         {caseItem.title}
                       </h3>
                       <div className="text-2xl font-bold text-primary mb-2">
-                        {caseItem.metric}
+                        <MetricCounter value={caseItem.metric} suffix={caseItem.unit} duration={1.2} />
                       </div>
                       <div className="flex items-center text-sm text-muted-foreground">
                         <CheckCircle className="h-4 w-4 text-success mr-2" />
