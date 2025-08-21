@@ -4,6 +4,8 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 import mdx from "@mdx-js/rollup";
 import remarkGfm from "remark-gfm";
+import rehypeSlug from "rehype-slug";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import { visualizer } from "rollup-plugin-visualizer";
 import compression from "vite-plugin-compression";
 import { splitVendorChunkPlugin } from "vite";
@@ -14,6 +16,10 @@ export default defineConfig(({ mode, command }) => {
   const plugins: any[] = [
     mdx({
       remarkPlugins: [remarkGfm],
+      rehypePlugins: [
+        rehypeSlug,
+        [rehypeAutolinkHeadings, { behavior: "wrap" }],
+      ],
     }),
     react(),
     splitVendorChunkPlugin(),

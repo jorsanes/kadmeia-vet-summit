@@ -21,19 +21,17 @@ export function TextCard({ title, date, href, excerpt, cta = "Ver más →", cov
         aria-label={title} 
         className="absolute inset-0 z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 rounded-2xl" 
       />
-      {/* Miniatura o placeholder */}
-      <div className="aspect-[4/3] w-full bg-muted overflow-hidden">
-        {cover ? (
+      {/* Miniatura opcional - solo si hay cover */}
+      {cover && (
+        <div className="aspect-[4/3] w-full bg-muted overflow-hidden">
           <img 
             src={cover} 
             alt={title}
             className="w-full h-full object-cover"
             loading="lazy"
           />
-        ) : (
-          <div className="w-full h-full bg-gradient-to-br from-muted to-muted/70" />
-        )}
-      </div>
+        </div>
+      )}
       <div className="p-4">
         <h3 className="font-serif text-lg text-primary">{title}</h3>
         {excerpt && (
