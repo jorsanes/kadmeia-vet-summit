@@ -6,7 +6,13 @@ import SmartImage from '@/components/ui/SmartImage';
 import Reveal from '@/components/ui/Reveal';
 
 export default function Cases() {
-  const isEN = useLocation().pathname.startsWith('/en');
+  let isEN = false;
+  try {
+    isEN = useLocation().pathname.startsWith('/en');
+  } catch (error) {
+    // Default to Spanish when outside Router context
+    isEN = false;
+  }
   const lang = isEN ? 'en' : 'es';
 
   const cases = getAllCasesMeta().filter(c => c.lang === lang);
