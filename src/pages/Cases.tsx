@@ -18,7 +18,7 @@ import { Link } from 'react-router-dom';
 import { PageSeo } from '@/components/seo/PageSeo';
 import { ArticleJsonLd } from '@/components/seo/SeoJsonLd';
 import { useLocale } from '@/i18n/LocaleProvider';
-import { listEntries } from '@/lib/mdx';
+import { caseIndex } from '@/lib/content-index';
 
 const Cases = () => {
   const { t } = useTranslation();
@@ -32,7 +32,7 @@ const Cases = () => {
     ? 'Casos reales de implementación exitosa de IA y automatización en clínicas veterinarias. Resultados medibles y lecciones aprendidas.'
     : 'Real cases of successful implementation of AI and automation in veterinary clinics. Measurable results and lessons learned.';
 
-  const caseEntries = listEntries('casos').filter(entry => entry.lang === locale);
+  const caseEntries = caseIndex.filter(entry => entry.locale === locale);
   const fadeInUp = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
@@ -131,11 +131,11 @@ const Cases = () => {
       {caseEntries.slice(0, 3).map((caseItem, index) => (
         <ArticleJsonLd
           key={index}
-          title={caseItem.title}
-          description={caseItem.excerpt}
-          url={`https://kadmeia.com${locale === 'en' ? '/en' : ''}/casos/${caseItem.path.split('/').pop()?.replace('.mdx', '')}`}
-          datePublished={caseItem.date}
-          tags={caseItem.tags || []}
+          title={caseItem.meta.title}
+          description={caseItem.meta.excerpt || ''}
+          url={`https://kadmeia.com${locale === 'en' ? '/en' : ''}/casos/${caseItem.slug}`}
+          datePublished={caseItem.meta.date.toISOString()}
+          tags={caseItem.meta.tags || []}
         />
       ))}
 

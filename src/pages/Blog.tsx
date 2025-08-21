@@ -1,3 +1,4 @@
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,7 +17,7 @@ import {
 import { Link } from 'react-router-dom';
 import { PageSeo } from '@/components/seo/PageSeo';
 import { useLocale } from '@/i18n/LocaleProvider';
-import { listEntries, blogModules } from '@/lib/mdx';
+import { blogIndex } from '@/lib/content-index';
 
 const Blog = () => {
   const { t } = useTranslation();
@@ -30,7 +31,7 @@ const Blog = () => {
     ? 'Descubre las últimas tendencias en tecnología veterinaria, IA aplicada y casos de éxito en consultoría clínica.'
     : 'Discover the latest trends in veterinary technology, applied AI and success stories in clinical consulting.';
 
-  const allBlogPosts = listEntries(blogModules).filter(post => post.lang === locale);
+  const allBlogPosts = blogIndex.filter(post => post.locale === locale);
   const fadeInUp = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
@@ -183,9 +184,9 @@ const Blog = () => {
             >
               <Card className="card-premium overflow-hidden">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
-                  <div className="bg-gradient-hero p-12 flex items-center justify-center">
-                    {post.icon ? <post.icon className="h-24 w-24 text-secondary" /> : <Brain className="h-24 w-24 text-secondary" />}
-                  </div>
+                    <div className="bg-gradient-hero p-12 flex items-center justify-center">
+                      {(post as any).icon ? React.createElement((post as any).icon, { className: "h-24 w-24 text-secondary" }) : <Brain className="h-24 w-24 text-secondary" />}
+                    </div>
                   <div>
                     <CardHeader className="pb-4">
                       <div className="flex items-center gap-3 mb-4">
@@ -193,12 +194,12 @@ const Blog = () => {
                         <Badge variant="outline">{locale === 'es' ? 'Destacado' : 'Featured'}</Badge>
                       </div>
                       <CardTitle className="font-display text-2xl text-foreground leading-tight">
-                        {post.title}
+                        {post.meta?.title || post.title}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p className="text-muted-foreground mb-6 leading-relaxed">
-                        {post.excerpt}
+                        {post.meta?.excerpt || post.excerpt}
                       </p>
                       
                       <div className="flex items-center gap-6 text-sm text-muted-foreground mb-6">
@@ -208,7 +209,7 @@ const Blog = () => {
                         </div>
                         <div className="flex items-center gap-2">
                           <Calendar className="h-4 w-4" />
-                          {new Date(post.date).toLocaleDateString(locale === 'es' ? 'es-ES' : 'en-US')}
+                          {new Date(post.meta?.date || post.date).toLocaleDateString(locale === 'es' ? 'es-ES' : 'en-US')}
                         </div>
                         <div className="flex items-center gap-2">
                           <Clock className="h-4 w-4" />
@@ -217,7 +218,7 @@ const Blog = () => {
                       </div>
 
                       <div className="flex flex-wrap gap-2 mb-6">
-                        {(post.tags || ['IA', 'Diagnóstico']).map((tag, tagIndex) => (
+                        {(post.meta?.tags || post.tags || ['IA', 'Diagnóstico']).map((tag, tagIndex) => (
                           <Badge key={tagIndex} variant="outline" className="text-xs">
                             {tag}
                           </Badge>
@@ -250,22 +251,22 @@ const Blog = () => {
                   <CardHeader className="pb-4">
                     <div className="flex items-center justify-between mb-4">
                       <Badge variant="secondary">{post.category || 'Tecnología'}</Badge>
-                      {post.icon ? <post.icon className="h-6 w-6 text-secondary" /> : <Brain className="h-6 w-6 text-secondary" />}
+                      {(post as any).icon ? React.createElement((post as any).icon, { className: "h-6 w-6 text-secondary" }) : <Brain className="h-6 w-6 text-secondary" />}
                     </div>
                     <CardTitle className="font-display text-lg text-foreground leading-tight group-hover:text-primary transition-colors">
-                      {post.title}
+                      {post.meta?.title || post.title}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="flex-1 flex flex-col">
                     <p className="text-muted-foreground mb-4 leading-relaxed flex-1">
-                      {post.excerpt}
+                      {post.meta?.excerpt || post.excerpt}
                     </p>
                     
                     <div className="space-y-4">
                       <div className="flex items-center gap-4 text-xs text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Calendar className="h-3 w-3" />
-                          {new Date(post.date).toLocaleDateString(locale === 'es' ? 'es-ES' : 'en-US')}
+                          {new Date(post.meta?.date || post.date).toLocaleDateString(locale === 'es' ? 'es-ES' : 'en-US')}
                         </div>
                         <div className="flex items-center gap-1">
                           <Clock className="h-3 w-3" />
@@ -274,14 +275,14 @@ const Blog = () => {
                       </div>
 
                       <div className="flex flex-wrap gap-1">
-                        {(post.tags || ['Tecnología']).slice(0, 2).map((tag, tagIndex) => (
+                        {(post.meta?.tags || post.tags || ['Tecnología']).slice(0, 2).map((tag, tagIndex) => (
                           <Badge key={tagIndex} variant="outline" className="text-xs">
                             {tag}
                           </Badge>
                         ))}
-                        {(post.tags || []).length > 2 && (
+                        {(post.meta?.tags || post.tags || []).length > 2 && (
                           <Badge variant="outline" className="text-xs">
-                            +{(post.tags || []).length - 2}
+                            +{(post.meta?.tags || post.tags || []).length - 2}
                           </Badge>
                         )}
                       </div>
