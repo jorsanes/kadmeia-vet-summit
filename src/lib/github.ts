@@ -1,4 +1,6 @@
 // GitHub API utilities for content management
+import { decodeBase64Utf8, encodeBase64Utf8 } from './encoding';
+
 export interface GitHubConfig {
   token: string;
   owner: string;
@@ -21,7 +23,7 @@ export class GitHubAPI {
   private getHeaders() {
     return {
       'Authorization': `token ${this.config.token}`,
-      'Accept': 'application/vnd.github.v3+json',
+      'Accept': 'application/vnd.github+json',
       'Content-Type': 'application/json',
     };
   }
@@ -47,7 +49,7 @@ export class GitHubAPI {
     }
 
     return {
-      content: atob(data.content.replace(/\n/g, '')),
+      content: decodeBase64Utf8(data.content),
       sha: data.sha
     };
   }
@@ -60,7 +62,7 @@ export class GitHubAPI {
         headers: this.getHeaders(),
         body: JSON.stringify({
           message,
-          content: btoa(unescape(encodeURIComponent(content))),
+          content: encodeBase64Utf8(content),
           sha,
           branch: this.config.branch
         })
@@ -80,7 +82,7 @@ export class GitHubAPI {
         headers: this.getHeaders(),
         body: JSON.stringify({
           message,
-          content: btoa(unescape(encodeURIComponent(content))),
+          content: encodeBase64Utf8(content),
           branch: this.config.branch
         })
       }
