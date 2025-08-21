@@ -79,12 +79,16 @@ const About = () => {
           animate="animate"
           variants={fadeInUp}
         >
-          <h1 className="font-display text-4xl font-semibold tracking-tight text-foreground sm:text-5xl mb-6">
-            Sobre KADMEIA
-          </h1>
-          <p className="text-xl text-muted-foreground">
-            Nacimos para ser el puente entre la ciencia veterinaria, las oportunidades de negocio y las soluciones tecnológicas que realmente funcionan.
-          </p>
+          <Reveal y={12}>
+            <h1 className="font-display text-4xl font-semibold tracking-tight text-foreground sm:text-5xl mb-6">
+              Sobre KADMEIA
+            </h1>
+          </Reveal>
+          <Reveal delay={0.05}>
+            <p className="text-xl text-muted-foreground">
+              Nacimos para ser el puente entre la ciencia veterinaria, las oportunidades de negocio y las soluciones tecnológicas que realmente funcionan.
+            </p>
+          </Reveal>
         </motion.div>
 
         {/* Mission */}
@@ -105,12 +109,16 @@ const About = () => {
                   <h2 className="font-display text-3xl font-semibold text-foreground mb-6">
                     Clara, rigurosa y humana
                   </h2>
-                  <p className="text-muted-foreground text-lg leading-relaxed mb-6">
-                    El sector veterinario evoluciona rápidamente, pero la brecha entre la innovación tecnológica y su aplicación práctica sigue siendo enorme.
-                  </p>
-                  <p className="text-muted-foreground text-lg leading-relaxed">
-                    En KADMEIA cerramos esa brecha con <strong className="text-foreground">raíces sólidas</strong> en la ciencia veterinaria y una <strong className="text-foreground">mirada tecnológica</strong> hacia el futuro.
-                  </p>
+                  <Reveal delay={0.05}>
+                    <p className="text-muted-foreground text-lg leading-relaxed mb-6">
+                      El sector veterinario evoluciona rápidamente, pero la brecha entre la innovación tecnológica y su aplicación práctica sigue siendo enorme.
+                    </p>
+                  </Reveal>
+                  <Reveal delay={0.1}>
+                    <p className="text-muted-foreground text-lg leading-relaxed">
+                      En KADMEIA cerramos esa brecha con <strong className="text-foreground">raíces sólidas</strong> en la ciencia veterinaria y una <strong className="text-foreground">mirada tecnológica</strong> hacia el futuro.
+                    </p>
+                  </Reveal>
                 </div>
                 <div className="relative">
                   <div className="bg-gradient-subtle p-8 rounded-2xl">
@@ -179,28 +187,36 @@ const About = () => {
               <h2 className="font-display text-3xl font-semibold text-foreground mb-6">
                 Evidencia + Práctica + Tecnología
               </h2>
-              <p className="text-muted-foreground text-lg leading-relaxed mb-6">
-                No partimos de soluciones predefinidas. Cada proyecto comienza con una comprensión profunda de:
-              </p>
+              <Reveal delay={0.05}>
+                <p className="text-muted-foreground text-lg leading-relaxed mb-6">
+                  No partimos de soluciones predefinidas. Cada proyecto comienza con una comprensión profunda de:
+                </p>
+              </Reveal>
               <ul className="space-y-4 mb-8">
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="h-5 w-5 text-success mt-1 flex-shrink-0" />
-                  <span className="text-muted-foreground">
-                    <strong className="text-foreground">El contexto científico:</strong> ¿Qué dice la evidencia?
-                  </span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="h-5 w-5 text-success mt-1 flex-shrink-0" />
-                  <span className="text-muted-foreground">
-                    <strong className="text-foreground">La realidad práctica:</strong> ¿Cómo trabajan realmente?
-                  </span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="h-5 w-5 text-success mt-1 flex-shrink-0" />
-                  <span className="text-muted-foreground">
-                    <strong className="text-foreground">Las oportunidades tecnológicas:</strong> ¿Qué es posible hoy?
-                  </span>
-                </li>
+                <Reveal delay={0.1}>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-success mt-1 flex-shrink-0" />
+                    <span className="text-muted-foreground">
+                      <strong className="text-foreground">El contexto científico:</strong> ¿Qué dice la evidencia?
+                    </span>
+                  </li>
+                </Reveal>
+                <Reveal delay={0.15}>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-success mt-1 flex-shrink-0" />
+                    <span className="text-muted-foreground">
+                      <strong className="text-foreground">La realidad práctica:</strong> ¿Cómo trabajan realmente?
+                    </span>
+                  </li>
+                </Reveal>
+                <Reveal delay={0.2}>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-success mt-1 flex-shrink-0" />
+                    <span className="text-muted-foreground">
+                      <strong className="text-foreground">Las oportunidades tecnológicas:</strong> ¿Qué es posible hoy?
+                    </span>
+                  </li>
+                </Reveal>
               </ul>
               
               <Reveal>

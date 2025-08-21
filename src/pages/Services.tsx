@@ -107,12 +107,16 @@ const Services = () => {
           animate="animate"
           variants={fadeInUp}
         >
-          <h1 className="font-display text-4xl font-semibold tracking-tight text-foreground sm:text-5xl mb-6">
-            Nuestros servicios
-          </h1>
-          <p className="text-xl text-muted-foreground">
-            Soluciones especializadas que transforman el sector veterinario a través de la ciencia, la tecnología y la innovación práctica.
-          </p>
+          <Reveal y={12}>
+            <h1 className="font-display text-4xl font-semibold tracking-tight text-foreground sm:text-5xl mb-6">
+              Nuestros servicios
+            </h1>
+          </Reveal>
+          <Reveal delay={0.05}>
+            <p className="text-xl text-muted-foreground">
+              Soluciones especializadas que transforman el sector veterinario a través de la ciencia, la tecnología y la innovación práctica.
+            </p>
+          </Reveal>
           
           <Reveal delay={0.1}>
             <SmartImage

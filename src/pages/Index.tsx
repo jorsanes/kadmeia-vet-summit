@@ -93,18 +93,20 @@ const Home = () => {
             animate="animate"
             variants={staggerContainer}
           >
-            <motion.h1 
-              className="font-display text-4xl font-semibold tracking-tight text-foreground sm:text-6xl lg:text-7xl"
-              variants={fadeInUp}
-            >
-              {t('hero.title')}
-            </motion.h1>
-            <motion.p 
-              className="mt-6 text-lg leading-8 text-muted-foreground sm:text-xl max-w-3xl mx-auto"
-              variants={fadeInUp}
-            >
-              {t('hero.subtitle')}
-            </motion.p>
+            <Reveal y={12}>
+              <h1 
+                className="font-display text-4xl font-semibold tracking-tight text-foreground sm:text-6xl lg:text-7xl"
+              >
+                {t('hero.title')}
+              </h1>
+            </Reveal>
+            <Reveal delay={0.05}>
+              <p 
+                className="mt-6 text-lg leading-8 text-muted-foreground sm:text-xl max-w-3xl mx-auto"
+              >
+                {t('hero.subtitle')}
+              </p>
+            </Reveal>
             <motion.div 
               className="mt-10 flex items-center justify-center gap-4 flex-wrap"
               variants={fadeInUp}
