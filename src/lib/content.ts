@@ -62,6 +62,35 @@ export function loadEntries(globResult: Record<string, any>, type: "case" | "pos
   return items.filter(Boolean).filter((i: ContentItem) => i.draft !== true);
 }
 
+/** Devuelve todos los casos (ES/EN) con meta y componente MDX */
+export function getAllCasesWithMDX() {
+  const modules = import.meta.glob("@/content/casos/**/*.{mdx,md}", { eager: true });
+  return Object.entries(modules).map(([path, mod]: any) => {
+    const raw = mod?.raw ?? "";
+    const fm = mod?.meta ?? matter(raw).data ?? {};
+    const slug = fm.slug ?? path.split("/").pop()?.replace(/\.(mdx|md)$/, "");
+    const lang = /\/casos\/(en|es)\//.test(path) ? path.match(/\/casos\/(en|es)\//)![1] : fm.lang;
+
+    const parsed = BaseContentSchema.safeParse({ ...fm, slug, lang });
+    if (!parsed.success) return null;
+
+    return {
+      ...parsed.data,
+      mdx: mod?.default ?? null,   // componente MDX compilado
+      body: mod?.body ?? "",
+      path,
+    };
+  })
+  .filter(Boolean)
+  .filter((x: any) => x.draft !== true);
+}
+
+/** Encuentra un caso por lang + slug con componente MDX */
+export function getCaseWithMDXBySlug(lang: "es" | "en", slug: string) {
+  const items = getAllCasesWithMDX();
+  return items.find((i: any) => i.lang === lang && i.slug === slug) ?? null;
+}
+
 // Legacy API compatibility - keep existing functions working exactly the same
 import type { CaseStudy, Locale, MDXModule, Post } from '@/content/types';
 

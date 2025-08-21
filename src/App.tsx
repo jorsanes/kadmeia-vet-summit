@@ -22,9 +22,8 @@ import Privacy from "@/pages/Privacy";
 import Legal from "@/pages/Legal";
 import Cookies from "@/pages/Cookies";
 import BlogPostNew from "@/pages/blog/Post";
-import CaseView from "@/pages/casos/Case";
 import PostDetail from "@/pages/blog/PostDetail";
-import CaseDetail from "@/pages/cases/CaseDetail";
+import CaseDetail from "@/pages/casos/CaseDetail";
 
 import ContentManager from "@/pages/ContentManager";
 import NotFound from "./pages/NotFound";
