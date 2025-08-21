@@ -2,13 +2,45 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Reveal from '@/components/ui/Reveal';
-import ContentCard from '@/components/content/ContentCard';
-import { getAllPosts } from '@/lib/content';
+import { TextCard } from '@/components/content/TextCard';
+
+const modules = import.meta.glob("@/content/blog/**/*.{mdx,md}", { eager: true });
+
+type BlogPost = {
+  slug: string;
+  lang: "es" | "en";
+  title: string;
+  date: string;
+  excerpt?: string;
+};
+
+function formatDate(date: string, lang: "es" | "en") {
+  try {
+    return new Date(date).toLocaleDateString(lang === "en" ? "en-GB" : "es-ES", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+  } catch { return date; }
+}
+
+const blogPosts: BlogPost[] = Object.entries(modules).map(([path, mod]) => {
+  const meta = (mod as any).meta || {};
+  const m = path.match(/\/blog\/(en|es)\/(.+)\.(mdx|md)$/);
+  const lang = (m?.[1] ?? "es") as "es" | "en";
+  const slug = m?.[2] ?? "";
+  return {
+    slug,
+    lang,
+    title: meta.title ?? slug,
+    date: meta.date ?? "",
+    excerpt: meta.excerpt ?? "",
+  };
+}).sort((a,b)=> (b.date?.localeCompare(a.date)));
 
 export default function Blog() {
   const isEN = useLocation().pathname.startsWith('/en');
   const lang = isEN ? 'en' : 'es';
-  const posts = getAllPosts(lang as any);
 
   return (
     <div className="container py-12">
@@ -38,22 +70,23 @@ export default function Blog() {
         />
       </Reveal>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-        {posts.map(post => (
-          <ContentCard
-            key={post.slug}
-            href={isEN ? `/en/blog/${post.slug}` : `/blog/${post.slug}`}
-            title={post.title}
-            excerpt={post.excerpt}
-            date={post.date}
-            tags={post.tags}
-            cover={post.cover}
-            locale={lang}
-          />
-        ))}
+      <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        {blogPosts.filter(post => post.lang === lang).map(post => {
+          const href = post.lang === "en" ? `/en/blog/${post.slug}` : `/blog/${post.slug}`;
+          return (
+            <TextCard
+              key={`${post.lang}-${post.slug}`}
+              title={post.title}
+              date={formatDate(post.date, post.lang)}
+              excerpt={post.excerpt}
+              href={href}
+              cta={isEN ? "Read article →" : "Leer artículo →"}
+            />
+          );
+        })}
       </div>
       
-      {posts.length === 0 && (
+      {blogPosts.filter(post => post.lang === lang).length === 0 && (
         <div className="text-center py-16">
           <p className="text-muted-foreground text-lg">
             {isEN ? 'No blog posts available yet.' : 'Aún no hay artículos disponibles.'}
