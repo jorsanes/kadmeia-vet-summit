@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { getAllCases } from '@/lib/content';
 
 export default function Cases() {
@@ -9,6 +10,10 @@ export default function Cases() {
 
   return (
     <div className="container py-12">
+      <Helmet>
+        <title>{isEN ? 'Case Studies | KADMEIA' : 'Casos de éxito | KADMEIA'}</title>
+        <meta name="description" content={isEN ? 'Measured outcomes from our projects.' : 'Resultados medibles de nuestros proyectos.'} />
+      </Helmet>
       <h1 className="text-4xl font-serif mb-8">{isEN ? 'Case Studies' : 'Casos de éxito'}</h1>
       <div className="grid md:grid-cols-2 gap-6">
         {cases.map(c => (

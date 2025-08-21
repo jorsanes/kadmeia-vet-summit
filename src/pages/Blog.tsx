@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { getAllPosts } from '@/lib/content';
 
 export default function Blog() {
@@ -9,6 +10,10 @@ export default function Blog() {
 
   return (
     <div className="container py-12">
+      <Helmet>
+        <title>{isEN ? 'Blog | KADMEIA' : 'Blog | KADMEIA'}</title>
+        <meta name="description" content={isEN ? 'Insights on veterinary AI and automation.' : 'Ideas sobre IA y automatización veterinaria.'} />
+      </Helmet>
       <h1 className="text-4xl font-serif mb-8">{isEN ? 'Blog' : 'Blog'}</h1>
       <div className="grid md:grid-cols-2 gap-6">
         {posts.map(p => (
