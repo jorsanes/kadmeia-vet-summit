@@ -46,40 +46,43 @@ export default function Blog() {
         />
       </Reveal>
       
-      <div className="mt-10 grid gap-8 sm:gap-10 lg:gap-12 sm:grid-cols-2 lg:grid-cols-3" role="list">
-        {posts.length > 0 ? (
-          posts.map(post => (
-            <TextCard
-              key={post.slug}
-              title={post.title}
-              date={new Date(post.date).toLocaleDateString(lang === 'en' ? 'en-US' : 'es-ES')}
-              href={post.lang === "en" ? `/en/blog/${post.slug}` : `/blog/${post.slug}`}
-              excerpt={post.excerpt}
-              cover={post.cover}
-              cta={lang === "en" ? "Read article →" : "Leer artículo →"}
-            />
-          ))
-        ) : (
-          <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
-            <div className="max-w-md mx-auto">
-              <h3 className="text-xl font-serif text-foreground mb-3">
-                {lang === "en" ? "Content coming soon" : "Pronto añadiremos contenido"}
-              </h3>
-              <p className="text-muted-foreground mb-6">
-                {lang === "en" 
-                  ? "We're preparing insightful articles about veterinary AI, consulting, and industry trends."
-                  : "Estamos preparando artículos perspicaces sobre IA veterinaria, consultoría y tendencias del sector."}
-              </p>
-              <a 
-                href={lang === "en" ? "/en/contact" : "/contact"}
-                className="btn-primary"
-              >
-                {lang === "en" ? "Contact us" : "Contactanos"}
-              </a>
+      <Reveal>
+        <div className="mt-10 grid gap-8 sm:gap-10 lg:gap-12 sm:grid-cols-2 lg:grid-cols-3" role="list">
+          {posts.length > 0 ? (
+            posts.map((post, index) => (
+              <Reveal key={post.slug} delay={index * 0.1}>
+                <TextCard
+                  title={post.title}
+                  date={new Date(post.date).toLocaleDateString(lang === 'en' ? 'en-US' : 'es-ES')}
+                  href={post.lang === "en" ? `/en/blog/${post.slug}` : `/blog/${post.slug}`}
+                  excerpt={post.excerpt}
+                  cover={post.cover}
+                  cta={lang === "en" ? "Read article →" : "Leer artículo →"}
+                />
+              </Reveal>
+            ))
+          ) : (
+            <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
+              <div className="max-w-md mx-auto">
+                <h3 className="text-xl font-serif text-foreground mb-3">
+                  {lang === "en" ? "Content coming soon" : "Pronto añadiremos contenido"}
+                </h3>
+                <p className="text-muted-foreground mb-6">
+                  {lang === "en" 
+                    ? "We're preparing insightful articles about veterinary AI, consulting, and industry trends."
+                    : "Estamos preparando artículos perspicaces sobre IA veterinaria, consultoría y tendencias del sector."}
+                </p>
+                <a 
+                  href={lang === "en" ? "/en/contact" : "/contact"}
+                  className="btn-primary"
+                >
+                  {lang === "en" ? "Contact us" : "Contactanos"}
+                </a>
+              </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      </Reveal>
     </div>
   );
 }

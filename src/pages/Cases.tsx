@@ -47,40 +47,43 @@ export default function Cases() {
         />
       </Reveal>
       
-      <div className="mt-10 grid gap-8 sm:gap-10 lg:gap-12 sm:grid-cols-2 lg:grid-cols-3" role="list">
-        {cases.length > 0 ? (
-          cases.map(caseItem => (
-            <TextCard
-              key={caseItem.slug}
-              title={caseItem.title}
-              date={new Date(caseItem.date).toLocaleDateString(lang === 'en' ? 'en-US' : 'es-ES')}
-              href={caseItem.lang === "en" ? `/en/cases/${caseItem.slug}` : `/casos/${caseItem.slug}`}
-              excerpt={caseItem.excerpt}
-              cover={caseItem.cover}
-              cta={lang === "en" ? "View case →" : "Ver caso →"}
-            />
-          ))
-        ) : (
-          <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
-            <div className="max-w-md mx-auto">
-              <h3 className="text-xl font-serif text-foreground mb-3">
-                {lang === "en" ? "Content coming soon" : "Pronto añadiremos contenido"}
-              </h3>
-              <p className="text-muted-foreground mb-6">
-                {lang === "en" 
-                  ? "We're working on bringing you inspiring case studies from our veterinary consulting work."
-                  : "Estamos trabajando en traerte casos de éxito inspiradores de nuestro trabajo de consultoría veterinaria."}
-              </p>
-              <a 
-                href={lang === "en" ? "/en/contact" : "/contact"}
-                className="btn-primary"
-              >
-                {lang === "en" ? "Contact us" : "Contactanos"}
-              </a>
+      <Reveal>
+        <div className="mt-10 grid gap-8 sm:gap-10 lg:gap-12 sm:grid-cols-2 lg:grid-cols-3" role="list">
+          {cases.length > 0 ? (
+            cases.map((caseItem, index) => (
+              <Reveal key={caseItem.slug} delay={index * 0.1}>
+                <TextCard
+                  title={caseItem.title}
+                  date={new Date(caseItem.date).toLocaleDateString(lang === 'en' ? 'en-US' : 'es-ES')}
+                  href={caseItem.lang === "en" ? `/en/cases/${caseItem.slug}` : `/casos/${caseItem.slug}`}
+                  excerpt={caseItem.excerpt}
+                  cover={caseItem.cover}
+                  cta={lang === "en" ? "View case →" : "Ver caso →"}
+                />
+              </Reveal>
+            ))
+          ) : (
+            <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
+              <div className="max-w-md mx-auto">
+                <h3 className="text-xl font-serif text-foreground mb-3">
+                  {lang === "en" ? "Content coming soon" : "Pronto añadiremos contenido"}
+                </h3>
+                <p className="text-muted-foreground mb-6">
+                  {lang === "en" 
+                    ? "We're working on bringing you inspiring case studies from our veterinary consulting work."
+                    : "Estamos trabajando en traerte casos de éxito inspiradores de nuestro trabajo de consultoría veterinaria."}
+                </p>
+                <a 
+                  href={lang === "en" ? "/en/contact" : "/contact"}
+                  className="btn-primary"
+                >
+                  {lang === "en" ? "Contact us" : "Contactanos"}
+                </a>
+              </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      </Reveal>
     </div>
   );
 }

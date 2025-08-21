@@ -130,110 +130,107 @@ const Services = () => {
         </motion.div>
 
         {/* Services */}
-        <motion.div 
-          className="space-y-20"
-          initial="initial"
-          animate="animate"
-          variants={staggerContainer}
-        >
-          {services.map((service, index) => (
-            <motion.div 
-              key={index}
-              variants={fadeInUp}
-              className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start"
-            >
-              {/* Service Info */}
-              <div className={`${index % 2 === 1 ? 'lg:order-2' : ''}`}>
-                <Card className="card-premium h-full">
-                  <CardHeader className="pb-6">
-                    <div className="flex items-center gap-4 mb-4">
-                      <div className="flex items-center justify-center w-12 h-12 bg-secondary/10 rounded-xl">
-                        <service.icon className="h-6 w-6 text-secondary" />
+        <Reveal>
+          <div className="space-y-20">
+            {services.map((service, index) => (
+              <Reveal 
+                key={index}
+                delay={index * 0.1}
+                className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start"
+              >
+                {/* Service Info */}
+                <div className={`${index % 2 === 1 ? 'lg:order-2' : ''}`}>
+                  <Card className="card-premium h-full">
+                    <CardHeader className="pb-6">
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className="flex items-center justify-center w-12 h-12 bg-secondary/10 rounded-xl">
+                          <service.icon className="h-6 w-6 text-secondary" />
+                        </div>
+                        <Badge variant="secondary" className="text-xs">
+                          {service.target}
+                        </Badge>
                       </div>
-                      <Badge variant="secondary" className="text-xs">
-                        {service.target}
-                      </Badge>
-                    </div>
-                    <CardTitle className="font-display text-2xl text-foreground">
-                      {service.title}
-                    </CardTitle>
-                    <p className="text-secondary font-medium">
-                      {service.subtitle}
-                    </p>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground mb-6">
-                      {service.description}
-                    </p>
-                    
-                    <div className="flex items-center gap-4 mb-6 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4 text-secondary" />
-                        {service.duration}
+                      <CardTitle className="font-display text-2xl text-foreground">
+                        {service.title}
+                      </CardTitle>
+                      <p className="text-secondary font-medium">
+                        {service.subtitle}
+                      </p>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground mb-6">
+                        {service.description}
+                      </p>
+                      
+                      <div className="flex items-center gap-4 mb-6 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-4 w-4 text-secondary" />
+                          {service.duration}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Target className="h-4 w-4 text-secondary" />
+                          Resultados medibles
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Target className="h-4 w-4 text-secondary" />
-                        Resultados medibles
-                      </div>
-                    </div>
 
-                    <Button asChild className="btn-primary">
-                      <Link to="/contacto" className="gap-2">
-                        Consultar proyecto
-                        <ArrowRight className="h-4 w-4" />
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
+                      <Button asChild className="btn-primary">
+                        <Link to="/contacto" className="gap-2">
+                          Consultar proyecto
+                          <ArrowRight className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
 
-              {/* Deliverables & Process */}
-              <div className={`space-y-6 ${index % 2 === 1 ? 'lg:order-1' : ''}`}>
-                {/* Deliverables */}
-                <Card className="card-premium">
-                  <CardHeader>
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <CheckCircle className="h-5 w-5 text-success" />
-                      Entregables
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-3">
-                      {service.deliverables.map((item, i) => (
-                        <li key={i} className="flex items-start gap-3">
-                          <CheckCircle className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
-                          <span className="text-sm text-muted-foreground">{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
+                {/* Deliverables & Process */}
+                <div className={`space-y-6 ${index % 2 === 1 ? 'lg:order-1' : ''}`}>
+                  {/* Deliverables */}
+                  <Card className="card-premium">
+                    <CardHeader>
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        <CheckCircle className="h-5 w-5 text-success" />
+                        Entregables
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-3">
+                        {service.deliverables.map((item, i) => (
+                          <li key={i} className="flex items-start gap-3">
+                            <CheckCircle className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
+                            <span className="text-sm text-muted-foreground">{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
 
-                {/* Process */}
-                <Card className="card-premium">
-                  <CardHeader>
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <Workflow className="h-5 w-5 text-secondary" />
-                      Proceso
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ol className="space-y-3">
-                      {service.process.map((step, i) => (
-                        <li key={i} className="flex items-start gap-3">
-                          <div className="flex items-center justify-center w-6 h-6 bg-secondary/10 rounded-full text-xs font-semibold text-secondary flex-shrink-0 mt-0.5">
-                            {i + 1}
-                          </div>
-                          <span className="text-sm text-muted-foreground">{step}</span>
-                        </li>
-                      ))}
-                    </ol>
-                  </CardContent>
-                </Card>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
+                  {/* Process */}
+                  <Card className="card-premium">
+                    <CardHeader>
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        <Workflow className="h-5 w-5 text-secondary" />
+                        Proceso
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ol className="space-y-3">
+                        {service.process.map((step, i) => (
+                          <li key={i} className="flex items-start gap-3">
+                            <div className="flex items-center justify-center w-6 h-6 bg-secondary/10 rounded-full text-xs font-semibold text-secondary flex-shrink-0 mt-0.5">
+                              {i + 1}
+                            </div>
+                            <span className="text-sm text-muted-foreground">{step}</span>
+                          </li>
+                        ))}
+                      </ol>
+                    </CardContent>
+                  </Card>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </Reveal>
 
         {/* CTA Section */}
         <motion.div 

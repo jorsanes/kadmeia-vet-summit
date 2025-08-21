@@ -100,7 +100,7 @@ const Home = () => {
                 {t('hero.title')}
               </h1>
             </Reveal>
-            <Reveal delay={0.05}>
+            <Reveal delay={0.1}>
               <p 
                 className="mt-6 text-lg leading-8 text-muted-foreground sm:text-xl max-w-3xl mx-auto"
               >
@@ -168,61 +168,57 @@ const Home = () => {
           </Reveal>
           </motion.div>
 
-          <motion.div 
-            className="grid grid-cols-1 gap-8 lg:grid-cols-3"
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true }}
-            variants={staggerContainer}
-          >
-            <Reveal delay={0.1}>
-              <Card className="card-premium h-full">
-                <CardContent className="p-8">
-                  <div className="flex items-center justify-center w-12 h-12 bg-secondary/10 rounded-xl mb-6">
-                    <Network className="h-6 w-6 text-secondary" />
-                  </div>
-                  <h3 className="font-display text-xl font-semibold text-foreground mb-4">
-                    {t('whatWeDo.bridge.title')}
-                  </h3>
-                  <p className="text-muted-foreground">
-                    {t('whatWeDo.bridge.description')}
-                  </p>
-                </CardContent>
-              </Card>
-            </Reveal>
+          <Reveal>
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+              <Reveal delay={0.1}>
+                <Card className="card-premium h-full">
+                  <CardContent className="p-8">
+                    <div className="flex items-center justify-center w-12 h-12 bg-secondary/10 rounded-xl mb-6">
+                      <Network className="h-6 w-6 text-secondary" />
+                    </div>
+                    <h3 className="font-display text-xl font-semibold text-foreground mb-4">
+                      {t('whatWeDo.bridge.title')}
+                    </h3>
+                    <p className="text-muted-foreground">
+                      {t('whatWeDo.bridge.description')}
+                    </p>
+                  </CardContent>
+                </Card>
+              </Reveal>
 
-            <Reveal delay={0.15}>
-              <Card className="card-premium h-full">
-                <CardContent className="p-8">
-                  <div className="flex items-center justify-center w-12 h-12 bg-secondary/10 rounded-xl mb-6">
-                    <Brain className="h-6 w-6 text-secondary" />
-                  </div>
-                  <h3 className="font-display text-xl font-semibold text-foreground mb-4">
-                    {t('whatWeDo.ai.title')}
-                  </h3>
-                  <p className="text-muted-foreground">
-                    {t('whatWeDo.ai.description')}
-                  </p>
-                </CardContent>
-              </Card>
-            </Reveal>
+              <Reveal delay={0.15}>
+                <Card className="card-premium h-full">
+                  <CardContent className="p-8">
+                    <div className="flex items-center justify-center w-12 h-12 bg-secondary/10 rounded-xl mb-6">
+                      <Brain className="h-6 w-6 text-secondary" />
+                    </div>
+                    <h3 className="font-display text-xl font-semibold text-foreground mb-4">
+                      {t('whatWeDo.ai.title')}
+                    </h3>
+                    <p className="text-muted-foreground">
+                      {t('whatWeDo.ai.description')}
+                    </p>
+                  </CardContent>
+                </Card>
+              </Reveal>
 
-            <Reveal delay={0.2}>
-              <Card className="card-premium h-full">
-                <CardContent className="p-8">
-                  <div className="flex items-center justify-center w-12 h-12 bg-secondary/10 rounded-xl mb-6">
-                    <Workflow className="h-6 w-6 text-secondary" />
-                  </div>
-                  <h3 className="font-display text-xl font-semibold text-foreground mb-4">
-                    {t('whatWeDo.automation.title')}
-                  </h3>
-                  <p className="text-muted-foreground">
-                    {t('whatWeDo.automation.description')}
-                  </p>
-                </CardContent>
-              </Card>
-            </Reveal>
-          </motion.div>
+              <Reveal delay={0.2}>
+                <Card className="card-premium h-full">
+                  <CardContent className="p-8">
+                    <div className="flex items-center justify-center w-12 h-12 bg-secondary/10 rounded-xl mb-6">
+                      <Workflow className="h-6 w-6 text-secondary" />
+                    </div>
+                    <h3 className="font-display text-xl font-semibold text-foreground mb-4">
+                      {t('whatWeDo.automation.title')}
+                    </h3>
+                    <p className="text-muted-foreground">
+                      {t('whatWeDo.automation.description')}
+                    </p>
+                  </CardContent>
+                </Card>
+              </Reveal>
+            </div>
+          </Reveal>
         </div>
       </section>
 
@@ -302,40 +298,38 @@ const Home = () => {
             </Button>
           </motion.div>
 
-          <motion.div 
-            className="grid grid-cols-1 gap-8 md:grid-cols-3"
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true }}
-            variants={staggerContainer}
-          >
-            {/* Placeholder Cases */}
-            {[
-              { title: "Optimización de flujos clínicos", metric: "40% reducción tiempo", sector: "Clínica veterinaria" },
-              { title: "IA para diagnóstico por imagen", metric: "95% precisión", sector: "Red de clínicas" },
-              { title: "Automatización de inventario", metric: "30% ahorro costes", sector: "Distribuidor" }
-            ].map((caseItem, index) => (
-              <motion.div key={index} variants={fadeInUp}>
-                <Card className="card-premium h-full hover:shadow-elegant transition-shadow duration-300">
-                  <CardContent className="p-6">
-                    <div className="text-sm text-secondary font-medium mb-2">
-                      {caseItem.sector}
-                    </div>
-                    <h3 className="font-semibold text-lg text-foreground mb-4">
-                      {caseItem.title}
-                    </h3>
-                    <div className="text-2xl font-bold text-primary mb-2">
-                      {caseItem.metric}
-                    </div>
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <CheckCircle className="h-4 w-4 text-success mr-2" />
-                      Caso verificado
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </motion.div>
+          <Reveal>
+            <div 
+              className="grid grid-cols-1 gap-8 md:grid-cols-3"
+            >
+              {/* Placeholder Cases */}
+              {[
+                { title: "Optimización de flujos clínicos", metric: "40% reducción tiempo", sector: "Clínica veterinaria" },
+                { title: "IA para diagnóstico por imagen", metric: "95% precisión", sector: "Red de clínicas" },
+                { title: "Automatización de inventario", metric: "30% ahorro costes", sector: "Distribuidor" }
+              ].map((caseItem, index) => (
+                <Reveal key={index} delay={index * 0.1}>
+                  <Card className="card-premium h-full hover:shadow-elegant transition-shadow duration-300">
+                    <CardContent className="p-6">
+                      <div className="text-sm text-secondary font-medium mb-2">
+                        {caseItem.sector}
+                      </div>
+                      <h3 className="font-semibold text-lg text-foreground mb-4">
+                        {caseItem.title}
+                      </h3>
+                      <div className="text-2xl font-bold text-primary mb-2">
+                        {caseItem.metric}
+                      </div>
+                      <div className="flex items-center text-sm text-muted-foreground">
+                        <CheckCircle className="h-4 w-4 text-success mr-2" />
+                        Caso verificado
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Reveal>
+              ))}
+            </div>
+          </Reveal>
         </div>
       </section>
 
