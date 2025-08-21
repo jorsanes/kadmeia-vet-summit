@@ -1,60 +1,20 @@
-import React from 'react';
+import React from "react";
 import { useLocation, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import ContentCard from "@/components/content/ContentCard";
+import { loadEntries } from "@/lib/content";
+import SmartImage from '@/components/ui/SmartImage';
 import Reveal from '@/components/ui/Reveal';
-import { TextCard } from '@/components/content/TextCard';
 
 const modules = import.meta.glob("@/content/blog/**/*.{mdx,md}", { eager: true });
-
-type BlogPost = {
-  slug: string;
-  lang: "es" | "en";
-  title: string;
-  date: string;
-  excerpt?: string;
-};
-
-function formatDate(date: string, lang: "es" | "en") {
-  try {
-    return new Date(date).toLocaleDateString(lang === "en" ? "en-GB" : "es-ES", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    });
-  } catch { return date; }
-}
-
-// Helper to generate excerpt from content if none provided
-function generateExcerpt(content: string): string {
-  if (!content) return "";
-  // Remove MDX/markdown syntax and get first ~140 chars
-  const cleanText = content
-    .replace(/^---[\s\S]*?---/, '') // Remove frontmatter
-    .replace(/[#*`_~]/g, '') // Remove markdown syntax
-    .replace(/\n+/g, ' ') // Replace newlines with spaces
-    .trim();
-  
-  return cleanText.length > 140 ? cleanText.substring(0, 140) + '...' : cleanText;
-}
-
-const blogPosts: BlogPost[] = Object.entries(modules).map(([path, mod]) => {
-  const meta = (mod as any).meta || {};
-  const content = (mod as any).default?.toString() || '';
-  const m = path.match(/\/blog\/(en|es)\/(.+)\.(mdx|md)$/);
-  const lang = (m?.[1] ?? "es") as "es" | "en";
-  const slug = m?.[2] ?? "";
-  return {
-    slug,
-    lang,
-    title: meta.title ?? slug,
-    date: meta.date ?? "",
-    excerpt: meta.excerpt || generateExcerpt(content),
-  };
-}).sort((a,b)=> (b.date?.localeCompare(a.date)));
 
 export default function Blog() {
   const isEN = useLocation().pathname.startsWith('/en');
   const lang = isEN ? 'en' : 'es';
+
+  const posts = loadEntries(modules, "post")
+    .filter(post => post.lang === lang)
+    .sort((a, b) => +new Date(b.date) - +new Date(a.date));
 
   return (
     <div className="container py-12">
@@ -74,7 +34,7 @@ export default function Blog() {
       </Reveal>
       
       <Reveal>
-        <img
+        <SmartImage
           src="/images/illustrations/blog-abstract.webp"
           alt="Ilustración abstracta representando ideas y conocimiento"
           className="w-full max-w-4xl mx-auto mb-16 rounded-3xl shadow-elegant"
@@ -85,41 +45,42 @@ export default function Blog() {
       </Reveal>
       
       <div className="mt-10 grid gap-8 sm:gap-10 lg:gap-12 sm:grid-cols-2 lg:grid-cols-3" role="list">
-        {blogPosts.filter(post => post.lang === lang).map(post => {
-          const href = post.lang === "en" ? `/en/blog/${post.slug}` : `/blog/${post.slug}`;
-          return (
-            <TextCard
-              key={`${post.lang}-${post.slug}`}
+        {posts.length > 0 ? (
+          posts.map(post => (
+            <ContentCard
+              key={post.slug}
+              href={post.lang === "en" ? `/en/blog/${post.slug}` : `/blog/${post.slug}`}
               title={post.title}
-              date={formatDate(post.date, post.lang)}
+              date={post.date}
+              lang={post.lang}
               excerpt={post.excerpt}
-              href={href}
-              cta={isEN ? "Read article →" : "Leer artículo →"}
+              kicker={post.card?.kicker}
+              badges={post.card?.badges}
+              highlights={post.card?.highlights?.filter(h => h.label && h.value) as Array<{label: string; value: string}>}
+              cta={post.card?.cta}
             />
-          );
-        })}
-      </div>
-      
-      {blogPosts.filter(post => post.lang === lang).length === 0 && (
-        <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
-          <div className="max-w-md mx-auto">
-            <h3 className="text-xl font-serif text-foreground mb-3">
-              {lang === "en" ? "Content coming soon" : "Pronto añadiremos contenido"}
-            </h3>
-            <p className="text-muted-foreground mb-6">
-              {lang === "en" 
-                ? "We're preparing insightful articles about veterinary AI, consulting, and industry trends."
-                : "Estamos preparando artículos perspicaces sobre IA veterinaria, consultoría y tendencias del sector."}
-            </p>
-            <Link 
-              to={lang === "en" ? "/en/contact" : "/contact"}
-              className="btn-primary"
-            >
-              {lang === "en" ? "Contact us" : "Contactanos"}
-            </Link>
+          ))
+        ) : (
+          <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
+            <div className="max-w-md mx-auto">
+              <h3 className="text-xl font-serif text-foreground mb-3">
+                {lang === "en" ? "Content coming soon" : "Pronto añadiremos contenido"}
+              </h3>
+              <p className="text-muted-foreground mb-6">
+                {lang === "en" 
+                  ? "We're preparing insightful articles about veterinary AI, consulting, and industry trends."
+                  : "Estamos preparando artículos perspicaces sobre IA veterinaria, consultoría y tendencias del sector."}
+              </p>
+              <Link 
+                to={lang === "en" ? "/en/contact" : "/contact"}
+                className="btn-primary"
+              >
+                {lang === "en" ? "Contact us" : "Contactanos"}
+              </Link>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
