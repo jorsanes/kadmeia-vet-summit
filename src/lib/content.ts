@@ -1,62 +1,100 @@
-import fg from "fast-glob";
-import fs from "fs";
-import path from "path";
-import matter from "gray-matter";
-import { BlogMeta, CaseMeta } from "@/content/schemas";
+import type { CaseStudy, Locale, MDXModule, Post } from '@/content/types';
 
-const ROOT = path.resolve(".");
-const BLOG_DIR = "src/content/blog";
-const CASE_DIR = "src/content/casos";
+// 1) Indexar ficheros MDX con Vite
+// Estructura esperada:
+//   src/content/blog/es/*.mdx
+//   src/content/blog/en/*.mdx
+//   src/content/casos/es/*.mdx
+//   src/content/casos/en/*.mdx
+//
+// Cada MDX debe exportar default (componente) y usar frontmatter YAML.
 
-type Item<T = any> = {
-  slug: string;
-  filepath: string;
-  meta: T;
-};
+const blogModules = import.meta.glob<MDXModule>('/src/content/blog/**/**/*.mdx', { eager: true });
+const caseModules = import.meta.glob<MDXModule>('/src/content/casos/**/**/*.mdx', { eager: true });
 
-function readItems<T>(
-  dir: string,
-  locale: "es" | "en",
-  schema: any
-): Item<T>[] {
-  const base = path.join(ROOT, dir, locale);
-  const files = fg.sync("**/*.mdx", { cwd: base, absolute: true });
-  const items: Item<T>[] = [];
-
-  for (const file of files) {
-    const raw = fs.readFileSync(file, "utf8");
-    const { data } = matter(raw);
-    const parsed = schema.safeParse(data);
-    if (!parsed.success) {
-      console.warn(`[content] invalid frontmatter: ${file}`, parsed.error.format());
-      continue;
-    }
-    const slug = path.basename(file, ".mdx");
-    items.push({
-      slug,
-      filepath: file,
-      meta: parsed.data as T,
-    });
-  }
-
-  return items
-    .filter((it) => !(it.meta as any).draft)
-    .sort((a, b) => (b.meta as any).date.getTime() - (a.meta as any).date.getTime())
-    .reverse();
+// Util para construir slug desde el path
+function pathToSlug(path: string) {
+  // /src/content/blog/es/mi-articulo.mdx -> mi-articulo
+  return path.split('/').pop()!.replace(/\.mdx$/, '');
+}
+function pathToLang(path: string): Locale {
+  // .../blog/es/... or .../casos/en/...
+  const parts = path.split('/');
+  const idx = parts.findIndex(p => p === 'blog' || p === 'casos');
+  const lang = parts[idx + 1] as Locale;
+  return (lang === 'en' ? 'en' : 'es');
+}
+function isDraft(mod: MDXModule) {
+  return Boolean(mod.frontmatter?.draft);
 }
 
-export function getAllPosts(locale: "es" | "en") {
-  return readItems(BLOG_DIR, locale, BlogMeta);
+function moduleToPost(path: string, mod: MDXModule): Post {
+  const fm = mod.frontmatter ?? {};
+  return {
+    kind: 'post',
+    slug: fm.slug ?? pathToSlug(path),
+    title: fm.title ?? pathToSlug(path),
+    date: fm.date ?? new Date().toISOString().slice(0,10),
+    excerpt: fm.excerpt,
+    cover: fm.cover,
+    lang: (fm.lang as any) ?? pathToLang(path),
+    tags: fm.tags ?? [],
+    draft: !!fm.draft,
+  };
+}
+function moduleToCase(path: string, mod: MDXModule): CaseStudy {
+  const fm = mod.frontmatter ?? {};
+  return {
+    kind: 'case',
+    slug: fm.slug ?? pathToSlug(path),
+    title: fm.title ?? pathToSlug(path),
+    date: fm.date ?? new Date().toISOString().slice(0,10),
+    excerpt: fm.excerpt,
+    cover: fm.cover,
+    lang: (fm.lang as any) ?? pathToLang(path),
+    tags: fm.tags ?? [],
+    draft: !!fm.draft,
+  };
 }
 
-export function getAllCases(locale: "es" | "en") {
-  return readItems(CASE_DIR, locale, CaseMeta);
+// 2) Catálogos en memoria (eager)
+const POSTS: Record<string, { meta: Post; mod: MDXModule }> = {};
+const CASES: Record<string, { meta: CaseStudy; mod: MDXModule }> = {};
+
+for (const [path, mod] of Object.entries(blogModules)) {
+  const meta = moduleToPost(path, mod);
+  if (!isDraft(mod)) POSTS[`/${meta.lang}/blog/${meta.slug}`] = { meta, mod };
+  // acceso alterno sin prefijo /es
+  POSTS[`/blog/${meta.slug}`] = { meta, mod };
 }
 
-export function getPostBySlug(locale: "es" | "en", slug: string) {
-  return getAllPosts(locale).find((p) => p.slug === slug);
+for (const [path, mod] of Object.entries(caseModules)) {
+  const meta = moduleToCase(path, mod);
+  if (!isDraft(mod)) CASES[`/${meta.lang}/cases/${meta.slug}`] = { meta, mod };
+  CASES[`/casos/${meta.slug}`] = { meta, mod }; // ES corto
 }
 
-export function getCaseBySlug(locale: "es" | "en", slug: string) {
-  return getAllCases(locale).find((c) => c.slug === slug);
+// 3) API pública
+export function getAllPosts(lang: Locale): Post[] {
+  return Object.values(POSTS)
+    .map(v => v.meta)
+    .filter(p => p.lang === lang)
+    .sort((a,b) => (a.date < b.date ? 1 : -1));
+}
+
+export function getAllCases(lang: Locale): CaseStudy[] {
+  return Object.values(CASES)
+    .map(v => v.meta)
+    .filter(c => c.lang === lang)
+    .sort((a,b) => (a.date < b.date ? 1 : -1));
+}
+
+export function getPostBySlug(lang: Locale, slug: string) {
+  const key = lang === 'en' ? `/en/blog/${slug}` : `/blog/${slug}`;
+  return POSTS[key];
+}
+
+export function getCaseBySlug(lang: Locale, slug: string) {
+  const key = lang === 'en' ? `/en/cases/${slug}` : `/casos/${slug}`;
+  return CASES[key];
 }
