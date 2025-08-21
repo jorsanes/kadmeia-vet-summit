@@ -9,30 +9,30 @@
     "cta": "Contactar"
   },
   "hero": {
-    "title": "ConsultorÃ­a y tecnologÃ­a veterinaria",
-    "subtitle": "Unimos ciencia, tecnologÃ­a y negocio para clÃ­nicas y fabricantes en Europa",
+    "title": "Consultoría y tecnología veterinaria",
+    "subtitle": "Unimos ciencia, tecnología y negocio para clínicas y fabricantes en Europa",
     "cta_primary": "Hablemos",
     "cta_secondary": "Ver servicios"
   },
   "whatWeDo": {
-    "title": "QuÃ© hacemos",
+    "title": "Qué hacemos",
     "subtitle": "Tres pilares que transforman tu negocio veterinario",
     "bridge": {
-      "title": "Puente ciencia-negocio-tecnologÃ­a",
-      "description": "Conectamos evidencia cientÃ­fica con oportunidades de negocio y soluciones tecnolÃ³gicas prÃ¡cticas"
+      "title": "Puente ciencia-negocio-tecnología",
+      "description": "Conectamos evidencia científica con oportunidades de negocio y soluciones tecnológicas prácticas"
     },
     "ai": {
-      "title": "IA y software para clÃ­nicas",
-      "description": "Implementamos y distribuimos soluciones de inteligencia artificial que optimizan la gestiÃ³n clÃ­nica"
+      "title": "IA y software para clínicas",
+      "description": "Implementamos y distribuimos soluciones de inteligencia artificial que optimizan la gestión clínica"
     },
     "automation": {
-      "title": "AutomatizaciÃ³n No-Code",
+      "title": "Automatización No-Code",
       "description": "Creamos flujos automatizados con Make y n8n que liberan tiempo para lo que realmente importa"
     }
   },
   "sectors": {
     "title": "Sectores que transformamos",
-    "clinics": "ClÃ­nicas de pequeÃ±os animales",
+    "clinics": "Clínicas de pequeños animales",
     "distributors": "Distribuidores especializados",
     "corporate": "Grupos corporativos veterinarios"
   },
@@ -41,16 +41,16 @@
     "viewAll": "Ver todos los casos"
   },
   "testimonials": {
-    "title": "ConfÃ­an en nosotros"
+    "title": "Confían en nosotros"
   },
   "finalCta": {
-    "title": "Â¿Listo para transformar su negocio veterinario?",
-    "subtitle": "Conversemos sobre cÃ³mo podemos ayudarle a crecer con evidencia y tecnologÃ­a",
-    "cta": "Iniciar conversaciÃ³n"
+    "title": "¿Listo para transformar su negocio veterinario?",
+    "subtitle": "Conversemos sobre cómo podemos ayudarle a crecer con evidencia y tecnología",
+    "cta": "Iniciar conversación"
   },
   "footer": {
-    "description": "ConsultorÃ­a y tecnologÃ­a veterinaria con base cientÃ­fica y visiÃ³n prÃ¡ctica.",
-    "address": "Camino de los Malatones, 63 - J3<br>28119 Algete, Madrid, EspaÃ±a",
+    "description": "Consultoría y tecnología veterinaria con base científica y visión práctica.",
+    "address": "Camino de los Malatones, 63 - J3<br>28119 Algete, Madrid, España",
     "email": "info@kadmeia.com",
     "links": {
       "privacy": "Privacidad",
@@ -70,48 +70,48 @@
       "name": "Nombre completo",
       "email": "Email",
       "company": "Empresa",
-      "phone": "TelÃ©fono",
+      "phone": "Teléfono",
       "message": "Mensaje",
-      "consent": "Acepto el tratamiento de mis datos personales segÃºn la polÃ­tica de privacidad",
+      "consent": "Acepto el tratamiento de mis datos personales según la política de privacidad",
       "submit": "Enviar mensaje"
     }
   },
   "seo": {
     "home": {
-      "title": "KADMEIA - ConsultorÃ­a y TecnologÃ­a Veterinaria",
-      "description": "ConsultorÃ­a y tecnologÃ­a veterinaria que une evidencia, claridad e impacto. Puenteamos ciencia, negocio y tecnologÃ­a para clÃ­nicas y fabricantes."
+      "title": "KADMEIA - Consultoría y Tecnología Veterinaria",
+      "description": "Consultoría y tecnología veterinaria que une evidencia, claridad e impacto. Puenteamos ciencia, negocio y tecnología para clínicas y fabricantes."
     },
     "services": {
       "title": "Servicios - KADMEIA",
-      "description": "Servicios de consultorÃ­a veterinaria: Market bridge, IA para clÃ­nicas y automatizaciÃ³n No-Code para optimizar su negocio veterinario."
+      "description": "Servicios de consultoría veterinaria: Market bridge, IA para clínicas y automatización No-Code para optimizar su negocio veterinario."
     },
     "cases": {
-      "title": "Casos de Ãxito - KADMEIA",
-      "description": "Casos de Ã©xito de implementaciones de IA y automatizaciÃ³n en clÃ­nicas veterinarias. Resultados medibles y transformaciÃ³n digital."
+      "title": "Casos de Éxito - KADMEIA",
+      "description": "Casos de éxito de implementaciones de IA y automatización en clínicas veterinarias. Resultados medibles y transformación digital."
     },
     "blog": {
       "title": "Blog - KADMEIA",
-      "description": "ArtÃ­culos sobre tecnologÃ­a veterinaria, IA aplicada, automatizaciÃ³n de procesos y tendencias en el sector veterinario."
+      "description": "Artículos sobre tecnología veterinaria, IA aplicada, automatización de procesos y tendencias en el sector veterinario."
     },
     "about": {
       "title": "Sobre Nosotros - KADMEIA",
-      "description": "Conoce el equipo de KADMEIA, nuestra experiencia en consultorÃ­a veterinaria y cÃ³mo transformamos clÃ­nicas con tecnologÃ­a."
+      "description": "Conoce el equipo de KADMEIA, nuestra experiencia en consultoría veterinaria y cómo transformamos clínicas con tecnología."
     },
     "contact": {
       "title": "Contacto - KADMEIA",
-      "description": "Contacta con nuestro equipo de consultorÃ­a veterinaria. Hablemos de tu proyecto de transformaciÃ³n digital."
+      "description": "Contacta con nuestro equipo de consultoría veterinaria. Hablemos de tu proyecto de transformación digital."
     },
     "legal": {
       "title": "Aviso Legal - KADMEIA",
-      "description": "Aviso legal de KADMEIA SLU. InformaciÃ³n sobre tÃ©rminos de uso, propiedad intelectual y legislaciÃ³n aplicable."
+      "description": "Aviso legal de KADMEIA SLU. Información sobre términos de uso, propiedad intelectual y legislación aplicable."
     },
     "privacy": {
-      "title": "PolÃ­tica de Privacidad - KADMEIA",
-      "description": "PolÃ­tica de privacidad de KADMEIA. InformaciÃ³n sobre el tratamiento de datos personales segÃºn el RGPD."
+      "title": "Política de Privacidad - KADMEIA",
+      "description": "Política de privacidad de KADMEIA. Información sobre el tratamiento de datos personales según el RGPD."
     },
     "cookies": {
-      "title": "PolÃ­tica de Cookies - KADMEIA",
-      "description": "PolÃ­tica de cookies de KADMEIA. InformaciÃ³n sobre el uso de cookies y tecnologÃ­as similares en nuestro sitio web."
+      "title": "Política de Cookies - KADMEIA",
+      "description": "Política de cookies de KADMEIA. Información sobre el uso de cookies y tecnologías similares en nuestro sitio web."
     }
   }
 }
