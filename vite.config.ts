@@ -8,6 +8,7 @@ import remarkFrontmatter from "remark-frontmatter";
 import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import rehypeRaw from "rehype-raw";
 import { visualizer } from "rollup-plugin-visualizer";
 import compression from "vite-plugin-compression";
 import { splitVendorChunkPlugin } from "vite";
@@ -27,6 +28,7 @@ export default defineConfig(({ mode, command }) => ({
         [remarkMdxFrontmatter, { name: 'meta' }],
       ],
       rehypePlugins: [
+        rehypeRaw,
         rehypeSlug,
         [rehypeAutolinkHeadings, { behavior: "append", properties: { className: ["mdx-anchor"] } }],
       ],
