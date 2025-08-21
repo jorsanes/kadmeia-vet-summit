@@ -8,6 +8,8 @@ import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import { visualizer } from "rollup-plugin-visualizer";
+import compression from 'vite-plugin-compression';
+import { splitVendorChunkPlugin } from 'vite';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode, command }) => {
@@ -40,6 +42,10 @@ export default defineConfig(({ mode, command }) => {
           brotliSize: true,
           open: true,
         }),
+      // Compresión para build de producción
+      !isDev && compression({ algorithm: 'brotliCompress', ext: '.br', deleteOriginFile: false }),
+      !isDev && compression({ algorithm: 'gzip', ext: '.gz', deleteOriginFile: false }),
+      !isDev && splitVendorChunkPlugin()
     ].filter(Boolean),
     resolve: {
       alias: {
