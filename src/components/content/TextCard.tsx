@@ -10,9 +10,16 @@ type Props = {
 
 export function TextCard({ title, date, href, excerpt, cta = "Ver más →" }: Props) {
   return (
-    <article className="relative rounded-2xl bg-gradient-to-b from-white to-[#f8f5f0] shadow-[0_10px_40px_-15px_rgba(0,0,0,.15)] ring-1 ring-black/5 overflow-hidden transition hover:shadow-[0_18px_50px_-10px_rgba(0,0,0,.2)]">
+    <article 
+      role="listitem"
+      className="relative rounded-2xl bg-gradient-to-b from-white to-[#f8f5f0] shadow-[0_10px_40px_-15px_rgba(0,0,0,.15)] ring-1 ring-black/5 overflow-hidden transition-all duration-300 hover:shadow-[0_18px_50px_-10px_rgba(0,0,0,.2)] hover:translate-y-[-2px] focus-within:ring-2 focus-within:ring-primary/40"
+    >
       {/* overlay link accesible */}
-      <Link to={href} aria-label={title} className="absolute inset-0 z-10" />
+      <Link 
+        to={href} 
+        aria-label={title} 
+        className="absolute inset-0 z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 rounded-2xl" 
+      />
       {/* "cabecera" vacía para el look de tarjeta sin imagen */}
       <div className="aspect-[4/3] w-full bg-[#f1ede7]" />
       <div className="p-4">
