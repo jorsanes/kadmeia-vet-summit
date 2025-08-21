@@ -1,4 +1,4 @@
-# --- KADMEIA: SPA + Decap Admin routing ---
+# --- KADMEIA: SPA routing ---
 Options -Multiviews
 RewriteEngine On
 
@@ -7,16 +7,5 @@ RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
-# 2) Decap CMS: /admin y sus rutas internas -> admin/index.html
-RewriteRule ^admin/?$ /admin/index.html [L]
-RewriteRule ^admin/.+ /admin/index.html [L]
-
-# 3) SPA fallback: cualquier otra ruta -> index.html
+# 2) SPA fallback: cualquier otra ruta -> index.html
 RewriteRule ^ index.html [L]
-
-# (opcional) Evitar cache agresiva durante ajustes del CMS
-<IfModule mod_headers.c>
-  <FilesMatch "^admin/(index\.html|decap-config\.js|oauth-bridge\.js)$">
-    Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
-  </FilesMatch>
-</IfModule>
