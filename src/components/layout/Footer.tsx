@@ -112,6 +112,9 @@ const Footer = () => {
               <Link to={getLocalizedHref('/cookies')} className="text-sm text-primary-foreground/60 hover:text-secondary transition-colors">
                 {t('footer.links.cookies')}
               </Link>
+              <a href="/rss.xml" target="_blank" rel="noopener" className="text-sm text-primary-foreground/60 hover:text-secondary transition-colors">
+                RSS
+              </a>
             </div>
           </div>
         </div>
