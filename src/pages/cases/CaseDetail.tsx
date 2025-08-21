@@ -3,7 +3,7 @@ import { useParams, useLocation } from 'react-router-dom';
 import { MDXProvider } from '@mdx-js/react';
 import { Helmet } from 'react-helmet-async';
 import { getCaseBySlug } from '@/lib/content';
-import { MDXComponents } from '@/components/mdx/MDXComponents';
+import MDXComponents from '@/components/mdx/MDXComponents';
 
 export default function CaseDetail() {
   const { slug = '' } = useParams();

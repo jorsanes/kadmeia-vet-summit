@@ -5,6 +5,8 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 import mdx from "@mdx-js/rollup";
 import remarkGfm from "remark-gfm";
+import rehypeSlug from "rehype-slug";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import { visualizer } from "rollup-plugin-visualizer";
 
 // https://vitejs.dev/config/
@@ -19,7 +21,13 @@ export default defineConfig(({ mode, command }) => {
     },
     plugins: [
       // MDX primero para que transforme antes que React
-      mdx({ remarkPlugins: [remarkGfm] }),
+      mdx({
+        remarkPlugins: [remarkGfm],
+        rehypePlugins: [
+          rehypeSlug,
+          [rehypeAutolinkHeadings, { behavior: 'append', properties: { className: ['mdx-anchor'] } }]
+        ],
+      }),
       react(),
       // Solo en dev local (Lovable/preview) añade el tagger
       isDev && componentTagger(),
