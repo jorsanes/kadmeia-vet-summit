@@ -6,6 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowLeft } from 'lucide-react';
 import EnhancedProse from '@/components/prose/EnhancedProse';
 import { enhancedMDXComponents } from '@/components/prose/MDXComponents';
+import ReadingProgress from '@/components/ui/ReadingProgress';
+import Toc from '@/components/ui/Toc';
 
 const modules = import.meta.glob("@/content/blog/**/*.{mdx,md}");
 
@@ -92,65 +94,81 @@ export default function PostDetail() {
   };
 
   return (
-    <div className="container max-w-6xl py-12">
-      <Helmet>
-        <title>{title}</title>
-        <meta name="description" content={desc} />
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={desc} />
-        <meta property="og:type" content="article" />
-        <meta property="og:url" content={url} />
-        {meta?.cover && <meta property="og:image" content={meta.cover} />}
-        <link rel="canonical" href={url} />
-        <script type="application/ld+json">
-          {JSON.stringify(structuredData)}
-        </script>
-      </Helmet>
+    <>
+      <ReadingProgress target="#article-root" />
+      
+      <div className="container max-w-7xl py-12">
+        <Helmet>
+          <title>{title}</title>
+          <meta name="description" content={desc} />
+          <meta property="og:title" content={title} />
+          <meta property="og:description" content={desc} />
+          <meta property="og:type" content="article" />
+          <meta property="og:url" content={url} />
+          {meta?.cover && <meta property="og:image" content={meta.cover} />}
+          <link rel="canonical" href={url} />
+          <script type="application/ld+json">
+            {JSON.stringify(structuredData)}
+          </script>
+        </Helmet>
 
-      {/* Breadcrumb */}
-      <div className="mb-8">
-        <Link 
-          to={isEN ? "/en/blog" : "/blog"} 
-          className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          {isEN ? "Back to blog" : "Volver al blog"}
-        </Link>
-      </div>
-
-      {/* Header */}
-      <article>
-        <header className="mb-12">
-          <h1 className="text-4xl md:text-5xl font-serif text-foreground leading-tight mb-4">
-            {meta?.title || slug}
-          </h1>
-          
-          {meta?.date && (
-            <p className="text-sm text-muted-foreground mb-4">
-              {formatDate(meta.date)}
-            </p>
-          )}
-
-          {meta?.tags && meta.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {meta.tags.map((tag: string, index: number) => (
-                <Badge key={index} variant="secondary" className="text-xs">
-                  {tag}
-                </Badge>
-              ))}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Contenido principal */}
+          <div className="lg:col-span-3">
+            {/* Breadcrumb */}
+            <div className="mb-8">
+              <Link 
+                to={isEN ? "/en/blog" : "/blog"} 
+                className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                {isEN ? "Back to blog" : "Volver al blog"}
+              </Link>
             </div>
-          )}
-        </header>
 
-        {/* Content */}
-        <div className="max-w-4xl mx-auto">
-          <MDXProvider components={enhancedMDXComponents}>
-            <EnhancedProse>
-              <Comp />
-            </EnhancedProse>
-          </MDXProvider>
+            {/* Header */}
+            <article id="article-root">
+              <header className="mb-12">
+                <h1 className="text-4xl md:text-5xl font-serif text-foreground leading-tight mb-4">
+                  {meta?.title || slug}
+                </h1>
+                
+                {meta?.date && (
+                  <p className="text-sm text-muted-foreground mb-4">
+                    {formatDate(meta.date)}
+                  </p>
+                )}
+
+                {meta?.tags && meta.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {meta.tags.map((tag: string, index: number) => (
+                      <Badge key={index} variant="secondary" className="text-xs">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </header>
+
+              {/* Content */}
+              <div className="max-w-none">
+                <MDXProvider components={enhancedMDXComponents}>
+                  <EnhancedProse>
+                    <Comp />
+                  </EnhancedProse>
+                </MDXProvider>
+              </div>
+            </article>
+          </div>
+
+          {/* Sidebar con TOC */}
+          <div className="lg:col-span-1">
+            <div className="lg:sticky lg:top-24">
+              <Toc title={isEN ? "Table of Contents" : "Índice"} />
+            </div>
+          </div>
         </div>
-      </article>
-    </div>
+      </div>
+    </>
   );
 }

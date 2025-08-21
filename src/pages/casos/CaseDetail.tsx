@@ -10,6 +10,8 @@ import { MDXProvider } from "@mdx-js/react";
 import EnhancedProse from "@/components/prose/EnhancedProse";
 import { enhancedMDXComponents } from "@/components/prose/MDXComponents";
 import Reveal from "@/components/ui/Reveal";
+import ReadingProgress from "@/components/ui/ReadingProgress";
+import Toc from "@/components/ui/Toc";
 
 export default function CaseDetail() {
   const { slug = "" } = useParams();
@@ -47,6 +49,8 @@ export default function CaseDetail() {
 
   return (
     <>
+      <ReadingProgress target="#article-root" />
+      
       <Helmet>
         <title>{`${caseData.title} - KADMEIA`}</title>
         <meta name="description" content={caseData.excerpt || `Caso de éxito: ${caseData.title}`} />
@@ -88,91 +92,105 @@ export default function CaseDetail() {
         </script>
       </Helmet>
 
-      <article className="container py-12">
-        {/* Header con navegación */}
-        <Reveal y={12}>
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate(lang === "en" ? "/en/cases" : "/casos")}
-            className="mb-8 hover:bg-primary/5"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            {lang === "en" ? "Back to cases" : "Volver a casos"}
-          </Button>
-        </Reveal>
+      <div className="container max-w-7xl py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Contenido principal */}
+          <div className="lg:col-span-3">
+            {/* Header con navegación */}
+            <Reveal y={12}>
+              <Button 
+                variant="ghost" 
+                onClick={() => navigate(lang === "en" ? "/en/cases" : "/casos")}
+                className="mb-8 hover:bg-primary/5"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                {lang === "en" ? "Back to cases" : "Volver a casos"}
+              </Button>
+            </Reveal>
 
-        {/* Header del caso */}
-        <header className="mb-12 max-w-4xl mx-auto">
-          <Reveal y={16}>
-            {caseData.tags && caseData.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-6">
-                {caseData.tags.map((tag) => (
-                  <Badge key={tag} variant="secondary" className="bg-primary/10 text-primary">
-                    {tag}
-                  </Badge>
-                ))}
+            <article id="article-root">
+              {/* Header del caso */}
+              <header className="mb-12">
+                <Reveal y={16}>
+                  {caseData.tags && caseData.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-6">
+                      {caseData.tags.map((tag) => (
+                        <Badge key={tag} variant="secondary" className="bg-primary/10 text-primary">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                  
+                  <h1 className="text-4xl md:text-5xl font-serif text-slate-900 mb-6 leading-tight">
+                    {caseData.title}
+                  </h1>
+                  
+                  {caseData.excerpt && (
+                    <p className="text-xl text-muted-foreground mb-6 leading-relaxed">
+                      {caseData.excerpt}
+                    </p>
+                  )}
+                  
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4" />
+                      <time dateTime={typeof caseData.date === 'string' ? caseData.date : caseData.date.toISOString()}>
+                        {(typeof caseData.date === 'string' ? new Date(caseData.date) : caseData.date).toLocaleDateString(lang === "en" ? "en-US" : "es-ES", {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </time>
+                    </div>
+                  </div>
+                </Reveal>
+              </header>
+
+              {/* Contenido principal */}
+              <Reveal>
+                <div className="max-w-none">
+                  {MDXComponent && (
+                    <EnhancedProse>
+                      <MDXProvider components={enhancedMDXComponents}>
+                        <MDXComponent />
+                      </MDXProvider>
+                    </EnhancedProse>
+                  )}
+                </div>
+              </Reveal>
+            </article>
+
+            {/* Footer CTA */}
+            <Reveal y={16} delay={0.3}>
+              <div className="mt-16 max-w-2xl mx-auto text-center p-8 bg-gradient-to-b from-primary/5 to-transparent rounded-3xl">
+                <h2 className="text-2xl font-serif mb-4">
+                  {lang === "en" ? "Ready for your transformation?" : "¿Listo para tu transformación?"}
+                </h2>
+                <p className="text-muted-foreground mb-6">
+                  {lang === "en" 
+                    ? "Let's discuss how we can help you achieve similar results."
+                    : "Hablemos de cómo podemos ayudarte a conseguir resultados similares."}
+                </p>
+                <Button 
+                  onClick={() => navigate(lang === "en" ? "/en/contact" : "/contact")}
+                  size="lg"
+                  className="bg-primary hover:bg-primary/90 text-white"
+                >
+                  {lang === "en" ? "Get in touch" : "Hablemos"}
+                </Button>
               </div>
-            )}
-            
-            <h1 className="text-4xl md:text-5xl font-serif text-slate-900 mb-6 leading-tight">
-              {caseData.title}
-            </h1>
-            
-            {caseData.excerpt && (
-              <p className="text-xl text-muted-foreground mb-6 leading-relaxed">
-                {caseData.excerpt}
-              </p>
-            )}
-            
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
-                <time dateTime={typeof caseData.date === 'string' ? caseData.date : caseData.date.toISOString()}>
-                  {(typeof caseData.date === 'string' ? new Date(caseData.date) : caseData.date).toLocaleDateString(lang === "en" ? "en-US" : "es-ES", {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
-                </time>
-              </div>
+            </Reveal>
+          </div>
+
+          {/* Sidebar con TOC */}
+          <div className="lg:col-span-1">
+            <div className="lg:sticky lg:top-24">
+              <Toc title={lang === "en" ? "Table of Contents" : "Índice"} />
             </div>
-          </Reveal>
-        </header>
-
-        {/* Contenido principal */}
-        <Reveal>
-          <div className="max-w-5xl mx-auto">
-            {MDXComponent && (
-              <EnhancedProse>
-                <MDXProvider components={enhancedMDXComponents}>
-                  <MDXComponent />
-                </MDXProvider>
-              </EnhancedProse>
-            )}
           </div>
-        </Reveal>
-
-        {/* Footer CTA */}
-        <Reveal y={16} delay={0.3}>
-          <div className="mt-16 max-w-2xl mx-auto text-center p-8 bg-gradient-to-b from-primary/5 to-transparent rounded-3xl">
-            <h2 className="text-2xl font-serif mb-4">
-              {lang === "en" ? "Ready for your transformation?" : "¿Listo para tu transformación?"}
-            </h2>
-            <p className="text-muted-foreground mb-6">
-              {lang === "en" 
-                ? "Let's discuss how we can help you achieve similar results."
-                : "Hablemos de cómo podemos ayudarte a conseguir resultados similares."}
-            </p>
-            <Button 
-              onClick={() => navigate(lang === "en" ? "/en/contact" : "/contact")}
-              size="lg"
-              className="bg-primary hover:bg-primary/90 text-white"
-            >
-              {lang === "en" ? "Get in touch" : "Hablemos"}
-            </Button>
-          </div>
-        </Reveal>
-      </article>
+        </div>
+      </div>
     </>
   );
 }
