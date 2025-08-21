@@ -9,8 +9,11 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview --port 8080 --strictPort",
     "lint": "eslint \"src/**/*.{ts,tsx}\" --max-warnings=0",
-    "postbuild": "node scripts/generate-sitemap.mjs",
-    "analyze": "vite build --mode analyze"
+    "analyze": "vite build --mode analyze",
+    "rss": "node scripts/generate-rss.mjs",
+    "new:post": "node scripts/new-content.mjs post es",
+    "new:case": "node scripts/new-content.mjs case es",
+    "postbuild": "node scripts/generate-sitemap.mjs && node scripts/generate-rss.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
