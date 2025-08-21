@@ -121,9 +121,25 @@ const Contact = () => {
           <h1 className="font-display text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
             {t('contact.title')}
           </h1>
-          <p className="mt-4 text-lg text-muted-foreground">
+          <p className="mt-4 text-lg text-muted-foreground mb-8">
             {t('contact.subtitle')}
           </p>
+          
+          <motion.div
+            initial="initial"
+            animate="animate"
+            variants={fadeInUp}
+            transition={{ delay: 0.3 }}
+          >
+            <img
+              src="/images/illustrations/contact-banner.webp"
+              alt="Contacto KADMEIA - Transformamos clínicas veterinarias"
+              className="w-full max-w-4xl mx-auto rounded-2xl"
+              width={1200}
+              height={800}
+              loading="eager"
+            />
+          </motion.div>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">

@@ -19,6 +19,17 @@ export default function Blog() {
       <Reveal y={12}>
         <h1 className="text-4xl font-serif mb-8">{isEN ? 'Blog' : 'Blog'}</h1>
       </Reveal>
+      
+      <Reveal>
+        <img
+          src="/images/illustrations/blog-abstract.webp"
+          alt="Ilustración abstracta representando ideas y conocimiento"
+          className="w-full max-w-4xl mx-auto mb-8 rounded-2xl"
+          width={1200}
+          height={800}
+          loading="eager"
+        />
+      </Reveal>
       <div className="grid md:grid-cols-2 gap-6">
         {posts.map(p => (
           <motion.div 
