@@ -36,18 +36,32 @@ export default function Blog() {
             key={p.slug}
             whileHover={{ y: -2, scale: 1.01 }} 
             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            className="rounded-2xl border bg-card text-card-foreground shadow-sm hover:shadow-lg transition-all duration-300"
           >
             <Link
               to={isEN ? `/en/blog/${p.slug}` : `/blog/${p.slug}`}
-              className="group rounded-2xl border p-5 hover:shadow-lg transition"
+              className="group block p-5 h-full"
             >
-              {p.cover && <img src={p.cover} alt="" className="rounded-xl mb-4" loading="lazy" />}
-              <h2 className="text-2xl font-serif group-hover:underline">{p.title}</h2>
-              <p className="text-sm text-muted-foreground">{new Date(p.date).toLocaleDateString()}</p>
-              {p.excerpt && <p className="mt-2 text-muted-foreground">{p.excerpt}</p>}
+              {p.cover && (
+                <div className="aspect-video overflow-hidden rounded-xl mb-4">
+                  <img 
+                    src={p.cover} 
+                    alt={p.title} 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
+                    loading="lazy" 
+                  />
+                </div>
+              )}
+              <h2 className="text-2xl font-serif group-hover:text-primary transition-colors duration-200 mb-2">{p.title}</h2>
+              <p className="text-sm text-muted-foreground mb-3">{new Date(p.date).toLocaleDateString()}</p>
+              {p.excerpt && <p className="text-muted-foreground leading-relaxed mb-3">{p.excerpt}</p>}
               {p.tags?.length ? (
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {p.tags!.map(t => <span key={t} className="text-xs bg-muted rounded px-2 py-1">{t}</span>)}
+                <div className="flex flex-wrap gap-2">
+                  {p.tags!.map(t => (
+                    <span key={t} className="text-xs bg-muted text-muted-foreground rounded-full px-3 py-1">
+                      {t}
+                    </span>
+                  ))}
                 </div>
               ) : null}
             </Link>
