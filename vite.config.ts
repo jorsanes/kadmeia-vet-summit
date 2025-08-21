@@ -52,6 +52,7 @@ export default defineConfig(({ mode, command }) => ({
       workbox: {
         globPatterns: ["**/*.{js,css,html,svg,png,jpg,jpeg,webp,avif,woff2}"],
         navigateFallback: "/index.html",
+        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024, // 4MB limit
         runtimeCaching: [
           {
             // Imágenes estáticas

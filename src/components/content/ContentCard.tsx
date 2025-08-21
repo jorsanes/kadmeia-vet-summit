@@ -40,13 +40,18 @@ export default function ContentCard({
       role="listitem"
       className={clsx(
         "relative rounded-2xl bg-[linear-gradient(180deg,#f9f6f1,rgba(249,246,241,0.9))] shadow-sm",
-        "ring-1 ring-black/5 hover:shadow-md transition-all duration-200",
+        "ring-1 ring-black/5 hover:shadow-md hover:translate-y-[-2px] transition-all duration-200",
+        "focus-within:ring-2 focus-within:ring-primary/40",
         "flex flex-col justify-between overflow-hidden min-h-[360px]",
         className
       )}
     >
       {/* overlay link accesible */}
-      <Link to={href} aria-label={title} className="absolute inset-0 z-10" />
+      <Link 
+        to={href} 
+        aria-label={title} 
+        className="absolute inset-0 z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 rounded-2xl" 
+      />
 
       <div className="p-5 pb-0">
         {kicker && (
