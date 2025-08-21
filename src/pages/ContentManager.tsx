@@ -22,6 +22,7 @@ import {
 import { I18nEditor } from '@/components/content/I18nEditor';
 import { MDXPageEditor } from '@/components/content/MDXPageEditor';
 import { BlogEditor } from '@/components/content/BlogEditor';
+import { CasesEditor } from '@/components/content/CasesEditor';
 import { PageSeo } from '@/components/seo/PageSeo';
 
 export default function ContentManager() {
@@ -221,7 +222,7 @@ export default function ContentManager() {
       {/* Content */}
       <div className="max-w-7xl mx-auto p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="i18n" className="flex items-center gap-2">
               <Globe className="h-4 w-4" />
               Textos de Interfaz
@@ -233,6 +234,10 @@ export default function ContentManager() {
             <TabsTrigger value="blog" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               Blog
+            </TabsTrigger>
+            <TabsTrigger value="cases" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              Casos
             </TabsTrigger>
             <TabsTrigger value="seo" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
@@ -250,6 +255,10 @@ export default function ContentManager() {
 
           <TabsContent value="blog">
             <BlogEditor config={config} />
+          </TabsContent>
+
+          <TabsContent value="cases">
+            <CasesEditor config={config} />
           </TabsContent>
 
           <TabsContent value="seo">
