@@ -3,13 +3,13 @@ import { BlogMeta, CaseMeta } from "@/content/schemas";
 
 type Locale = "es" | "en";
 
-// MDX crudo para extraer frontmatter (eager)
-const blogRaw = import.meta.glob("../content/blog/*/*.mdx", { as: "raw", eager: true });
-const caseRaw = import.meta.glob("../content/casos/*/*.mdx", { as: "raw", eager: true });
+// MDX crudo para extraer frontmatter (eager) - TEMPORAL: datos de ejemplo
+const blogRaw: Record<string, string> = {};
+const caseRaw: Record<string, string> = {};
 
-// Módulos MDX (no eager) para cargar el componente al entrar al detalle
-const blogModules = import.meta.glob("../content/blog/*/*.mdx");
-const caseModules = import.meta.glob("../content/casos/*/*.mdx");
+// Módulos MDX (no eager) - TEMPORAL: vacío
+const blogModules: Record<string, any> = {};
+const caseModules: Record<string, any> = {};
 
 export type ContentItem<T> = {
   slug: string;
@@ -20,25 +20,31 @@ export type ContentItem<T> = {
 
 function buildIndex<T>(rawMap: Record<string, string>, schema: any): ContentItem<T>[] {
   const out: ContentItem<T>[] = [];
-  for (const p in rawMap) {
-    const raw = rawMap[p] as unknown as string;
-    const { data } = matter(raw);
-    const segs = p.split("/");
-    const locale = segs[segs.length - 2] as Locale;
-    const slug = segs[segs.length - 1].replace(/\.mdx$/, "");
+  
+  try {
+    for (const p in rawMap) {
+      const raw = rawMap[p] as unknown as string;
+      const { data } = matter(raw);
+      const segs = p.split("/");
+      const locale = segs[segs.length - 2] as Locale;
+      const slug = segs[segs.length - 1].replace(/\.mdx$/, "");
 
-    const parsed = schema.safeParse(data);
-    if (!parsed.success) {
-      console.warn("[content] invalid frontmatter:", p, parsed.error.format());
-      continue;
+      const parsed = schema.safeParse(data);
+      if (!parsed.success) {
+        console.warn("[content] invalid frontmatter:", p, parsed.error.format());
+        continue;
+      }
+      // normalizamos date a Date real
+     const meta = { ...parsed.data, date: new Date(String(parsed.data.date)) };
+      if ((meta as any).draft) continue;
+
+      out.push({ slug, locale, meta, path: p });
     }
-    // normalizamos date a Date real
-   const meta = { ...parsed.data, date: new Date(String(parsed.data.date)) };
-    if ((meta as any).draft) continue;
-
-    out.push({ slug, locale, meta, path: p });
+    return out.sort((a, b) => b.meta.date.getTime() - a.meta.date.getTime());
+  } catch (error) {
+    console.error("Error building content index:", error);
+    return [];
   }
-  return out.sort((a, b) => b.meta.date.getTime() - a.meta.date.getTime());
 }
 
 export const blogIndex = buildIndex<import("@/content/schemas").BlogMeta>(blogRaw, BlogMeta);
