@@ -85,14 +85,15 @@ export default defineConfig(({ mode, command }) => {
     plugins.push(componentTagger());
   }
 
-  // Agregar bundle analyzer solo en build
-  if (command === "build") {
+  // Agregar bundle analyzer
+  if (command === "build" || mode === "analyze") {
     plugins.push(
       visualizer({
-        filename: "dist/stats.html",
-        open: false,
+        filename: mode === "analyze" ? "dist/bundle-analysis.html" : "dist/stats.html",
+        open: mode === "analyze",
         gzipSize: true,
         brotliSize: true,
+        template: "treemap", // Mejor visualización para análisis
       })
     );
   }
@@ -117,12 +118,15 @@ export default defineConfig(({ mode, command }) => {
       include: ['buffer', 'gray-matter']
     },
     build: {
+      sourcemap: mode === "analyze",
       rollupOptions: {
         output: {
           manualChunks: {
             vendor: ["react", "react-dom"],
             ui: ["@radix-ui/react-accordion", "@radix-ui/react-dialog", "@radix-ui/react-dropdown-menu"],
             utils: ["clsx", "tailwind-merge", "class-variance-authority"],
+            router: ["react-router-dom"],
+            mdx: ["@mdx-js/react", "remark-gfm"],
           },
         },
       },
