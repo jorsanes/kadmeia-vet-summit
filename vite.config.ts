@@ -102,6 +102,12 @@ export default defineConfig(({ mode, command }) => {
         "@": path.resolve(__dirname, "./src"),
       },
     },
+    define: {
+      global: 'globalThis',
+    },
+    optimizeDeps: {
+      include: ['gray-matter']
+    },
     build: {
       rollupOptions: {
         output: {
