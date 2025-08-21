@@ -16,7 +16,16 @@ export default function CaseDetail() {
   const lang = isEN ? 'en' : 'es';
 
   const data = getCaseBySlug(lang as any, slug);
-  if (!data) return <div className="container py-20">Caso no encontrado.</div>;
+  if (!data) {
+    return (
+      <div className="container py-20 text-center">
+        <h1 className="text-2xl font-serif mb-4">Caso no encontrado</h1>
+        <Link to="/casos" className="text-primary hover:underline">
+          Volver a casos de éxito
+        </Link>
+      </div>
+    );
+  }
 
   const { meta, mod } = data;
   const MDX = mod.default;
