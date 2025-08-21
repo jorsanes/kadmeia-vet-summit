@@ -9,6 +9,7 @@ interface PageSeoProps {
   noindex?: boolean;
   ogImage?: string;
   ogType?: 'website' | 'article';
+  url?: string; // Opcional: si se proporciona, no usa useLocation
 }
 
 export function PageSeo({
@@ -17,9 +18,18 @@ export function PageSeo({
   canonical,
   noindex = false,
   ogImage = "/og.png",
-  ogType = 'website'
+  ogType = 'website',
+  url
 }: PageSeoProps) {
-  const location = useLocation();
+  // Solo usar useLocation si no se proporciona URL explícita
+  let location: { pathname: string; search?: string } | undefined;
+  try {
+    location = url ? { pathname: url, search: '' } : useLocation();
+  } catch (error) {
+    // Si useLocation falla (fuera del Router), usar URL por defecto
+    location = { pathname: '/', search: '' };
+  }
+  
   const { locale } = useLocale();
 
   const origin =
@@ -27,7 +37,7 @@ export function PageSeo({
       ? window.location.origin
       : "https://kadmeia.com";
 
-  const currentUrl = `${origin}${location.pathname}${location.search || ""}`;
+  const currentUrl = url || `${origin}${location.pathname}${location.search || ""}`;
   const canonicalUrl = canonical || currentUrl;
 
   // Alternates ES/EN manteniendo la ruta
