@@ -24,8 +24,22 @@ function formatDate(date: string, lang: "es" | "en") {
   } catch { return date; }
 }
 
+// Helper to generate excerpt from content if none provided
+function generateExcerpt(content: string): string {
+  if (!content) return "";
+  // Remove MDX/markdown syntax and get first ~140 chars
+  const cleanText = content
+    .replace(/^---[\s\S]*?---/, '') // Remove frontmatter
+    .replace(/[#*`_~]/g, '') // Remove markdown syntax
+    .replace(/\n+/g, ' ') // Replace newlines with spaces
+    .trim();
+  
+  return cleanText.length > 140 ? cleanText.substring(0, 140) + '...' : cleanText;
+}
+
 const blogPosts: BlogPost[] = Object.entries(modules).map(([path, mod]) => {
   const meta = (mod as any).meta || {};
+  const content = (mod as any).default?.toString() || '';
   const m = path.match(/\/blog\/(en|es)\/(.+)\.(mdx|md)$/);
   const lang = (m?.[1] ?? "es") as "es" | "en";
   const slug = m?.[2] ?? "";
@@ -34,7 +48,7 @@ const blogPosts: BlogPost[] = Object.entries(modules).map(([path, mod]) => {
     lang,
     title: meta.title ?? slug,
     date: meta.date ?? "",
-    excerpt: meta.excerpt ?? "",
+    excerpt: meta.excerpt || generateExcerpt(content),
   };
 }).sort((a,b)=> (b.date?.localeCompare(a.date)));
 
