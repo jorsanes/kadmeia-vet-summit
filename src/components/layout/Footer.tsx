@@ -115,6 +115,9 @@ const Footer = () => {
               <a href="/rss.xml" target="_blank" rel="noopener" className="text-sm text-primary-foreground/60 hover:text-secondary transition-colors">
                 RSS
               </a>
+              <a href="/offline.html" className="text-sm text-primary-foreground/60 hover:text-secondary transition-colors">
+                Offline
+              </a>
             </div>
           </div>
         </div>
