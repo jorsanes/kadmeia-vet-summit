@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { motion } from 'framer-motion';
 import { getAllCases } from '@/lib/content';
 
 export default function Cases() {
@@ -17,21 +18,26 @@ export default function Cases() {
       <h1 className="text-4xl font-serif mb-8">{isEN ? 'Case Studies' : 'Casos de éxito'}</h1>
       <div className="grid md:grid-cols-2 gap-6">
         {cases.map(c => (
-          <Link
+          <motion.div 
             key={c.slug}
-            to={isEN ? `/en/cases/${c.slug}` : `/casos/${c.slug}`}
-            className="group rounded-2xl border p-5 hover:shadow-lg transition"
+            whileHover={{ y: -2, scale: 1.01 }} 
+            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
           >
-            {c.cover && <img src={c.cover} alt="" className="rounded-xl mb-4" loading="lazy" />}
-            <h2 className="text-2xl font-serif group-hover:underline">{c.title}</h2>
-            <p className="text-sm text-muted-foreground">{new Date(c.date).toLocaleDateString()}</p>
-            {c.excerpt && <p className="mt-2 text-muted-foreground">{c.excerpt}</p>}
-            {c.tags?.length ? (
-              <div className="mt-3 flex flex-wrap gap-2">
-                {c.tags!.map(t => <span key={t} className="text-xs bg-muted rounded px-2 py-1">{t}</span>)}
-              </div>
-            ) : null}
-          </Link>
+            <Link
+              to={isEN ? `/en/cases/${c.slug}` : `/casos/${c.slug}`}
+              className="group rounded-2xl border p-5 hover:shadow-lg transition"
+            >
+              {c.cover && <img src={c.cover} alt="" className="rounded-xl mb-4" loading="lazy" />}
+              <h2 className="text-2xl font-serif group-hover:underline">{c.title}</h2>
+              <p className="text-sm text-muted-foreground">{new Date(c.date).toLocaleDateString()}</p>
+              {c.excerpt && <p className="mt-2 text-muted-foreground">{c.excerpt}</p>}
+              {c.tags?.length ? (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {c.tags!.map(t => <span key={t} className="text-xs bg-muted rounded px-2 py-1">{t}</span>)}
+                </div>
+              ) : null}
+            </Link>
+          </motion.div>
         ))}
       </div>
     </div>
