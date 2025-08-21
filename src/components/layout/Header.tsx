@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Globe } from 'lucide-react';
+import { Menu, X, Globe, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocale } from '@/i18n/LocaleProvider';
 import SmartImage from '@/components/ui/SmartImage';
 import SkipLink from '@/components/accessibility/SkipLink';
+import SearchCommand from '@/components/search/SearchCommand';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -88,6 +89,16 @@ const Header = () => {
 
           {/* Desktop Actions */}
           <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:items-center lg:gap-4">
+            <button
+              type="button"
+              onClick={() => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: navigator.platform.toUpperCase().includes('MAC'), ctrlKey: !navigator.platform.toUpperCase().includes('MAC') }))}
+              className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border hover:bg-muted"
+              aria-label="Abrir búsqueda (⌘/Ctrl+K)"
+            >
+              <Search className="w-4 h-4" />
+              <span className="text-sm opacity-80">Buscar</span>
+              <kbd className="ml-2 text-[10px] opacity-60 rounded border px-1.5 py-0.5">⌘/Ctrl K</kbd>
+            </button>
             <Button
               variant="ghost"
               size="sm"
@@ -168,6 +179,9 @@ const Header = () => {
           </motion.div>
         )}
       </AnimatePresence>
+      
+      {/* Search Command Palette */}
+      <SearchCommand />
     </header>
   );
 };
