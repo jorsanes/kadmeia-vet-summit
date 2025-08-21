@@ -1,15 +1,23 @@
 // src/pwa.ts
-import { registerSW } from "virtual:pwa-register";
+import { registerSW } from 'virtual:pwa-register';
+import { toast } from 'sonner';
 
 export function setupPWA() {
-  // auto-update y eventos silenciosos (si quieres UI, añadimos toasts luego)
-  registerSW({
+  const updateSW = registerSW({
     immediate: true,
     onNeedRefresh() {
-      // Aquí podríamos mostrar un toast 'Nueva versión disponible'
+      const t = toast.message('Hay una nueva versión disponible', {
+        description: 'Actualiza para obtener mejoras.',
+        action: {
+          label: 'Actualizar',
+          onClick: () => updateSW(true),
+        },
+      });
+      // opcional: auto-cerrar a los 15s
+      setTimeout(() => toast.dismiss(t), 15000);
     },
     onOfflineReady() {
-      // Aquí podríamos mostrar un toast 'Listo para uso offline'
+      toast.success('Listo para uso offline');
     },
   });
 }
