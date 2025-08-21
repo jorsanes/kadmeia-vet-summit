@@ -2,7 +2,7 @@ import React from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
-import { getCaseWithMDXBySlug } from "@/lib/content";
+import { getCaseBySlug } from "@/lib/content";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar } from "lucide-react";
@@ -18,11 +18,11 @@ export default function CaseDetail() {
   const navigate = useNavigate();
   const location = useLocation();
   const isEN = location.pathname.startsWith("/en/");
-  const lang = (isEN ? "en" : "es") as "en" | "es";
+  const lang = (isEN ? "en" : "es");
 
-  const caseData = getCaseWithMDXBySlug(lang, slug);
+  const entry = getCaseBySlug(lang as any, slug);
 
-  if (!caseData) {
+  if (!entry) {
     return (
       <div className="container py-12">
         <div className="max-w-2xl mx-auto text-center">
@@ -44,20 +44,22 @@ export default function CaseDetail() {
   }
 
   const currentUrl = `https://kadmeia.com${lang === 'en' ? '/en' : ''}/casos/${slug}`;
-  const MDXComponent = caseData.mdx;
+  const MDXComponent = entry.mod.default;
+  const meta = entry.meta;
+  const title = meta.title || slug;
 
   return (
     <>
       <ReadingProgress target="#article-root" />
       
       <Helmet>
-        <title>{`${caseData.title} - KADMEIA`}</title>
-        <meta name="description" content={caseData.excerpt || `Caso de éxito: ${caseData.title}`} />
-        <meta property="og:title" content={`${caseData.title} - KADMEIA`} />
-        <meta property="og:description" content={caseData.excerpt || `Caso de éxito: ${caseData.title}`} />
+        <title>{`${title} - KADMEIA`}</title>
+        <meta name="description" content={meta.excerpt || `Caso de éxito: ${title}`} />
+        <meta property="og:title" content={`${title} - KADMEIA`} />
+        <meta property="og:description" content={meta.excerpt || `Caso de éxito: ${title}`} />
         <meta property="og:url" content={currentUrl} />
         <meta property="og:type" content="article" />
-        {caseData.cover && <meta property="og:image" content={caseData.cover} />}
+        {meta.cover && <meta property="og:image" content={meta.cover} />}
         <link rel="canonical" href={currentUrl} />
         
         {/* JSON-LD Structured Data */}
@@ -65,9 +67,9 @@ export default function CaseDetail() {
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Article",
-            "headline": caseData.title,
-            "description": caseData.excerpt || `Caso de éxito: ${caseData.title}`,
-            "datePublished": typeof caseData.date === 'string' ? caseData.date : caseData.date.toISOString(),
+            "headline": title,
+            "description": meta.excerpt || `Caso de éxito: ${title}`,
+            "datePublished": meta.date,
             "url": currentUrl,
             "author": {
               "@type": "Organization",
@@ -81,10 +83,10 @@ export default function CaseDetail() {
                 "url": "https://kadmeia.com/og.png"
               }
             },
-            ...(caseData.cover && {
+            ...(meta.cover && {
               "image": {
                 "@type": "ImageObject",
-                "url": caseData.cover
+                "url": meta.cover
               }
             })
           })}
@@ -111,9 +113,9 @@ export default function CaseDetail() {
               {/* Header del caso */}
               <header className="mb-12">
                 <Reveal y={16}>
-                  {caseData.tags && caseData.tags.length > 0 && (
+                  {meta.tags && Array.isArray(meta.tags) && meta.tags.length > 0 && (
                     <div className="flex flex-wrap gap-2 mb-6">
-                      {caseData.tags.map((tag) => (
+                      {meta.tags.map((tag) => (
                         <Badge key={tag} variant="secondary" className="bg-primary/10 text-primary">
                           {tag}
                         </Badge>
@@ -122,24 +124,24 @@ export default function CaseDetail() {
                   )}
                   
                   <h1 className="text-4xl md:text-5xl font-serif text-slate-900 mb-6 leading-tight">
-                    {caseData.title}
+                    {title}
                   </h1>
                   
-                  {caseData.excerpt && (
+                  {meta.excerpt && (
                     <p className="text-xl text-muted-foreground mb-6 leading-relaxed">
-                      {caseData.excerpt}
+                      {meta.excerpt}
                     </p>
                   )}
                   
                   <div className="flex items-center gap-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
-                      <time dateTime={typeof caseData.date === 'string' ? caseData.date : caseData.date.toISOString()}>
-                        {(typeof caseData.date === 'string' ? new Date(caseData.date) : caseData.date).toLocaleDateString(lang === "en" ? "en-US" : "es-ES", {
+                      <time dateTime={meta.date}>
+                        {meta.date ? new Date(meta.date).toLocaleDateString(lang === "en" ? "en-US" : "es-ES", {
                           year: 'numeric',
                           month: 'long',
                           day: 'numeric'
-                        })}
+                        }) : 'Sin fecha'}
                       </time>
                     </div>
                   </div>

@@ -51,8 +51,17 @@ export function Divider() {
 }
 
 export function ButtonLink({ href, children }: { href: string; children: ReactNode }) {
+  // Check if it's an internal link (starts with /) or external
+  if (href.startsWith('/')) {
+    return (
+      <a href={href} className="inline-block rounded-xl bg-slate-900 px-4 py-2 text-white shadow-sm hover:bg-slate-800">
+        {children}
+      </a>
+    );
+  }
+  
   return (
-    <a href={href} className="inline-block rounded-xl bg-slate-900 px-4 py-2 text-white shadow-sm hover:bg-slate-800">
+    <a href={href} target="_blank" rel="noopener noreferrer" className="inline-block rounded-xl bg-slate-900 px-4 py-2 text-white shadow-sm hover:bg-slate-800">
       {children}
     </a>
   );
