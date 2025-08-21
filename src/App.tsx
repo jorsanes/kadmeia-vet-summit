@@ -5,8 +5,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from 'react-helmet-async';
-import { MDXProvider } from '@mdx-js/react';
-import mdxComponents from '@/components/mdx/MDXComponents';
 import ErrorBoundary from "@/components/ErrorBoundary";
 import i18n from "@/i18n/config";
 import { LocaleProvider } from "@/i18n/LocaleProvider";
@@ -37,9 +35,8 @@ const App = () => (
       <I18nextProvider i18n={i18n}>
         <QueryClientProvider client={queryClient}>
           <TooltipProvider>
-            <MDXProvider components={mdxComponents}>
-              <Toaster />
-              <Sonner />
+            <Toaster />
+            <Sonner />
               <BrowserRouter>
                 <LocaleProvider>
                   <div className="min-h-screen flex flex-col">
@@ -84,9 +81,8 @@ const App = () => (
                     </main>
                     <Footer />
                   </div>
-                </LocaleProvider>
-              </BrowserRouter>
-            </MDXProvider>
+              </LocaleProvider>
+            </BrowserRouter>
           </TooltipProvider>
         </QueryClientProvider>
       </I18nextProvider>
