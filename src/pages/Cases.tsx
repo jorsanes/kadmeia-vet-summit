@@ -70,7 +70,7 @@ export default function Cases() {
         />
       </Reveal>
       
-      <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3" role="list">
+      <div className="mt-10 grid gap-8 sm:gap-10 lg:gap-12 sm:grid-cols-2 lg:grid-cols-3" role="list">
         {items.filter(it => it.lang === lang).map(it => {
           const href = it.lang === "en" ? `/en/cases/${it.slug}` : `/casos/${it.slug}`;
           return (
@@ -80,7 +80,7 @@ export default function Cases() {
               date={fmt(it.date, it.lang)}
               excerpt={it.excerpt}
               href={href}
-              cta="Ver caso →"
+              cta={it.lang === "en" ? "View case →" : "Ver caso →"}
             />
           );
         })}
