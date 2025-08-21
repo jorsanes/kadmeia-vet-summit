@@ -21,6 +21,8 @@ import Legal from "@/pages/Legal";
 import Cookies from "@/pages/Cookies";
 import BlogPostNew from "@/pages/blog/Post";
 import CaseView from "@/pages/casos/Case";
+import PostDetail from "@/pages/blog/PostDetail";
+import CaseDetail from "@/pages/cases/CaseDetail";
 
 import ContentManager from "@/pages/ContentManager";
 import NotFound from "./pages/NotFound";
@@ -54,8 +56,8 @@ const App = () => (
                       <Route path="/servicios" element={<Services />} />
                       <Route path="/casos" element={<Cases />} />
                       <Route path="/blog" element={<Blog />} />
-                      <Route path="/blog/:slug" element={<BlogPostNew />} />
-                      <Route path="/casos/:slug" element={<CaseView />} />
+                      <Route path="/blog/:slug" element={<PostDetail />} />
+                      <Route path="/casos/:slug" element={<CaseDetail />} />
                       <Route path="/sobre" element={<About />} />
                       <Route path="/contacto" element={<Contact />} />
                       <Route path="/privacidad" element={<Privacy />} />
@@ -69,8 +71,8 @@ const App = () => (
                       <Route path="/en/services" element={<Services />} />
                       <Route path="/en/cases" element={<Cases />} />
                       <Route path="/en/blog" element={<Blog />} />
-                      <Route path="/en/blog/:slug" element={<BlogPostNew />} />
-                      <Route path="/en/casos/:slug" element={<CaseView />} />
+                      <Route path="/en/blog/:slug" element={<PostDetail />} />
+                      <Route path="/en/cases/:slug" element={<CaseDetail />} />
                       <Route path="/en/about" element={<About />} />
                       <Route path="/en/contact" element={<Contact />} />
                       <Route path="/en/privacy" element={<Privacy />} />
