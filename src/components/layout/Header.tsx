@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Globe, Search } from 'lucide-react';
@@ -12,8 +11,18 @@ import SearchCommand from '@/components/search/SearchCommand';
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { t } = useTranslation();
-  const location = useLocation();
   const { locale, switchLocale } = useLocale();
+  
+  // Safe location access with fallback
+  const getLocationPathname = () => {
+    try {
+      return window.location.pathname;
+    } catch {
+      return '/';
+    }
+  };
+  
+  const locationPathname = getLocationPathname();
 
   const toggleLanguage = () => {
     const newLang = locale === 'es' ? 'en' : 'es';
@@ -77,7 +86,7 @@ const Header = () => {
                 key={item.name}
                 href={item.href}
                 className={`text-sm font-medium transition-colors hover:text-primary ${
-                  location.pathname === item.href 
+                  locationPathname === item.href 
                     ? 'text-primary' 
                     : 'text-muted-foreground'
                 }`}
@@ -148,7 +157,7 @@ const Header = () => {
                   key={item.name}
                   href={item.href}
                   className={`block py-2 text-base font-medium transition-colors ${
-                    location.pathname === item.href
+                    locationPathname === item.href
                       ? 'text-primary'
                       : 'text-muted-foreground hover:text-primary'
                   }`}

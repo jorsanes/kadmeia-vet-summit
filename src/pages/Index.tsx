@@ -298,7 +298,7 @@ const Home = () => {
               </h2>
             </div>
             <Button asChild variant="outline" className="hover:bg-primary hover:text-primary-foreground">
-              <Link to="/casos">{t('cases.viewAll')}</Link>
+              <a href="/casos">{t('cases.viewAll')}</a>
             </Button>
           </motion.div>
 

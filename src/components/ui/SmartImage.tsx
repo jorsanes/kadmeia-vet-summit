@@ -31,7 +31,6 @@ const SmartImage: React.FC<SmartImageProps> = ({
       height={height}
       loading={priority ? 'eager' : 'lazy'}
       decoding={priority ? 'sync' : 'async'}
-      fetchPriority={priority ? ('high' as any) : undefined}
       sizes={sizes}
       className={cn(className)}
       {...props}
