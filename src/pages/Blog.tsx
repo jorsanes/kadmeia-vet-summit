@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { getAllPostsMeta } from "@/lib/content";
 import SmartImage from '@/components/ui/SmartImage';
 import Reveal from '@/components/ui/Reveal';
+import { TextCard } from '@/components/content/TextCard';
 
 export default function Blog() {
   let isEN = false;
@@ -48,28 +49,15 @@ export default function Blog() {
       <div className="mt-10 grid gap-8 sm:gap-10 lg:gap-12 sm:grid-cols-2 lg:grid-cols-3" role="list">
         {posts.length > 0 ? (
           posts.map(post => (
-            <article key={post.slug} className="rounded-3xl shadow-sm bg-gradient-to-b from-[#faf7f3] to-white border border-neutral-100 overflow-hidden">
-              <div className="h-40 bg-gradient-to-b from-white to-neutral-50" />
-              <div className="p-5">
-                <h3 className="text-xl font-serif leading-tight">
-                  <a href={post.lang === "en" ? `/en/blog/${post.slug}` : `/blog/${post.slug}`} className="hover:text-primary">
-                    {post.title}
-                  </a>
-                </h3>
-                {post.excerpt && <p className="mt-2 text-neutral-600">{post.excerpt}</p>}
-                <div className="mt-3 text-sm text-neutral-500">
-                  {new Date(post.date).toLocaleDateString(lang === 'en' ? 'en-US' : 'es-ES')}
-                </div>
-                <div className="mt-4">
-                  <a 
-                    href={post.lang === "en" ? `/en/blog/${post.slug}` : `/blog/${post.slug}`}
-                    className="text-primary-700 hover:underline"
-                  >
-                    {lang === "en" ? "Read article →" : "Leer artículo →"}
-                  </a>
-                </div>
-              </div>
-            </article>
+            <TextCard
+              key={post.slug}
+              title={post.title}
+              date={new Date(post.date).toLocaleDateString(lang === 'en' ? 'en-US' : 'es-ES')}
+              href={post.lang === "en" ? `/en/blog/${post.slug}` : `/blog/${post.slug}`}
+              excerpt={post.excerpt}
+              cover={post.cover}
+              cta={lang === "en" ? "Read article →" : "Leer artículo →"}
+            />
           ))
         ) : (
           <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">

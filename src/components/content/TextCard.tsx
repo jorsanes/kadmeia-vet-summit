@@ -6,9 +6,10 @@ type Props = {
   href: string;
   excerpt?: string;
   cta?: string;
+  cover?: string; // Nueva prop para la miniatura
 };
 
-export function TextCard({ title, date, href, excerpt, cta = "Ver más →" }: Props) {
+export function TextCard({ title, date, href, excerpt, cta = "Ver más →", cover }: Props) {
   return (
     <article 
       role="listitem"
@@ -20,10 +21,21 @@ export function TextCard({ title, date, href, excerpt, cta = "Ver más →" }: P
         aria-label={title} 
         className="absolute inset-0 z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 rounded-2xl" 
       />
-      {/* "cabecera" vacía para el look de tarjeta sin imagen */}
-      <div className="aspect-[4/3] w-full bg-[#f1ede7]" />
+      {/* Miniatura o placeholder */}
+      <div className="aspect-[4/3] w-full bg-muted overflow-hidden">
+        {cover ? (
+          <img 
+            src={cover} 
+            alt={title}
+            className="w-full h-full object-cover"
+            loading="lazy"
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-muted to-muted/70" />
+        )}
+      </div>
       <div className="p-4">
-        <h3 className="font-serif text-lg text-[#0b2436]">{title}</h3>
+        <h3 className="font-serif text-lg text-primary">{title}</h3>
         {excerpt && (
           <p
             className="mt-1 text-sm text-muted-foreground"
@@ -37,7 +49,7 @@ export function TextCard({ title, date, href, excerpt, cta = "Ver más →" }: P
             {excerpt}
           </p>
         )}
-        <p className="mt-1 text-xs text-muted-foreground">{date}</p>
+        <p className="mt-1 text-xs text-secondary font-medium">{date}</p>
         <span className="mt-2 inline-flex items-center gap-1 text-sm text-primary">{cta}</span>
       </div>
     </article>

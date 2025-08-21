@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { getAllCasesMeta } from "@/lib/content";
 import SmartImage from '@/components/ui/SmartImage';
 import Reveal from '@/components/ui/Reveal';
+import { TextCard } from '@/components/content/TextCard';
 
 export default function Cases() {
   let isEN = false;
@@ -49,28 +50,15 @@ export default function Cases() {
       <div className="mt-10 grid gap-8 sm:gap-10 lg:gap-12 sm:grid-cols-2 lg:grid-cols-3" role="list">
         {cases.length > 0 ? (
           cases.map(caseItem => (
-            <article key={caseItem.slug} className="rounded-3xl shadow-sm bg-gradient-to-b from-[#faf7f3] to-white border border-neutral-100 overflow-hidden">
-              <div className="h-40 bg-gradient-to-b from-white to-neutral-50" />
-              <div className="p-5">
-                <h3 className="text-xl font-serif leading-tight">
-                  <a href={caseItem.lang === "en" ? `/en/cases/${caseItem.slug}` : `/casos/${caseItem.slug}`} className="hover:text-primary">
-                    {caseItem.title}
-                  </a>
-                </h3>
-                {caseItem.excerpt && <p className="mt-2 text-neutral-600">{caseItem.excerpt}</p>}
-                <div className="mt-3 text-sm text-neutral-500">
-                  {new Date(caseItem.date).toLocaleDateString(lang === 'en' ? 'en-US' : 'es-ES')}
-                </div>
-                <div className="mt-4">
-                  <a 
-                    href={caseItem.lang === "en" ? `/en/cases/${caseItem.slug}` : `/casos/${caseItem.slug}`}
-                    className="text-primary-700 hover:underline"
-                  >
-                    {lang === "en" ? "View case →" : "Ver caso →"}
-                  </a>
-                </div>
-              </div>
-            </article>
+            <TextCard
+              key={caseItem.slug}
+              title={caseItem.title}
+              date={new Date(caseItem.date).toLocaleDateString(lang === 'en' ? 'en-US' : 'es-ES')}
+              href={caseItem.lang === "en" ? `/en/cases/${caseItem.slug}` : `/casos/${caseItem.slug}`}
+              excerpt={caseItem.excerpt}
+              cover={caseItem.cover}
+              cta={lang === "en" ? "View case →" : "Ver caso →"}
+            />
           ))
         ) : (
           <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
