@@ -1,20 +1,15 @@
 import React from "react";
 import { useLocation, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import ContentCard from "@/components/content/ContentCard";
-import { loadEntries } from "@/lib/content";
+import { getAllPostsMeta } from "@/lib/content";
 import SmartImage from '@/components/ui/SmartImage';
 import Reveal from '@/components/ui/Reveal';
-
-const modules = import.meta.glob("@/content/blog/**/*.{mdx,md}", { eager: true });
 
 export default function Blog() {
   const isEN = useLocation().pathname.startsWith('/en');
   const lang = isEN ? 'en' : 'es';
 
-  const posts = loadEntries(modules, "post")
-    .filter(post => post.lang === lang)
-    .sort((a, b) => +new Date(b.date) - +new Date(a.date));
+  const posts = getAllPostsMeta().filter(p => p.lang === lang);
 
   return (
     <div className="container py-12">
@@ -47,18 +42,28 @@ export default function Blog() {
       <div className="mt-10 grid gap-8 sm:gap-10 lg:gap-12 sm:grid-cols-2 lg:grid-cols-3" role="list">
         {posts.length > 0 ? (
           posts.map(post => (
-            <ContentCard
-              key={post.slug}
-              href={post.lang === "en" ? `/en/blog/${post.slug}` : `/blog/${post.slug}`}
-              title={post.title}
-              date={post.date}
-              lang={post.lang}
-              excerpt={post.excerpt}
-              kicker={post.card?.kicker}
-              badges={post.card?.badges}
-              highlights={post.card?.highlights?.filter(h => h.label && h.value) as Array<{label: string; value: string}>}
-              cta={post.card?.cta}
-            />
+            <article key={post.slug} className="rounded-3xl shadow-sm bg-gradient-to-b from-[#faf7f3] to-white border border-neutral-100 overflow-hidden">
+              <div className="h-40 bg-gradient-to-b from-white to-neutral-50" />
+              <div className="p-5">
+                <h3 className="text-xl font-serif leading-tight">
+                  <Link to={post.lang === "en" ? `/en/blog/${post.slug}` : `/blog/${post.slug}`} className="hover:text-primary">
+                    {post.title}
+                  </Link>
+                </h3>
+                {post.excerpt && <p className="mt-2 text-neutral-600">{post.excerpt}</p>}
+                <div className="mt-3 text-sm text-neutral-500">
+                  {new Date(post.date).toLocaleDateString(lang === 'en' ? 'en-US' : 'es-ES')}
+                </div>
+                <div className="mt-4">
+                  <Link 
+                    to={post.lang === "en" ? `/en/blog/${post.slug}` : `/blog/${post.slug}`}
+                    className="text-primary-700 hover:underline"
+                  >
+                    {lang === "en" ? "Read article →" : "Leer artículo →"}
+                  </Link>
+                </div>
+              </div>
+            </article>
           ))
         ) : (
           <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">

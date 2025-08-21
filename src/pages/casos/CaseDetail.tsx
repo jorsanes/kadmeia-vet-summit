@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar } from "lucide-react";
 import { MDXProvider } from "@mdx-js/react";
-import Prose from "@/components/typography/Prose";
+import { MdxProse } from "@/components/mdx/MdxProse";
 import { MDXComponents } from "@/components/typography/MDXComponents";
 import Reveal from "@/components/ui/Reveal";
 
@@ -143,11 +143,11 @@ export default function CaseDetail() {
         <Reveal>
           <div className="max-w-4xl mx-auto">
             {MDXComponent && (
-              <Prose>
+              <MdxProse>
                 <MDXProvider components={MDXComponents}>
                   <MDXComponent />
                 </MDXProvider>
-              </Prose>
+              </MdxProse>
             )}
           </div>
         </Reveal>

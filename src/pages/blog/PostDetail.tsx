@@ -4,7 +4,8 @@ import { MDXProvider } from '@mdx-js/react';
 import { Helmet } from 'react-helmet-async';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft } from 'lucide-react';
-import { Prose, mdxComponents } from '@/content/MDXComponents';
+import { MdxProse } from '@/components/mdx/MdxProse';
+import { MDXComponents } from '@/components/typography/MDXComponents';
 
 const modules = import.meta.glob("@/content/blog/**/*.{mdx,md}");
 
@@ -142,10 +143,10 @@ export default function PostDetail() {
         </header>
 
         {/* Content */}
-        <MDXProvider components={mdxComponents}>
-          <Prose>
+        <MDXProvider components={MDXComponents}>
+          <MdxProse>
             <Comp />
-          </Prose>
+          </MdxProse>
         </MDXProvider>
       </article>
     </div>

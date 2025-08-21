@@ -1,94 +1,48 @@
 import matter from "gray-matter";
-import { BaseContentSchema, type BaseContentMeta, type ContentCardMeta } from "@/content/schemas";
 
-function computeReadingTime(text: string) {
-  const words = (text || "").split(/\s+/).filter(Boolean).length;
-  const minutes = Math.max(1, Math.round(words / 200));
-  return `${minutes} min`;
-}
+export type Lang = "es" | "en";
 
-export type ContentItem = BaseContentMeta & {
-  excerpt: string;
-  mdx: React.ComponentType<any>;
-  readingTime: string;
-  card: Required<ContentCardMeta>;
+export type BaseMeta = {
+  slug: string;
+  lang: Lang;
+  title: string;
+  date: string;           // ISO
+  excerpt?: string;
+  tags?: string[];
+  cover?: string | null;
 };
 
-export function loadEntries(globResult: Record<string, any>, type: "case" | "post"): ContentItem[] {
-  const items = Object.entries(globResult).map(([path, mod]) => {
-    const raw = mod?.raw ?? "";
-    const mdx = mod?.default;
-    const fm = mod?.meta ?? matter(raw).data ?? {};
-    const body = mod?.body ?? ""; // si tenemos el cuerpo
-    const parsed = BaseContentSchema.safeParse({
-      ...fm,
-      slug: fm.slug ?? path.split("/").pop()?.replace(/\.(mdx|md)$/, ""),
+function parseCollection(rawModules: Record<string, string>, kind: "blog" | "casos"): BaseMeta[] {
+  const items: BaseMeta[] = [];
+  for (const [path, raw] of Object.entries(rawModules)) {
+    const { data } = matter(raw);
+    // Exigimos título y fecha válidos
+    if (!data?.title || !data?.date) continue;
+    const slug = path.split("/").pop()!.replace(/\.mdx?$/, "");
+    const lang: Lang = path.includes("/en/") ? "en" : "es";
+    items.push({
+      slug,
+      lang,
+      title: String(data.title),
+      date: new Date(data.date).toISOString(),
+      excerpt: data.excerpt ? String(data.excerpt) : undefined,
+      tags: Array.isArray(data.tags) ? data.tags.map(String) : undefined,
+      cover: data.cover ? String(data.cover) : null,
     });
-
-    if (!parsed.success) {
-      console.warn("Invalid meta for", path, parsed.error);
-      return null;
-    }
-
-    const meta = parsed.data;
-
-    // Fallbacks de tarjeta
-    const defaultCta = type === "case"
-      ? (meta.lang === "en" ? "View case →" : "Ver caso →")
-      : (meta.lang === "en" ? "Read article →" : "Leer artículo →");
-
-    const excerpt =
-      meta.excerpt?.trim() ||
-      (body ? body.replace(/[#>*`_]/g, "").slice(0, 180) + "…" : "");
-
-    const readingTime = computeReadingTime(body);
-
-    return {
-      ...meta,
-      excerpt,
-      mdx,
-      readingTime,
-      card: {
-        kicker: meta.card?.kicker,
-        badges: meta.card?.badges ?? meta.tags ?? [],
-        highlights:
-          meta.card?.highlights ??
-          (type === "post" ? [{ label: meta.lang === "en" ? "Read" : "Lectura", value: readingTime }] : undefined),
-        cta: meta.card?.cta ?? defaultCta,
-      },
-    } as ContentItem;
-  });
-
-  return items.filter(Boolean).filter((i: ContentItem) => i.draft !== true);
+  }
+  // Más recientes primero
+  return items.sort((a, b) => (a.date > b.date ? -1 : 1));
 }
 
-/** Devuelve todos los casos (ES/EN) con meta y componente MDX */
-export function getAllCasesWithMDX() {
-  const modules = import.meta.glob("@/content/casos/**/*.{mdx,md}", { eager: true });
-  return Object.entries(modules).map(([path, mod]: any) => {
-    const raw = mod?.raw ?? "";
-    const fm = mod?.meta ?? matter(raw).data ?? {};
-    const slug = fm.slug ?? path.split("/").pop()?.replace(/\.(mdx|md)$/, "");
-    const lang = /\/casos\/(en|es)\//.test(path) ? path.match(/\/casos\/(en|es)\//)![1] : fm.lang;
-
-    const parsed = BaseContentSchema.safeParse({ ...fm, slug, lang });
-    if (!parsed.success) return null;
-
-    return {
-      ...parsed.data,
-      mdx: mod?.default ?? null,   // componente MDX compilado
-      body: mod?.body ?? "",
-      path,
-    };
-  })
-  .filter(Boolean)
-  .filter((x: any) => x.draft !== true);
+export function getAllPostsMeta(): BaseMeta[] {
+  // IMPORTANTE: leer como RAW para no compilar MDX en el listado
+  const modules = import.meta.glob("/src/content/blog/**/**/*.mdx", { eager: true, as: "raw" }) as Record<string, string>;
+  return parseCollection(modules, "blog");
 }
 
-/** Encuentra un caso por lang + slug con componente MDX */
-export function getCaseWithMDXBySlug(lang: "es" | "en", slug: string) {
-  const items = getAllCasesWithMDX();
-  return items.find((i: any) => i.lang === lang && i.slug === slug) ?? null;
+export function getAllCasesMeta(): BaseMeta[] {
+  const modules = import.meta.glob("/src/content/casos/**/**/*.mdx", { eager: true, as: "raw" }) as Record<string, string>;
+  return parseCollection(modules, "casos");
 }
 
 // Legacy API compatibility - keep existing functions working exactly the same
@@ -236,4 +190,100 @@ export function getPostBySlug(lang: Locale, slug: string) {
 export function getCaseBySlug(lang: Locale, slug: string) {
   const key = lang === 'en' ? `/en/cases/${slug}` : `/casos/${slug}`;
   return CASES[key];
+}
+
+/** Encuentra un caso por lang + slug con componente MDX */
+export function getCaseWithMDXBySlug(lang: "es" | "en", slug: string) {
+  const items = getAllCasesWithMDX();
+  return items.find((i: any) => i.lang === lang && i.slug === slug) ?? null;
+}
+
+/** Devuelve todos los casos (ES/EN) con meta y componente MDX */
+export function getAllCasesWithMDX() {
+  const modules = import.meta.glob("@/content/casos/**/*.{mdx,md}", { eager: true });
+  return Object.entries(modules).map(([path, mod]: any) => {
+    const raw = mod?.raw ?? "";
+    const fm = mod?.meta ?? matter(raw).data ?? {};
+    const slug = fm.slug ?? path.split("/").pop()?.replace(/\.(mdx|md)$/, "");
+    const lang = /\/casos\/(en|es)\//.test(path) ? path.match(/\/casos\/(en|es)\//)![1] : fm.lang;
+
+    return {
+      slug,
+      lang,
+      title: fm.title || "",
+      date: fm.date || "",
+      excerpt: fm.excerpt || "",
+      tags: fm.tags || [],
+      cover: fm.cover || null,
+      mdx: mod?.default ?? null,   // componente MDX compilado
+      body: mod?.body ?? "",
+      path,
+    };
+  })
+  .filter(Boolean)
+  .filter((x: any) => x.draft !== true);
+}
+
+// Keep loadEntries for compatibility
+import { BaseContentSchema, type BaseContentMeta, type ContentCardMeta } from "@/content/schemas";
+
+function computeReadingTime(text: string) {
+  const words = (text || "").split(/\s+/).filter(Boolean).length;
+  const minutes = Math.max(1, Math.round(words / 200));
+  return `${minutes} min`;
+}
+
+export type ContentItem = BaseContentMeta & {
+  excerpt: string;
+  mdx: React.ComponentType<any>;
+  readingTime: string;
+  card: Required<ContentCardMeta>;
+};
+
+export function loadEntries(globResult: Record<string, any>, type: "case" | "post"): ContentItem[] {
+  const items = Object.entries(globResult).map(([path, mod]) => {
+    const raw = mod?.raw ?? "";
+    const mdx = mod?.default;
+    const fm = mod?.meta ?? matter(raw).data ?? {};
+    const body = mod?.body ?? ""; // si tenemos el cuerpo
+    const parsed = BaseContentSchema.safeParse({
+      ...fm,
+      slug: fm.slug ?? path.split("/").pop()?.replace(/\.(mdx|md)$/, ""),
+    });
+
+    if (!parsed.success) {
+      console.warn("Invalid meta for", path, parsed.error);
+      return null;
+    }
+
+    const meta = parsed.data;
+
+    // Fallbacks de tarjeta
+    const defaultCta = type === "case"
+      ? (meta.lang === "en" ? "View case →" : "Ver caso →")
+      : (meta.lang === "en" ? "Read article →" : "Leer artículo →");
+
+    const excerpt =
+      meta.excerpt?.trim() ||
+      (body ? body.replace(/[#>*`_]/g, "").slice(0, 180) + "…" : "");
+
+    const readingTime = computeReadingTime(body);
+
+    return {
+      ...meta,
+      excerpt,
+      mdx,
+      readingTime,
+      card: {
+        kicker: meta.card?.kicker,
+        badges: meta.card?.badges ?? meta.tags ?? [],
+        highlights:
+          meta.card?.highlights ??
+          (type === "post" ? [{ label: meta.lang === "en" ? "Read" : "Lectura", value: readingTime }] : undefined),
+        cta: meta.card?.cta ?? defaultCta,
+      },
+    } as ContentItem;
+  });
+
+  return items.filter(Boolean).filter((i: ContentItem) => i.draft !== true);
 }

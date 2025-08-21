@@ -1,20 +1,15 @@
 import React from "react";
 import { useLocation, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import ContentCard from "@/components/content/ContentCard";
-import { loadEntries } from "@/lib/content";
+import { getAllCasesMeta } from "@/lib/content";
 import SmartImage from '@/components/ui/SmartImage';
 import Reveal from '@/components/ui/Reveal';
-
-const modules = import.meta.glob("@/content/casos/**/*.{mdx,md}", { eager: true });
 
 export default function Cases() {
   const isEN = useLocation().pathname.startsWith('/en');
   const lang = isEN ? 'en' : 'es';
 
-  const items = loadEntries(modules, "case")
-    .filter(item => item.lang === lang)
-    .sort((a, b) => +new Date(b.date) - +new Date(a.date));
+  const cases = getAllCasesMeta().filter(c => c.lang === lang);
 
   return (
     <div className="container py-12">
@@ -46,20 +41,30 @@ export default function Cases() {
       </Reveal>
       
       <div className="mt-10 grid gap-8 sm:gap-10 lg:gap-12 sm:grid-cols-2 lg:grid-cols-3" role="list">
-        {items.length > 0 ? (
-          items.map(item => (
-            <ContentCard
-              key={item.slug}
-              href={item.lang === "en" ? `/en/cases/${item.slug}` : `/casos/${item.slug}`}
-              title={item.title}
-              date={item.date}
-              lang={item.lang}
-              excerpt={item.excerpt}
-              kicker={item.card?.kicker}
-              badges={item.card?.badges}
-              highlights={item.card?.highlights?.filter(h => h.label && h.value) as Array<{label: string; value: string}>}
-              cta={item.card?.cta}
-            />
+        {cases.length > 0 ? (
+          cases.map(caseItem => (
+            <article key={caseItem.slug} className="rounded-3xl shadow-sm bg-gradient-to-b from-[#faf7f3] to-white border border-neutral-100 overflow-hidden">
+              <div className="h-40 bg-gradient-to-b from-white to-neutral-50" />
+              <div className="p-5">
+                <h3 className="text-xl font-serif leading-tight">
+                  <Link to={caseItem.lang === "en" ? `/en/cases/${caseItem.slug}` : `/casos/${caseItem.slug}`} className="hover:text-primary">
+                    {caseItem.title}
+                  </Link>
+                </h3>
+                {caseItem.excerpt && <p className="mt-2 text-neutral-600">{caseItem.excerpt}</p>}
+                <div className="mt-3 text-sm text-neutral-500">
+                  {new Date(caseItem.date).toLocaleDateString(lang === 'en' ? 'en-US' : 'es-ES')}
+                </div>
+                <div className="mt-4">
+                  <Link 
+                    to={caseItem.lang === "en" ? `/en/cases/${caseItem.slug}` : `/casos/${caseItem.slug}`}
+                    className="text-primary-700 hover:underline"
+                  >
+                    {lang === "en" ? "View case →" : "Ver caso →"}
+                  </Link>
+                </div>
+              </div>
+            </article>
           ))
         ) : (
           <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
