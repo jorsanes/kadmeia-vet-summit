@@ -1,0 +1,51 @@
+/* src/styles/case-prose.css */
+.case-prose {
+  line-height: 1.75;
+}
+
+.case-prose h2 {
+  margin-top: 2rem;   /* separación entre secciones */
+  margin-bottom: 0.75rem;
+  color: #B38A3F;     /* dorado KADMEIA */
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
+.case-prose h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #B38A3F;
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+
+.case-prose p,
+.case-prose ul,
+.case-prose ol,
+.case-prose blockquote {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.case-prose ul,
+.case-prose ol {
+  padding-left: 1.25rem;
+}
+
+.case-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+.case-prose th,
+.case-prose td {
+  border: 1px solid rgba(0,0,0,0.08);
+  padding: 0.5rem 0.75rem;
+  vertical-align: top;
+}
+
+.case-prose thead th {
+  font-weight: 600;
+  background: rgba(0,0,0,0.03);
+}

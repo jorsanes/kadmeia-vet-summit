@@ -25,6 +25,7 @@ import { getHreflangUrl, getRelatedByTags } from '@/lib/hreflang';
 import { getAllCasesMeta } from '@/lib/content';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { FrontmatterHider } from '@/components/mdx/FrontmatterHider';
+import "@/styles/case-prose.css";
 
 const formatDateSafe = (iso?: string | Date, lang: 'es'|'en' = 'es') => {
   if (!iso) return '';
