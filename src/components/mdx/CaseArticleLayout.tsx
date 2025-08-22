@@ -1,18 +1,28 @@
 import { MDXProvider } from "@mdx-js/react";
 import { ReactNode } from "react";
+import { FilteredMDXContent } from "./FilteredMDXContent";
 
 export function CaseArticleLayout({ children }: { children: ReactNode }) {
   return (
     <article className="prose prose-zinc max-w-none leading-relaxed
                         prose-headings:font-serif prose-headings:text-slate-900
-                        prose-h2:mt-10 prose-h2:text-3xl prose-h2:tracking-tight
-                        prose-h3:mt-8 prose-h3:text-2xl
-                        prose-p:mt-4 prose-p:text-slate-700
-                        prose-li:my-1
+                        prose-h1:hidden prose-h1:text-0 prose-h1:opacity-0
+                        prose-h2:mt-12 prose-h2:mb-6 prose-h2:text-3xl prose-h2:tracking-tight
+                        prose-h3:mt-10 prose-h3:mb-4 prose-h3:text-2xl prose-h3:font-medium
+                        prose-p:mt-6 prose-p:mb-4 prose-p:text-slate-700 prose-p:leading-7
+                        prose-li:my-2 prose-li:leading-relaxed
+                        prose-ul:mt-6 prose-ul:mb-6 prose-ul:space-y-2
+                        prose-ol:mt-6 prose-ol:mb-6 prose-ol:space-y-2
                         prose-a:text-sky-700 hover:prose-a:text-sky-800
-                        prose-strong:text-slate-900
-                        prose-blockquote:border-l-4 prose-blockquote:border-slate-300 prose-blockquote:text-slate-700
-                        prose-img:rounded-xl">
+                        prose-strong:text-slate-900 prose-strong:font-semibold
+                        prose-blockquote:mt-8 prose-blockquote:mb-8 prose-blockquote:py-4 prose-blockquote:px-6
+                        prose-blockquote:border-l-4 prose-blockquote:border-primary/30 
+                        prose-blockquote:bg-muted/30 prose-blockquote:rounded-r-lg
+                        prose-blockquote:text-slate-700 prose-blockquote:italic
+                        prose-img:rounded-xl prose-img:my-8
+                        prose-hr:my-12 prose-hr:border-slate-200
+                        [&>*:first-child:contains('title:')]:hidden
+                        [&>p:first-of-type:contains('title:')]:hidden">
       {children}
     </article>
   );
@@ -26,8 +36,8 @@ export function Callout({ type = "info", title, children }: { type?: "info" | "s
     warning: "bg-amber-50 border-amber-200",
   }[type];
   return (
-    <div className={`my-6 rounded-xl border px-4 py-3 ${styles}`}>
-      {title && <div className="mb-1 font-medium text-slate-900">{title}</div>}
+    <div className={`my-8 rounded-xl border px-6 py-4 ${styles}`}>
+      {title && <div className="mb-2 font-medium text-slate-900">{title}</div>}
       <div className="text-slate-700">{children}</div>
     </div>
   );
@@ -43,11 +53,11 @@ export function Metric({ label, value }: { label: string; value: string }) {
 }
 
 export function MetricGrid({ children }: { children: ReactNode }) {
-  return <div className="my-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{children}</div>;
+  return <div className="my-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">{children}</div>;
 }
 
 export function Divider() {
-  return <hr className="my-10 border-slate-200" />;
+  return <hr className="my-12 border-slate-200" />;
 }
 
 export function ButtonLink({ href, children }: { href: string; children: ReactNode }) {
