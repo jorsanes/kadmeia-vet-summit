@@ -55,3 +55,5 @@
   font-weight: 600;
   background: rgba(0,0,0,0.03);
 }
+
+.case-prose + .kpis { margin-top: -0.5rem; } /* si prefieres pegarlo más al header */
