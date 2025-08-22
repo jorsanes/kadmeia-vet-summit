@@ -4,15 +4,21 @@ import { Card, CardContent } from '@/components/ui/card';
 import { NewsletterInline } from '@/components/ui/NewsletterInline';
 import { Mail, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { TrackedLink } from '@/components/analytics/TrackedComponents';
+import { UTMParams } from '@/lib/analytics';
 
 interface BlogCTAProps {
   lang: string;
   type?: 'newsletter' | 'contact' | 'mixed';
+  source?: string;
+  utmParams?: UTMParams;
 }
 
 export const BlogCTA: React.FC<BlogCTAProps> = ({ 
   lang, 
-  type = 'mixed' 
+  type = 'mixed',
+  source = 'blog',
+  utmParams
 }) => {
   const isSpanish = lang === 'es';
 
@@ -44,11 +50,15 @@ export const BlogCTA: React.FC<BlogCTAProps> = ({
                 : 'Let\'s discuss how we can help you implement these solutions in your clinic.'
               }
             </p>
-            <Button asChild size="lg" className="w-full">
-              <Link to={isSpanish ? '/contacto' : '/en/contact'}>
-                {isSpanish ? 'Hablemos' : 'Let\'s talk'}
-              </Link>
-            </Button>
+            <TrackedLink
+              href={isSpanish ? '/contacto' : '/en/contact'}
+              eventName="CTA Click"
+              eventProps={{ location: source, type: 'contact-cta' }}
+              utmParams={utmParams}
+              className="btn-primary w-full inline-flex items-center justify-center gap-2 py-3 px-6 rounded-lg font-medium"
+            >
+              {isSpanish ? 'Hablemos' : 'Let\'s talk'}
+            </TrackedLink>
           </div>
         </CardContent>
       </Card>
@@ -97,11 +107,15 @@ export const BlogCTA: React.FC<BlogCTAProps> = ({
                 : 'Free consultation to evaluate your specific case'
               }
             </p>
-            <Button asChild size="lg" variant="default" className="w-full">
-              <Link to={isSpanish ? '/contacto' : '/en/contact'}>
-                {isSpanish ? 'Consulta gratuita' : 'Free consultation'}
-              </Link>
-            </Button>
+            <TrackedLink
+              href={isSpanish ? '/contacto' : '/en/contact'}
+              eventName="CTA Click"
+              eventProps={{ location: source, type: 'consultation-cta' }}
+              utmParams={utmParams}
+              className="btn-primary w-full inline-flex items-center justify-center gap-2 py-3 px-6 rounded-lg font-medium"
+            >
+              {isSpanish ? 'Consulta gratuita' : 'Free consultation'}
+            </TrackedLink>
           </div>
         </CardContent>
       </Card>

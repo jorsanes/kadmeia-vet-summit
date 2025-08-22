@@ -14,6 +14,9 @@ import { BlogCTA } from '@/components/blog/BlogCTA';
 import { RelatedPosts } from '@/components/blog/RelatedPosts';
 import { SeriesNavigation } from '@/components/blog/SeriesNavigation';
 import { getRelatedContent, getPrevNextItems, generateBreadcrumbs } from '@/lib/navigation';
+import { usePlausible } from '@/hooks/usePlausible';
+import { useScrollDepth } from '@/hooks/useScrollDepth';
+import { UTM_PRESETS } from '@/lib/analytics';
 
 const modules = import.meta.glob("@/content/blog/**/*.{mdx,md}");
 const allModules = import.meta.glob("@/content/blog/**/*.{mdx,md}", { eager: true });
@@ -22,6 +25,13 @@ export default function PostDetail() {
   const { slug = '' } = useParams();
   const isEN = useLocation().pathname.startsWith('/en/');
   const lang = isEN ? 'en' : 'es';
+  const { trackCTA } = usePlausible();
+  
+  // Track scroll depth for engagement metrics
+  useScrollDepth({
+    enableTracking: true,
+    pageName: `blog-${slug}`
+  });
 
   const key = Object.keys(modules).find(p => p.includes(`/blog/${lang}/${slug}.`));
   const [Comp, setComp] = React.useState<React.ComponentType | null>(null);
@@ -75,7 +85,11 @@ export default function PostDetail() {
   if (!key) return (
     <div className="container py-20 text-center">
       <h1 className="text-2xl font-serif mb-4">{isEN ? "Post not found" : "Artículo no encontrado"}</h1>
-      <Link to={isEN ? "/en/blog" : "/blog"} className="text-primary hover:underline">
+      <Link 
+        to={isEN ? "/en/blog" : "/blog"} 
+        className="text-primary hover:underline"
+        onClick={() => trackCTA('blog-detail', 'back-to-blog', 'not-found')}
+      >
         {isEN ? "Back to blog" : "Volver al blog"}
       </Link>
     </div>
@@ -264,7 +278,12 @@ export default function PostDetail() {
               />
 
               {/* CTA Block */}
-              <BlogCTA lang={lang} type="mixed" />
+              <BlogCTA 
+                lang={lang} 
+                type="mixed" 
+                source="blog-detail" 
+                utmParams={UTM_PRESETS.blogToContact}
+              />
 
               {/* Related Posts */}
               {relatedPosts.length > 0 && (
