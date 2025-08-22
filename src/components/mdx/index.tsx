@@ -338,7 +338,13 @@ export const CaseArticleLayout: React.FC<React.PropsWithChildren> = ({ children 
 );
 
 // =============================================================================
-// Enhanced components with all features
+// Case shortcodes imports
+// =============================================================================
+
+import { BeforeAfter, Timeline, Gallery, Quote } from '@/components/cases/CaseShortcodes';
+
+// =============================================================================
+// Enhanced components with all features + case shortcodes
 // =============================================================================
 
 export const enhancedMDXComponents = {
@@ -349,6 +355,11 @@ export const enhancedMDXComponents = {
   MetricGrid, 
   Divider,
   ButtonLink,
+  // New case shortcodes
+  BeforeAfter,
+  Timeline,
+  Gallery,
+  Quote,
 };
 
 // Wrapper component to handle the newsletter insertion logic

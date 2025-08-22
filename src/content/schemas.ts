@@ -32,5 +32,52 @@ export type BaseMeta = BaseContentMeta;
 export const BlogMeta = BaseContentSchema.extend({});
 export type BlogMeta = z.infer<typeof BlogMeta>;
 
-export const CaseMeta = BaseContentSchema.extend({});
+// Case-specific schema with premium consulting fields
+export const CaseMeta = BaseContentSchema.extend({
+  // Client information
+  client: z.string().min(1),
+  sector: z.string().min(1),
+  ubicacion: z.string().min(1),
+  servicios: z.array(z.string()).min(1),
+  
+  // Highlights and KPIs
+  highlights: z.array(z.object({
+    label: z.string(),
+    value: z.string()
+  })).optional(),
+  
+  kpis: z.array(z.object({
+    label: z.string(), 
+    value: z.string(),
+    description: z.string().optional()
+  })).optional(),
+  
+  // Testimonial
+  testimonial: z.object({
+    quote: z.string(),
+    author: z.string(),
+    role: z.string(),
+    avatar: z.string().optional()
+  }).optional(),
+  
+  // Media galleries
+  gallery: z.array(z.object({
+    src: z.string(),
+    alt: z.string(),
+    caption: z.string().optional()
+  })).optional(),
+  
+  // Timeline for case study progression
+  timeline: z.array(z.object({
+    phase: z.string(),
+    duration: z.string(),
+    description: z.string(),
+    deliverables: z.array(z.string()).optional()
+  })).optional(),
+  
+  // Legacy fields for backwards compatibility
+  duration: z.string().optional(),
+  clinics: z.number().optional(),
+});
+
 export type CaseMeta = z.infer<typeof CaseMeta>;

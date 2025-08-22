@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar } from "lucide-react";
 import { MDXProvider } from "@mdx-js/react";
 import { CaseArticleLayout, enhancedMDXComponents } from "@/components/mdx";
+import CaseHero from "@/components/cases/CaseHero";
+import { CaseMeta } from "@/content/schemas";
 import Reveal from "@/components/ui/Reveal";
 import ReadingProgress from "@/components/ui/ReadingProgress";
 import Toc from "@/components/ui/Toc";
@@ -45,7 +47,19 @@ export default function CaseDetail() {
 
   const currentUrl = `https://kadmeia.com${lang === 'en' ? '/en' : ''}/casos/${slug}`;
   const MDXComponent = entry.mod.default;
-  const meta = entry.meta;
+  const rawMeta = entry.meta;
+  
+  // Validate and enhance meta with CaseMeta schema
+  const metaValidation = CaseMeta.safeParse(rawMeta);
+  const meta = metaValidation.success ? metaValidation.data : rawMeta;
+  
+  // QA Warning for missing critical fields
+  const missingFields: string[] = [];
+  if (!(meta as any).client) missingFields.push('client');
+  if (!(meta as any).sector) missingFields.push('sector'); 
+  if (!(meta as any).ubicacion) missingFields.push('ubicacion');
+  if (!(meta as any).servicios?.length) missingFields.push('servicios');
+  
   const title = meta.title || slug;
 
   return (
@@ -94,6 +108,15 @@ export default function CaseDetail() {
       </Helmet>
 
       <div className="container max-w-7xl py-12">
+        {/* QA Warning for missing fields */}
+        {missingFields.length > 0 && (
+          <div className="mb-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <div className="text-sm text-yellow-800">
+              <strong>⚠️ QA Warning:</strong> Faltan campos críticos en el frontmatter: {missingFields.join(', ')}
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Contenido principal */}
           <div className="lg:col-span-3">
@@ -109,46 +132,55 @@ export default function CaseDetail() {
               </Button>
             </Reveal>
 
-            <article id="article-root">
-              {/* Header del caso */}
-              <header className="mb-12">
-                <Reveal y={16}>
-                  {meta.tags && Array.isArray(meta.tags) && meta.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mb-6">
-                      {meta.tags.map((tag) => (
-                        <Badge key={tag} variant="secondary" className="bg-primary/10 text-primary">
-                          {tag}
-                        </Badge>
-                      ))}
+            {/* Case Hero Section */}
+            {(meta as any).client && (meta as any).sector && (meta as any).ubicacion && (meta as any).servicios?.length ? (
+              <Reveal y={16}>
+                <CaseHero meta={meta as CaseMeta} className="mb-12" />
+              </Reveal>
+            ) : (
+              // Fallback to original header if missing critical fields
+              <article id="article-root">
+                <header className="mb-12">
+                  <Reveal y={16}>
+                    {meta.tags && Array.isArray(meta.tags) && meta.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mb-6">
+                        {meta.tags.map((tag) => (
+                          <Badge key={tag} variant="secondary" className="bg-primary/10 text-primary">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                    
+                    <h1 className="text-4xl md:text-5xl font-serif text-slate-900 mb-6 leading-tight">
+                      {title}
+                    </h1>
+                    
+                    {meta.excerpt && (
+                      <p className="text-xl text-muted-foreground mb-6 leading-relaxed">
+                        {meta.excerpt}
+                      </p>
+                    )}
+                    
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4" />
+                        <time dateTime={meta.date ? new Date(meta.date).toISOString() : undefined}>
+                          {meta.date ? new Date(meta.date).toLocaleDateString(lang === "en" ? "en-US" : "es-ES", {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          }) : 'Sin fecha'}
+                        </time>
+                      </div>
                     </div>
-                  )}
-                  
-                  <h1 className="text-4xl md:text-5xl font-serif text-slate-900 mb-6 leading-tight">
-                    {title}
-                  </h1>
-                  
-                  {meta.excerpt && (
-                    <p className="text-xl text-muted-foreground mb-6 leading-relaxed">
-                      {meta.excerpt}
-                    </p>
-                  )}
-                  
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4" />
-                      <time dateTime={meta.date}>
-                        {meta.date ? new Date(meta.date).toLocaleDateString(lang === "en" ? "en-US" : "es-ES", {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
-                        }) : 'Sin fecha'}
-                      </time>
-                    </div>
-                  </div>
-                </Reveal>
-              </header>
+                  </Reveal>
+                </header>
+              </article>
+            )}
 
-              {/* Contenido principal */}
+            {/* Contenido principal */}
+            <article id="article-root">
               <Reveal>
                 <div className="max-w-none">
                   {MDXComponent && (
