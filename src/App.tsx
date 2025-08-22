@@ -1,3 +1,4 @@
+import React, { Suspense } from "react";
 import { I18nextProvider } from "react-i18next";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -20,8 +21,11 @@ import Privacy from "@/pages/Privacy";
 import Legal from "@/pages/Legal";
 import Cookies from "@/pages/Cookies";
 import BlogPostNew from "@/pages/blog/Post";
-import PostDetail from "@/pages/blog/PostDetail";
-import CaseDetail from "@/pages/casos/CaseDetail";
+import { DetailPageSkeleton } from "@/components/ui/DetailPageSkeleton";
+
+// Lazy load detail pages for better code splitting
+const PostDetail = React.lazy(() => import("@/pages/blog/PostDetail"));
+const CaseDetail = React.lazy(() => import("@/pages/casos/CaseDetail"));
 
 import ContentManager from "@/pages/ContentManager";
 import NotFound from "./pages/NotFound";
@@ -48,8 +52,16 @@ const App = () => (
                         <Route path="/servicios" element={<Services />} />
                         <Route path="/casos" element={<Cases />} />
                         <Route path="/blog" element={<Blog />} />
-                        <Route path="/blog/:slug" element={<PostDetail />} />
-                        <Route path="/casos/:slug" element={<CaseDetail />} />
+                        <Route path="/blog/:slug" element={
+                          <Suspense fallback={<DetailPageSkeleton />}>
+                            <PostDetail />
+                          </Suspense>
+                        } />
+                        <Route path="/casos/:slug" element={
+                          <Suspense fallback={<DetailPageSkeleton />}>
+                            <CaseDetail />
+                          </Suspense>
+                        } />
                         <Route path="/sobre" element={<About />} />
                         <Route path="/contacto" element={<Contact />} />
                         <Route path="/privacidad" element={<Privacy />} />
@@ -63,8 +75,16 @@ const App = () => (
                         <Route path="/en/services" element={<Services />} />
                         <Route path="/en/cases" element={<Cases />} />
                         <Route path="/en/blog" element={<Blog />} />
-                        <Route path="/en/blog/:slug" element={<PostDetail />} />
-                        <Route path="/en/cases/:slug" element={<CaseDetail />} />
+                        <Route path="/en/blog/:slug" element={
+                          <Suspense fallback={<DetailPageSkeleton />}>
+                            <PostDetail />
+                          </Suspense>
+                        } />
+                        <Route path="/en/cases/:slug" element={
+                          <Suspense fallback={<DetailPageSkeleton />}>
+                            <CaseDetail />
+                          </Suspense>
+                        } />
                         <Route path="/en/about" element={<About />} />
                         <Route path="/en/contact" element={<Contact />} />
                         <Route path="/en/privacy" element={<Privacy />} />

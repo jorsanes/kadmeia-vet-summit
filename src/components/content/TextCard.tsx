@@ -1,4 +1,6 @@
-// No longer need Link import
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { SmartImage } from '@/components/mdx';
 
 type Props = {
   title: string;
@@ -6,32 +8,52 @@ type Props = {
   href: string;
   excerpt?: string;
   cta?: string;
-  cover?: string; // Nueva prop para la miniatura
+  cover?: string;
 };
 
 export function TextCard({ title, date, href, excerpt, cta = "Ver más →", cover }: Props) {
+  const [isPrefetched, setIsPrefetched] = useState(false);
+
+  const handleMouseEnter = () => {
+    if (!isPrefetched) {
+      // Prefetch the route
+      const link = document.createElement('link');
+      link.rel = 'prefetch';
+      link.as = 'document';
+      link.href = href;
+      document.head.appendChild(link);
+      setIsPrefetched(true);
+    }
+  };
+
   return (
     <article 
       role="listitem"
       className="relative rounded-2xl bg-gradient-to-b from-white to-[#f8f5f0] shadow-[0_10px_40px_-15px_rgba(0,0,0,.15)] ring-1 ring-black/5 overflow-hidden transition-all duration-300 hover:shadow-[0_18px_50px_-10px_rgba(0,0,0,.2)] hover:translate-y-[-2px] focus-within:ring-2 focus-within:ring-primary/40"
+      onMouseEnter={handleMouseEnter}
     >
-      {/* overlay link accesible */}
-      <a 
-        href={href} 
+      {/* Enhanced overlay link */}
+      <Link
+        to={href} 
         aria-label={title} 
         className="absolute inset-0 z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 rounded-2xl" 
       />
-      {/* Miniatura opcional - solo si hay cover */}
+      
+      {/* Optimized cover image */}
       {cover && (
         <div className="aspect-[4/3] w-full bg-muted overflow-hidden">
-          <img 
+          <SmartImage
             src={cover} 
             alt={title}
             className="w-full h-full object-cover"
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            width={400}
+            height={300}
             loading="lazy"
           />
         </div>
       )}
+      
       <div className="p-4">
         <h3 className="font-serif text-lg text-primary">{title}</h3>
         {excerpt && (
@@ -52,4 +74,4 @@ export function TextCard({ title, date, href, excerpt, cta = "Ver más →", cov
       </div>
     </article>
   );
-}
+};
