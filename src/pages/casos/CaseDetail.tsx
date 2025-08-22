@@ -1,18 +1,22 @@
 import React from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useNavigate, useLocation, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
 import { getCaseBySlug } from "@/lib/content";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, Calendar } from "lucide-react";
 import { MDXProvider } from "@mdx-js/react";
-import { CaseArticleLayout, enhancedMDXComponents } from "@/components/mdx";
+import { CaseArticleLayout, enhancedMDXComponents, SmartImage } from "@/components/mdx";
 import CaseHero from "@/components/cases/CaseHero";
 import { CaseMeta } from "@/content/schemas";
 import Reveal from "@/components/ui/Reveal";
 import ReadingProgress from "@/components/ui/ReadingProgress";
 import Toc from "@/components/ui/Toc";
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
+import { PrevNextNavigation } from '@/components/ui/PrevNextNavigation';
+import { getRelatedContent, getPrevNextItems, generateBreadcrumbs } from '@/lib/navigation';
 
 export default function CaseDetail() {
   const { slug = "" } = useParams();
@@ -59,6 +63,18 @@ export default function CaseDetail() {
   const metaValidation = CaseMeta.safeParse(rawMeta);
   const metaData = metaValidation.success ? metaValidation.data : rawMeta;
   
+  // Get related cases and navigation
+  const relatedCases = React.useMemo(() => {
+    if (metaData.tags) {
+      return getRelatedContent('cases', slug, metaData.tags, lang, 3);
+    }
+    return [];
+  }, [slug, metaData.tags, lang]);
+
+  const prevNext = React.useMemo(() => {
+    return getPrevNextItems('cases', slug, lang);
+  }, [slug, lang]);
+  
   // OG Image with fallback to generated version
   const ogImage = metaData.cover 
     ? (metaData.cover.startsWith('http') ? metaData.cover : `${siteUrl}${metaData.cover}`)
@@ -72,6 +88,9 @@ export default function CaseDetail() {
   if (!(metaData as any).servicios?.length) missingFields.push('servicios');
   
   const title = metaData.title || slug;
+
+  // Generate breadcrumbs
+  const breadcrumbs = generateBreadcrumbs('cases', lang, slug, title);
 
   return (
     <>
@@ -149,17 +168,10 @@ export default function CaseDetail() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Contenido principal */}
           <div className="lg:col-span-3">
-            {/* Header con navegación */}
-            <Reveal y={12}>
-              <Button 
-                variant="ghost" 
-                onClick={() => navigate(lang === "en" ? "/en/cases" : "/casos")}
-                className="mb-8 hover:bg-primary/5"
-              >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                {lang === "en" ? "Back to cases" : "Volver a casos"}
-              </Button>
-            </Reveal>
+            {/* Breadcrumbs */}
+            <div className="mb-6">
+              <Breadcrumbs items={breadcrumbs} />
+            </div>
 
             {/* Case Hero Section */}
             {(metaData as any).client && (metaData as any).sector && (metaData as any).ubicacion && (metaData as any).servicios?.length ? (
@@ -171,6 +183,16 @@ export default function CaseDetail() {
               <article id="article-root">
                 <header className="mb-12">
                   <Reveal y={16}>
+                    <Reveal y={16}>
+                      <Button 
+                        variant="ghost" 
+                        onClick={() => navigate(lang === "en" ? "/en/cases" : "/casos")}
+                        className="mb-8 hover:bg-primary/5"
+                      >
+                        <ArrowLeft className="h-4 w-4 mr-2" />
+                        {lang === "en" ? "Back to cases" : "Volver a casos"}
+                      </Button>
+                    </Reveal>
                     {metaData.tags && Array.isArray(metaData.tags) && metaData.tags.length > 0 && (
                       <div className="flex flex-wrap gap-2 mb-6">
                         {metaData.tags.map((tag) => (
@@ -222,6 +244,79 @@ export default function CaseDetail() {
                 </div>
               </Reveal>
             </article>
+
+            {/* Prev/Next Navigation */}
+            <PrevNextNavigation
+              prev={prevNext.prev}
+              next={prevNext.next}
+              lang={lang}
+              type="cases"
+            />
+
+            {/* Related Cases */}
+            {relatedCases.length > 0 && (
+              <Reveal y={16} delay={0.2}>
+                <div className="mt-16 pt-8 border-t border-border">
+                  <h2 className="text-2xl font-serif text-foreground mb-8">
+                    {lang === "en" ? 'Related Case Studies' : 'Casos Relacionados'}
+                  </h2>
+                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {relatedCases.map((relatedCase) => (
+                      <Card key={relatedCase.slug} className="group hover:shadow-lg transition-shadow">
+                        <Link to={`${lang === 'es' ? '/casos' : '/en/cases'}/${relatedCase.slug}`}>
+                          {relatedCase.cover && (
+                            <div className="relative overflow-hidden rounded-t-lg">
+                              <SmartImage
+                                src={relatedCase.cover}
+                                alt={relatedCase.title}
+                                className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                width={400}
+                                height={200}
+                              />
+                            </div>
+                          )}
+                          
+                          <CardContent className="p-6">
+                            <div className="space-y-3">
+                              {/* Tags */}
+                              <div className="flex flex-wrap gap-1">
+                                {relatedCase.tags.slice(0, 2).map((tag, index) => (
+                                  <Badge key={index} variant="outline" className="text-xs">
+                                    {tag}
+                                  </Badge>
+                                ))}
+                              </div>
+
+                              {/* Title */}
+                              <h3 className="font-serif text-lg leading-tight text-foreground group-hover:text-primary transition-colors">
+                                {relatedCase.title}
+                              </h3>
+
+                              {/* Excerpt */}
+                              <p className="text-sm text-muted-foreground line-clamp-3">
+                                {relatedCase.excerpt}
+                              </p>
+
+                              {/* Meta */}
+                              <div className="flex items-center justify-between text-xs text-muted-foreground pt-2">
+                                <time dateTime={relatedCase.date}>
+                                  {new Date(relatedCase.date).toLocaleDateString(lang === "en" ? "en-GB" : "es-ES", {
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                  })}
+                                </time>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Link>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              </Reveal>
+            )}
 
             {/* Footer CTA */}
             <Reveal y={16} delay={0.3}>

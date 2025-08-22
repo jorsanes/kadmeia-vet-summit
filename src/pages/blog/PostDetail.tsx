@@ -7,10 +7,13 @@ import EnhancedProse from '@/components/prose/EnhancedProse';
 import { enhancedMDXComponents } from '@/components/mdx';
 import ReadingProgress from '@/components/ui/ReadingProgress';
 import Toc from '@/components/ui/Toc';
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
+import { PrevNextNavigation } from '@/components/ui/PrevNextNavigation';
 import { BlogHeader } from '@/components/blog/BlogHeader';
 import { BlogCTA } from '@/components/blog/BlogCTA';
 import { RelatedPosts } from '@/components/blog/RelatedPosts';
 import { SeriesNavigation } from '@/components/blog/SeriesNavigation';
+import { getRelatedContent, getPrevNextItems, generateBreadcrumbs } from '@/lib/navigation';
 
 const modules = import.meta.glob("@/content/blog/**/*.{mdx,md}");
 const allModules = import.meta.glob("@/content/blog/**/*.{mdx,md}", { eager: true });
@@ -25,6 +28,7 @@ export default function PostDetail() {
   const [meta, setMeta] = React.useState<any>(null);
   const [relatedPosts, setRelatedPosts] = React.useState<any[]>([]);
   const [seriesPosts, setSeriesPosts] = React.useState<any[]>([]);
+  const [prevNext, setPrevNext] = React.useState<{ prev?: any; next?: any }>({});
 
   React.useEffect(() => {
     if (!key) return;
@@ -34,46 +38,31 @@ export default function PostDetail() {
       const postMeta = mod.meta || {};
       setMeta(postMeta);
 
-      // Get all posts for related articles and series
-      const allPosts = Object.entries(allModules)
-        .map(([path, module]: [string, any]) => {
-          const slug = path.split('/').pop()?.replace(/\.(mdx|md)$/, '') || '';
-          const postLang = path.includes(`/blog/en/`) ? 'en' : 'es';
-          return {
-            slug,
-            lang: postLang,
-            path,
-            ...module.meta
-          };
-        })
-        .filter(post => post.lang === lang);
-
-      // Find related posts by tag intersection
+      // Find related posts using the new navigation utility
       if (postMeta.tags) {
-        const related = allPosts
-          .filter(post => {
-            if (post.slug === slug) return false;
-            const intersection = post.tags?.filter((tag: string) => 
-              postMeta.tags.includes(tag)
-            ) || [];
-            return intersection.length > 0;
-          })
-          .sort((a, b) => {
-            const aIntersection = a.tags?.filter((tag: string) => 
-              postMeta.tags.includes(tag)
-            )?.length || 0;
-            const bIntersection = b.tags?.filter((tag: string) => 
-              postMeta.tags.includes(tag)
-            )?.length || 0;
-            return bIntersection - aIntersection;
-          })
-          .slice(0, 3);
-        
+        const related = getRelatedContent('blog', slug, postMeta.tags, lang, 3);
         setRelatedPosts(related);
       }
 
-      // Find series posts
+      // Get prev/next navigation
+      const navigation = getPrevNextItems('blog', slug, lang);
+      setPrevNext(navigation);
+
+      // Find series posts using existing logic
       if (postMeta.series) {
+        const allPosts = Object.entries(allModules)
+          .map(([path, module]: [string, any]) => {
+            const slug = path.split('/').pop()?.replace(/\.(mdx|md)$/, '') || '';
+            const postLang = path.includes(`/blog/en/`) ? 'en' : 'es';
+            return {
+              slug,
+              lang: postLang,
+              path,
+              ...module.meta
+            };
+          })
+          .filter(post => post.lang === lang);
+          
         const seriesArticles = allPosts
           .filter(post => post.series === postMeta.series)
           .sort((a, b) => (a.seriesOrder || 0) - (b.seriesOrder || 0));
@@ -170,6 +159,9 @@ export default function PostDetail() {
     })
   };
 
+  // Generate breadcrumbs
+  const breadcrumbs = generateBreadcrumbs('blog', lang, slug, meta?.title);
+
   return (
     <>
       <ReadingProgress target="#article-root" />
@@ -222,15 +214,9 @@ export default function PostDetail() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Contenido principal */}
           <div className="lg:col-span-3">
-            {/* Breadcrumb */}
-            <div className="mb-8">
-              <Link 
-                to={isEN ? "/en/blog" : "/blog"} 
-                className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                {isEN ? "Back to blog" : "Volver al blog"}
-              </Link>
+            {/* Breadcrumbs */}
+            <div className="mb-6">
+              <Breadcrumbs items={breadcrumbs} />
             </div>
 
             <article id="article-root">
@@ -268,6 +254,14 @@ export default function PostDetail() {
                   </EnhancedProse>
                 </MDXProvider>
               </div>
+
+              {/* Prev/Next Navigation */}
+              <PrevNextNavigation
+                prev={prevNext.prev}
+                next={prevNext.next}
+                lang={lang}
+                type="blog"
+              />
 
               {/* CTA Block */}
               <BlogCTA lang={lang} type="mixed" />
