@@ -3,6 +3,12 @@
   line-height: 1.75;
 }
 
+/* Ocultar primer H1 para evitar duplicación con el título del frontmatter */
+.case-prose h1:first-child,
+.case-prose > div > h1:first-child {
+  display: none;
+}
+
 .case-prose h2 {
   margin-top: 2rem;   /* separación entre secciones */
   margin-bottom: 0.75rem;
