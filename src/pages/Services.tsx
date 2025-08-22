@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Reveal from '@/components/ui/Reveal';
-import SmartImage from '@/components/media/SmartImage';
+import { SmartImage } from '@/components/mdx';
 
 const Services = () => {
   const { t } = useTranslation();

@@ -1,4 +1,4 @@
-import SmartImage from '@/components/ui/SmartImage';
+import { SmartImage } from '@/components/mdx';
 import { cn } from '@/lib/utils';
 
 interface BrandWatermarkProps {

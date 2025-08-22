@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Menu, X, Globe, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocale } from '@/i18n/LocaleProvider';
-import SmartImage from '@/components/ui/SmartImage';
+import { SmartImage } from '@/components/mdx';
 import SkipLink from '@/components/accessibility/SkipLink';
 import SearchCommand from '@/components/search/SearchCommand';
 

@@ -1,5 +1,5 @@
 import * as React from "react";
-import SmartImage from "./SmartImage";
+import { SmartImage } from "./";
 
 export const mdxComponents = {
   img: (props: any) => <SmartImage {...props} />,

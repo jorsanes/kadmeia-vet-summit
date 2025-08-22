@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar } from "lucide-react";
 import { MDXProvider } from "@mdx-js/react";
-import { CaseArticleLayout, mdxComponents } from "@/components/mdx/CaseArticleLayout";
+import { CaseArticleLayout, enhancedMDXComponents } from "@/components/mdx";
 import Reveal from "@/components/ui/Reveal";
 import ReadingProgress from "@/components/ui/ReadingProgress";
 import Toc from "@/components/ui/Toc";
@@ -152,7 +152,7 @@ export default function CaseDetail() {
               <Reveal>
                 <div className="max-w-none">
                   {MDXComponent && (
-                    <MDXProvider components={mdxComponents}>
+                    <MDXProvider components={enhancedMDXComponents}>
                       <CaseArticleLayout>
                         <MDXComponent />
                       </CaseArticleLayout>

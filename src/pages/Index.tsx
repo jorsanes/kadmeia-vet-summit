@@ -18,7 +18,7 @@ import {
 import { PageSeo } from "@/components/seo/PageSeo";
 import { OrganizationJsonLd } from "@/components/seo/SeoJsonLd";
 import { useLocale } from "@/i18n/LocaleProvider";
-import SmartImage from "@/components/ui/SmartImage";
+import { SmartImage } from "@/components/mdx";
 import Reveal from "@/components/ui/Reveal";
 import MetricCounter from "@/components/ui/MetricCounter";
 import BrandWatermark from "@/components/brand/BrandWatermark";

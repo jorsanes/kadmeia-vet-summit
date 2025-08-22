@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { CheckCircle, Clock, Users, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Prose, mdxComponents } from '@/content/MDXComponents';
+import { Prose, enhancedMDXComponents } from '@/components/mdx';
 import Reveal from '@/components/ui/Reveal';
 
 const modules = import.meta.glob("@/content/casos/**/*.{mdx,md}");
@@ -282,7 +282,7 @@ export default function CaseDetail() {
 
           {/* Detailed Content */}
           <div className="mt-16">
-            <MDXProvider components={mdxComponents}>
+            <MDXProvider components={enhancedMDXComponents}>
               <Prose>
                 <Comp />
               </Prose>

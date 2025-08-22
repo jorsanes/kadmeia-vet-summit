@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getAllCasesMeta } from "@/lib/content";
-import SmartImage from '@/components/ui/SmartImage';
+import { SmartImage } from '@/components/mdx';
 import Reveal from '@/components/ui/Reveal';
 import { TextCard } from '@/components/content/TextCard';
 import TagFilter from '@/components/content/TagFilter';

@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet-async';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft } from 'lucide-react';
 import EnhancedProse from '@/components/prose/EnhancedProse';
-import { enhancedMDXComponents } from '@/components/prose/MDXComponents';
+import { enhancedMDXComponents } from '@/components/mdx';
 import ReadingProgress from '@/components/ui/ReadingProgress';
 import Toc from '@/components/ui/Toc';
 

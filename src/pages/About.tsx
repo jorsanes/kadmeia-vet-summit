@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Reveal from '@/components/ui/Reveal';
-import SmartImage from '@/components/media/SmartImage';
+import { SmartImage } from '@/components/mdx';
 
 const About = () => {
   const fadeInUp = {

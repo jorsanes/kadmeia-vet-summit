@@ -3,7 +3,7 @@ import { useLocale } from '@/i18n/LocaleProvider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Mail, MapPin, Linkedin, Twitter } from 'lucide-react';
-import SmartImage from '@/components/ui/SmartImage';
+import { SmartImage } from '@/components/mdx';
 const Footer = () => {
   const {
     t
