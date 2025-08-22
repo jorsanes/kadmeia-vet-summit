@@ -24,6 +24,7 @@ import { UTM_PRESETS } from '@/lib/analytics';
 import { getHreflangUrl, getRelatedByTags } from '@/lib/hreflang';
 import { getAllCasesMeta } from '@/lib/content';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { FrontmatterHider } from '@/components/mdx/FrontmatterHider';
 
 export default function CaseDetail() {
   const { slug = "" } = useParams();
@@ -107,6 +108,7 @@ export default function CaseDetail() {
 
   return (
     <ErrorBoundary>
+      <FrontmatterHider />
       <ReadingProgress target="#article-root" />
       
       <Helmet>

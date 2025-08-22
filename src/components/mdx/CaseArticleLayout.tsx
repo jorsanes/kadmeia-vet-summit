@@ -1,6 +1,5 @@
 import { MDXProvider } from "@mdx-js/react";
 import { ReactNode } from "react";
-import { FilteredMDXContent } from "./FilteredMDXContent";
 
 export function CaseArticleLayout({ children }: { children: ReactNode }) {
   return (
@@ -20,9 +19,7 @@ export function CaseArticleLayout({ children }: { children: ReactNode }) {
                         prose-blockquote:bg-muted/30 prose-blockquote:rounded-r-lg
                         prose-blockquote:text-slate-700 prose-blockquote:italic
                         prose-img:rounded-xl prose-img:my-8
-                        prose-hr:my-12 prose-hr:border-slate-200
-                        [&>*:first-child:contains('title:')]:hidden
-                        [&>p:first-of-type:contains('title:')]:hidden">
+                        prose-hr:my-12 prose-hr:border-slate-200">
       {children}
     </article>
   );
