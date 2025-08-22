@@ -12,6 +12,19 @@ import { visualizer } from "rollup-plugin-visualizer";
 import compression from "vite-plugin-compression";
 import { splitVendorChunkPlugin } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
+import { visit } from "unist-util-visit";
+
+// Custom rehype plugin to remove NewsletterInline components
+function rehypeRemoveNewsletter() {
+  return (tree: any) => {
+    visit(tree, "mdxJsxFlowElement", (node: any, index: any, parent: any) => {
+      if (node.name === "NewsletterInline") {
+        parent.children.splice(index, 1);
+        return index;
+      }
+    });
+  };
+}
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode, command }) => {
@@ -21,6 +34,7 @@ export default defineConfig(({ mode, command }) => {
       rehypePlugins: [
         rehypeSlug,
         [rehypeAutolinkHeadings, { behavior: "wrap" }],
+        rehypeRemoveNewsletter,
       ],
     }),
     react(),

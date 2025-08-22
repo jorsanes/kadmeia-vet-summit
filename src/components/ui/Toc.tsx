@@ -21,7 +21,7 @@ export default function Toc({ className = "", title = "Índice" }: TocProps) {
 
   // Extraer headings del contenido
   useEffect(() => {
-    const headings = document.querySelectorAll('article h2, article h3');
+    const headings = document.querySelectorAll('#article-root h2, #article-root h3');
     const tocItems: TocItem[] = [];
     const slugger = new GithubSlugger();
 

@@ -48,7 +48,8 @@ export default function PostDetail() {
     (async () => {
       const mod: any = await modules[key]!();
       setComp(() => mod.default);
-      const postMeta = mod.meta || {};
+      // Use mod.frontmatter as primary source for metadata
+      const postMeta = mod.frontmatter || mod.meta || {};
       setMeta(postMeta);
 
       // Find related posts using the new navigation utility
@@ -114,7 +115,7 @@ export default function PostDetail() {
   if (!meta?.cover) missingFields.push('cover');
   if (!meta?.tags || meta.tags.length === 0) missingFields.push('tags');
   
-  const showQAWarning = missingFields.length > 0 && import.meta.env.DEV;
+  const showQAWarning = missingFields.length > 0 && import.meta.env.DEV && new URLSearchParams(window.location.search).has('qa');
 
   const title = `${meta?.title || slug} | KADMEIA`;
   const desc = meta?.excerpt ?? (isEN ? 'KADMEIA article' : 'Artículo de KADMEIA');
@@ -286,9 +287,9 @@ export default function PostDetail() {
                     return enhancedMDXComponents.h1({ children, ...props });
                   }
                 }}>
-                  <EnhancedProse>
+                  <div id="article-root" className="case-prose">
                     <Comp />
-                  </EnhancedProse>
+                  </div>
                 </MDXProvider>
               </div>
 
@@ -322,7 +323,7 @@ export default function PostDetail() {
           {/* Sidebar con TOC */}
           <div className="lg:col-span-1">
             <div className="lg:sticky lg:top-24">
-              <Toc title={isEN ? "Table of Contents" : "Índice"} />
+              <Toc key={slug} title={isEN ? "Table of Contents" : "Índice"} />
             </div>
           </div>
         </div>
