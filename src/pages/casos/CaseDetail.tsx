@@ -26,6 +26,13 @@ import { getAllCasesMeta } from '@/lib/content';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { FrontmatterHider } from '@/components/mdx/FrontmatterHider';
 
+const formatDateSafe = (iso?: string | Date, lang: 'es'|'en' = 'es') => {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return '';
+  return d.toLocaleDateString(lang === 'en' ? 'en-US' : 'es-ES', { year:'numeric', month:'long', day:'numeric' });
+};
+
 export default function CaseDetail() {
   const { slug = "" } = useParams();
   const { i18n } = useTranslation();
@@ -101,7 +108,8 @@ export default function CaseDetail() {
   if (!(metaData as any).ubicacion) missingFields.push('ubicacion');
   if (!(metaData as any).servicios?.length) missingFields.push('servicios');
   
-  const title = metaData.title || slug;
+  const title = metaData?.title ?? '';
+  const dateStr = formatDateSafe(metaData?.date, lang);
 
   // Generate breadcrumbs
   const breadcrumbs = generateBreadcrumbs('cases', lang, slug, title);
@@ -195,58 +203,37 @@ export default function CaseDetail() {
               </Reveal>
             ) : (
               // Fallback to original header if missing critical fields
-              <article id="article-root">
-                <header className="mb-12">
-                  <Reveal y={16}>
-                    <Reveal y={16}>
-                      <Button 
-                        variant="ghost" 
-                        onClick={() => navigate(lang === "en" ? "/en/cases" : "/casos")}
-                        className="mb-8 hover:bg-primary/5"
-                      >
-                        <ArrowLeft className="h-4 w-4 mr-2" />
-                        {lang === "en" ? "Back to cases" : "Volver a casos"}
-                      </Button>
-                    </Reveal>
-                    {metaData.tags && Array.isArray(metaData.tags) && metaData.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-6">
-                        {metaData.tags.map((tag) => (
-                          <Badge key={tag} variant="secondary" className="bg-primary/10 text-primary">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
-                    
-                    <h1 className="text-4xl md:text-5xl font-serif text-slate-900 mb-6 leading-tight">
-                      {title}
-                    </h1>
-                    
-                    {metaData.excerpt && (
-                      <p className="text-xl text-muted-foreground mb-6 leading-relaxed">
-                        {metaData.excerpt}
-                      </p>
-                    )}
-                    
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4" />
-                        <time dateTime={metaData.date ? new Date(metaData.date).toISOString() : undefined}>
-                          {metaData.date ? new Date(metaData.date).toLocaleDateString(lang === "en" ? "en-US" : "es-ES", {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                          }) : 'Sin fecha'}
-                        </time>
-                      </div>
+              <header className="mb-6">
+                <Reveal y={16}>
+                  <Button 
+                    variant="ghost" 
+                    onClick={() => navigate(lang === "en" ? "/en/cases" : "/casos")}
+                    className="mb-8 hover:bg-primary/5"
+                  >
+                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    {lang === "en" ? "Back to cases" : "Volver a casos"}
+                  </Button>
+                  
+                  {metaData.tags && Array.isArray(metaData.tags) && metaData.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-6">
+                      {metaData.tags.map((tag) => (
+                        <Badge key={tag} variant="secondary" className="bg-primary/10 text-primary">
+                          {tag}
+                        </Badge>
+                      ))}
                     </div>
-                  </Reveal>
-                </header>
-              </article>
+                  )}
+                  
+                  {title && <h1 className="text-4xl font-semibold tracking-tight">{title}</h1>}
+                  {dateStr && (
+                    <p className="mt-2 text-sm text-muted-foreground">{dateStr}</p>
+                  )}
+                </Reveal>
+              </header>
             )}
 
             {/* Contenido principal */}
-            <article id="article-root">
+            <article className="case-prose" id="article-root">
               <Reveal>
                 <div className="max-w-none">
                   {MDXComponent && (
