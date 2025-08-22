@@ -114,6 +114,16 @@ export default function PostDetail() {
   const desc = meta?.excerpt ?? (isEN ? 'KADMEIA article' : 'Artículo de KADMEIA');
   const url = typeof window !== 'undefined' ? window.location.href : '';
   const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://kadmeia.com';
+  
+  // Generate hreflang URLs
+  const baseUrl = url.replace(/\/(en\/)?blog\/.*$/, '');
+  const esUrl = `${baseUrl}/blog/${slug}`;
+  const enUrl = `${baseUrl}/en/blog/${slug}`;
+  
+  // OG Image with fallback to generated version
+  const ogImage = meta?.cover 
+    ? (meta.cover.startsWith('http') ? meta.cover : `${siteUrl}${meta.cover}`)
+    : `${siteUrl}/og/blog/${slug}-${lang}.png`;
 
   // JSON-LD structured data for BlogPosting
   const structuredData = {
@@ -146,12 +156,12 @@ export default function PostDetail() {
       "@id": url
     },
     "url": url,
-    ...(meta?.cover && {
-      "image": {
-        "@type": "ImageObject", 
-        "url": meta.cover.startsWith('http') ? meta.cover : `${siteUrl}${meta.cover}`
-      }
-    }),
+    "image": {
+      "@type": "ImageObject", 
+      "url": ogImage,
+      "width": 1200,
+      "height": 630
+    },
     ...(meta?.tags && {
       "keywords": meta.tags.join(", ")
     }),
@@ -168,11 +178,29 @@ export default function PostDetail() {
         <Helmet>
           <title>{title}</title>
           <meta name="description" content={desc} />
+          
+          {/* Hreflang links */}
+          <link rel="alternate" hrefLang="es" href={esUrl} />
+          <link rel="alternate" hrefLang="en" href={enUrl} />
+          <link rel="alternate" hrefLang="x-default" href={esUrl} />
+          
+          {/* Open Graph */}
           <meta property="og:title" content={title} />
           <meta property="og:description" content={desc} />
           <meta property="og:type" content="article" />
           <meta property="og:url" content={url} />
-          {meta?.cover && <meta property="og:image" content={meta.cover.startsWith('http') ? meta.cover : `${siteUrl}${meta.cover}`} />}
+          <meta property="og:image" content={ogImage} />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+          <meta property="og:locale" content={lang === "es" ? "es_ES" : "en_GB"} />
+          <meta property="og:site_name" content="KADMEIA" />
+          
+          {/* Twitter Card */}
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content={title} />
+          <meta name="twitter:description" content={desc} />
+          <meta name="twitter:image" content={ogImage} />
+          
           <link rel="canonical" href={url} />
           <script type="application/ld+json">
             {JSON.stringify(structuredData)}

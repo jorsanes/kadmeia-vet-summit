@@ -46,21 +46,32 @@ export default function CaseDetail() {
   }
 
   const currentUrl = `https://kadmeia.com${lang === 'en' ? '/en' : ''}/casos/${slug}`;
+  const siteUrl = 'https://kadmeia.com';
+  
+  // Generate hreflang URLs
+  const esUrl = `${siteUrl}/casos/${slug}`;
+  const enUrl = `${siteUrl}/en/cases/${slug}`;
+  
   const MDXComponent = entry.mod.default;
   const rawMeta = entry.meta;
   
   // Validate and enhance meta with CaseMeta schema
   const metaValidation = CaseMeta.safeParse(rawMeta);
-  const meta = metaValidation.success ? metaValidation.data : rawMeta;
+  const metaData = metaValidation.success ? metaValidation.data : rawMeta;
+  
+  // OG Image with fallback to generated version
+  const ogImage = metaData.cover 
+    ? (metaData.cover.startsWith('http') ? metaData.cover : `${siteUrl}${metaData.cover}`)
+    : `${siteUrl}/og/cases/${slug}-${lang}.png`;
   
   // QA Warning for missing critical fields
   const missingFields: string[] = [];
-  if (!(meta as any).client) missingFields.push('client');
-  if (!(meta as any).sector) missingFields.push('sector'); 
-  if (!(meta as any).ubicacion) missingFields.push('ubicacion');
-  if (!(meta as any).servicios?.length) missingFields.push('servicios');
+  if (!(metaData as any).client) missingFields.push('client');
+  if (!(metaData as any).sector) missingFields.push('sector'); 
+  if (!(metaData as any).ubicacion) missingFields.push('ubicacion');
+  if (!(metaData as any).servicios?.length) missingFields.push('servicios');
   
-  const title = meta.title || slug;
+  const title = metaData.title || slug;
 
   return (
     <>
@@ -68,12 +79,30 @@ export default function CaseDetail() {
       
       <Helmet>
         <title>{`${title} - KADMEIA`}</title>
-        <meta name="description" content={meta.excerpt || `Caso de éxito: ${title}`} />
+        <meta name="description" content={metaData.excerpt || `Caso de éxito: ${title}`} />
+        
+        {/* Hreflang links */}
+        <link rel="alternate" hrefLang="es" href={esUrl} />
+        <link rel="alternate" hrefLang="en" href={enUrl} />
+        <link rel="alternate" hrefLang="x-default" href={esUrl} />
+        
+        {/* Open Graph */}
         <meta property="og:title" content={`${title} - KADMEIA`} />
-        <meta property="og:description" content={meta.excerpt || `Caso de éxito: ${title}`} />
+        <meta property="og:description" content={metaData.excerpt || `Caso de éxito: ${title}`} />
         <meta property="og:url" content={currentUrl} />
         <meta property="og:type" content="article" />
-        {meta.cover && <meta property="og:image" content={meta.cover} />}
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:locale" content={lang === "es" ? "es_ES" : "en_GB"} />
+        <meta property="og:site_name" content="KADMEIA" />
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${title} - KADMEIA`} />
+        <meta name="twitter:description" content={metaData.excerpt || `Caso de éxito: ${title}`} />
+        <meta name="twitter:image" content={ogImage} />
+        
         <link rel="canonical" href={currentUrl} />
         
         {/* JSON-LD Structured Data */}
@@ -82,9 +111,15 @@ export default function CaseDetail() {
             "@context": "https://schema.org",
             "@type": "Article",
             "headline": title,
-            "description": meta.excerpt || `Caso de éxito: ${title}`,
-            "datePublished": meta.date,
+            "description": metaData.excerpt || `Caso de éxito: ${title}`,
+            "datePublished": metaData.date,
             "url": currentUrl,
+            "image": {
+              "@type": "ImageObject",
+              "url": ogImage,
+              "width": 1200,
+              "height": 630
+            },
             "author": {
               "@type": "Organization",
               "name": "KADMEIA"
@@ -94,15 +129,9 @@ export default function CaseDetail() {
               "name": "KADMEIA",
               "logo": {
                 "@type": "ImageObject",
-                "url": "https://kadmeia.com/og.png"
+                "url": `${siteUrl}/og.png`
               }
-            },
-            ...(meta.cover && {
-              "image": {
-                "@type": "ImageObject",
-                "url": meta.cover
-              }
-            })
+            }
           })}
         </script>
       </Helmet>
@@ -133,18 +162,18 @@ export default function CaseDetail() {
             </Reveal>
 
             {/* Case Hero Section */}
-            {(meta as any).client && (meta as any).sector && (meta as any).ubicacion && (meta as any).servicios?.length ? (
+            {(metaData as any).client && (metaData as any).sector && (metaData as any).ubicacion && (metaData as any).servicios?.length ? (
               <Reveal y={16}>
-                <CaseHero meta={meta as CaseMeta} className="mb-12" />
+                <CaseHero meta={metaData as CaseMeta} className="mb-12" />
               </Reveal>
             ) : (
               // Fallback to original header if missing critical fields
               <article id="article-root">
                 <header className="mb-12">
                   <Reveal y={16}>
-                    {meta.tags && Array.isArray(meta.tags) && meta.tags.length > 0 && (
+                    {metaData.tags && Array.isArray(metaData.tags) && metaData.tags.length > 0 && (
                       <div className="flex flex-wrap gap-2 mb-6">
-                        {meta.tags.map((tag) => (
+                        {metaData.tags.map((tag) => (
                           <Badge key={tag} variant="secondary" className="bg-primary/10 text-primary">
                             {tag}
                           </Badge>
@@ -156,17 +185,17 @@ export default function CaseDetail() {
                       {title}
                     </h1>
                     
-                    {meta.excerpt && (
+                    {metaData.excerpt && (
                       <p className="text-xl text-muted-foreground mb-6 leading-relaxed">
-                        {meta.excerpt}
+                        {metaData.excerpt}
                       </p>
                     )}
                     
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <div className="flex items-center gap-2">
                         <Calendar className="h-4 w-4" />
-                        <time dateTime={meta.date ? new Date(meta.date).toISOString() : undefined}>
-                          {meta.date ? new Date(meta.date).toLocaleDateString(lang === "en" ? "en-US" : "es-ES", {
+                        <time dateTime={metaData.date ? new Date(metaData.date).toISOString() : undefined}>
+                          {metaData.date ? new Date(metaData.date).toLocaleDateString(lang === "en" ? "en-US" : "es-ES", {
                             year: 'numeric',
                             month: 'long',
                             day: 'numeric'
