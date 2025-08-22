@@ -29,7 +29,35 @@ export type ContentCardMeta = z.infer<typeof ContentCardSchema>;
 export const BaseMeta = BaseContentSchema;
 export type BaseMeta = BaseContentMeta;
 
-export const BlogMeta = BaseContentSchema.extend({});
+// Enhanced Blog schema with mandatory fields
+export const BlogMeta = BaseContentSchema.extend({
+  // Mandatory fields for Blog V2
+  title: z.string().min(3),
+  date: z.preprocess((v) => new Date(String(v)), z.date()),
+  excerpt: z.string().min(10),
+  cover: z.string().min(1),
+  tags: z.array(z.string()).min(1),
+  
+  // Optional fields
+  updatedAt: z.preprocess((v) => v ? new Date(String(v)) : undefined, z.date().optional()),
+  author: z.object({
+    name: z.string(),
+    bio: z.string().optional(),
+    avatar: z.string().optional(),
+    social: z.object({
+      twitter: z.string().optional(),
+      linkedin: z.string().optional(),
+    }).optional()
+  }).optional(),
+  
+  // Series functionality
+  series: z.string().optional(),
+  seriesOrder: z.number().optional(),
+  
+  // Reading time (calculated automatically)
+  readingTime: z.number().optional(),
+});
+
 export type BlogMeta = z.infer<typeof BlogMeta>;
 
 // Case-specific schema with premium consulting fields
