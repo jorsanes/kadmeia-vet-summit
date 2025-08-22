@@ -4,6 +4,8 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 import mdx from "@mdx-js/rollup";
 import remarkGfm from "remark-gfm";
+import remarkFrontmatter from "remark-frontmatter";
+import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import { visualizer } from "rollup-plugin-visualizer";
@@ -15,7 +17,7 @@ import { VitePWA } from "vite-plugin-pwa";
 export default defineConfig(({ mode, command }) => {
   const plugins: any[] = [
     mdx({
-      remarkPlugins: [remarkGfm],
+      remarkPlugins: [remarkGfm, remarkFrontmatter, remarkMdxFrontmatter],
       rehypePlugins: [
         rehypeSlug,
         [rehypeAutolinkHeadings, { behavior: "wrap" }],

@@ -4,7 +4,7 @@ export function FrontmatterHider() {
   useEffect(() => {
     // Buscar y ocultar párrafos que contengan frontmatter después del DOM se renderiza
     const timer = setTimeout(() => {
-      const articles = document.querySelectorAll('article.prose');
+      const articles = document.querySelectorAll('article.case-prose, article.prose');
       
       articles.forEach(article => {
         const firstParagraph = article.querySelector('p:first-of-type');

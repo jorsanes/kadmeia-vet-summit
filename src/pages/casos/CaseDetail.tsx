@@ -202,7 +202,7 @@ export default function CaseDetail() {
 
       <div className="container max-w-7xl py-12">
         {/* QA Warning for missing fields - only show in development */}
-        {process.env.NODE_ENV === 'development' && missingFields.length > 0 && (
+        {import.meta.env.DEV && missingFields.length > 0 && (
           <div className="mb-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
             <div className="text-sm text-yellow-800">
               <strong>⚠️ QA Warning:</strong> Faltan campos críticos en el frontmatter: {missingFields.join(', ')}
