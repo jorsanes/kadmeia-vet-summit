@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { SmartLink } from '@/components/navigation/SmartLink';
 import { ChevronRight, Home } from 'lucide-react';
 
 interface BreadcrumbItem {
@@ -26,12 +26,12 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items, className = "" 
             )}
             
             {item.href ? (
-              <Link 
+              <SmartLink 
                 to={item.href}
                 className="hover:text-foreground transition-colors"
               >
                 {item.label}
-              </Link>
+              </SmartLink>
             ) : (
               <span className="text-foreground font-medium">
                 {item.label}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { SmartLink } from '@/components/navigation/SmartLink';
 import { SmartImage } from '@/components/mdx';
 
 type Props = {
@@ -33,7 +33,7 @@ export function TextCard({ title, date, href, excerpt, cta = "Ver más →", cov
       onMouseEnter={handleMouseEnter}
     >
       {/* Enhanced overlay link */}
-      <Link
+      <SmartLink
         to={href} 
         aria-label={title} 
         className="absolute inset-0 z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-2xl" 

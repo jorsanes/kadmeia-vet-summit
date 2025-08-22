@@ -2,6 +2,7 @@ import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { SmartLink } from '@/components/navigation/SmartLink';
 import { ExternalLink, Info, AlertTriangle, CheckCircle } from 'lucide-react';
 
 // Enhanced heading components with automatic ID generation
@@ -76,7 +77,7 @@ export const enhancedMDXComponents = {
     }
     
     return (
-      <a
+      <SmartLink
         href={href}
         target={isExternal ? "_blank" : undefined}
         rel={isExternal ? "noopener noreferrer" : undefined}
@@ -85,7 +86,7 @@ export const enhancedMDXComponents = {
       >
         {children}
         {isExternal && <ExternalLink className="h-3 w-3 opacity-70" />}
-      </a>
+      </SmartLink>
     );
   },
 
@@ -157,9 +158,9 @@ export const enhancedMDXComponents = {
   CTA: ({ href, children }: { href: string; children: React.ReactNode }) => (
     <div className="my-8 text-center">
       <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-white">
-        <a href={href} target="_blank" rel="noopener noreferrer">
+        <SmartLink href={href} target="_blank" rel="noopener noreferrer">
           {children}
-        </a>
+        </SmartLink>
       </Button>
     </div>
   )
