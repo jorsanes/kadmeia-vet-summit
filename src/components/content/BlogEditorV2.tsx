@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { BlogMeta } from '@/content/schemas';
 import { enhancedMDXComponents } from '@/components/mdx';
 import { MDXProvider } from '@mdx-js/react';
+import { MdxPreview } from '@/components/mdx/MdxPreview';
 import matter from 'gray-matter';
 import { 
   Calendar, 
@@ -514,9 +515,11 @@ export const BlogEditorV2: React.FC<BlogEditorV2Props> = ({ config }) => {
                 </CardHeader>
                 <CardContent>
                   <div className="prose max-w-none">
-                    <MDXProvider components={enhancedMDXComponents}>
-                      <div dangerouslySetInnerHTML={{ __html: editingPost.content }} />
-                    </MDXProvider>
+                    <MdxPreview>
+                      <MDXProvider components={enhancedMDXComponents}>
+                        <div dangerouslySetInnerHTML={{ __html: editingPost.content }} />
+                      </MDXProvider>
+                    </MdxPreview>
                   </div>
                 </CardContent>
               </Card>

@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { CaseMeta } from '@/content/schemas';
 import { enhancedMDXComponents } from '@/components/mdx';
 import { MDXProvider } from '@mdx-js/react';
+import { MdxPreview } from '@/components/mdx/MdxPreview';
 import matter from 'gray-matter';
 import { 
   Calendar, 
@@ -635,9 +636,11 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
                 </CardHeader>
                 <CardContent>
                   <div className="prose max-w-none">
-                    <MDXProvider components={enhancedMDXComponents}>
-                      <div dangerouslySetInnerHTML={{ __html: editingCase.content }} />
-                    </MDXProvider>
+                    <MdxPreview>
+                      <MDXProvider components={enhancedMDXComponents}>
+                        <div dangerouslySetInnerHTML={{ __html: editingCase.content }} />
+                      </MDXProvider>
+                    </MdxPreview>
                   </div>
                 </CardContent>
               </Card>

@@ -19,6 +19,7 @@ import { useScrollDepth } from '@/hooks/useScrollDepth';
 import { UTM_PRESETS } from '@/lib/analytics';
 import { getHreflangUrl, getRelatedByTags } from '@/lib/hreflang';
 import { getAllPostsMeta } from '@/lib/content';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 const modules = import.meta.glob("@/content/blog/**/*.{mdx,md}");
 const allModules = import.meta.glob("@/content/blog/**/*.{mdx,md}", { eager: true });
@@ -183,7 +184,7 @@ export default function PostDetail() {
   const alternateUrl = `${siteUrl}${getHreflangUrl(slug, lang, 'blog')}`;
 
   return (
-    <>
+    <ErrorBoundary>
       <ReadingProgress target="#article-root" />
       
       <div className="container max-w-7xl py-12">
@@ -309,6 +310,6 @@ export default function PostDetail() {
           </div>
         </div>
       </div>
-    </>
+    </ErrorBoundary>
   );
 }

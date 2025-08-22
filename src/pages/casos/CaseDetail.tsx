@@ -23,6 +23,7 @@ import { TrackedLink } from '@/components/analytics/TrackedComponents';
 import { UTM_PRESETS } from '@/lib/analytics';
 import { getHreflangUrl, getRelatedByTags } from '@/lib/hreflang';
 import { getAllCasesMeta } from '@/lib/content';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 export default function CaseDetail() {
   const { slug = "" } = useParams();
@@ -105,7 +106,7 @@ export default function CaseDetail() {
   const breadcrumbs = generateBreadcrumbs('cases', lang, slug, title);
 
   return (
-    <>
+    <ErrorBoundary>
       <ReadingProgress target="#article-root" />
       
       <Helmet>
@@ -360,6 +361,6 @@ export default function CaseDetail() {
           </div>
         </div>
       </div>
-    </>
+    </ErrorBoundary>
   );
 }
