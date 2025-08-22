@@ -93,6 +93,49 @@ export class GitHubAPI {
     }
   }
 
+  async getTree(path: string = '', recursive: boolean = false): Promise<any[]> {
+    const baseUrl = `https://api.github.com/repos/${this.config.owner}/${this.config.repo}`;
+    
+    // First get the commit SHA for the branch
+    const branchResponse = await fetch(`${baseUrl}/branches/${this.config.branch}`, {
+      headers: {
+        'Authorization': `token ${this.config.token}`,
+        'Accept': 'application/vnd.github.v3+json',
+      },
+    });
+
+    if (!branchResponse.ok) {
+      throw new Error(`Failed to get branch info: ${branchResponse.statusText}`);
+    }
+
+    const branchData = await branchResponse.json();
+    const commitSha = branchData.commit.sha;
+
+    // Get the tree
+    const treeUrl = `${baseUrl}/git/trees/${commitSha}${recursive ? '?recursive=1' : ''}`;
+    const treeResponse = await fetch(treeUrl, {
+      headers: {
+        'Authorization': `token ${this.config.token}`,
+        'Accept': 'application/vnd.github.v3+json',
+      },
+    });
+
+    if (!treeResponse.ok) {
+      throw new Error(`Failed to get tree: ${treeResponse.statusText}`);
+    }
+
+    const treeData = await treeResponse.json();
+    
+    // Filter by path if specified
+    if (path) {
+      return treeData.tree.filter((item: any) => 
+        item.path.startsWith(path)
+      );
+    }
+
+    return treeData.tree;
+  }
+
   static getStoredConfig(): GitHubConfig | null {
     try {
       const stored = localStorage.getItem('kadmeia-github-config');

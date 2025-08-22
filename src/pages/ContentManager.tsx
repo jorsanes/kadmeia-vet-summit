@@ -21,8 +21,8 @@ import {
 } from 'lucide-react';
 import { I18nEditor } from '@/components/content/I18nEditor';
 import { MDXPageEditor } from '@/components/content/MDXPageEditor';
-import { BlogEditor } from '@/components/content/BlogEditor';
-import { CasesEditor } from '@/components/content/CasesEditor';
+import { BlogEditorV2 } from '@/components/content/BlogEditorV2';
+import { CasesEditorV2 } from '@/components/content/CasesEditorV2';
 import { PageSeo } from '@/components/seo/PageSeo';
 
 export default function ContentManager() {
@@ -254,11 +254,11 @@ export default function ContentManager() {
           </TabsContent>
 
           <TabsContent value="blog">
-            <BlogEditor config={config} />
+            <BlogEditorV2 config={config} />
           </TabsContent>
 
           <TabsContent value="cases">
-            <CasesEditor config={config} />
+            <CasesEditorV2 config={config} />
           </TabsContent>
 
           <TabsContent value="seo">
