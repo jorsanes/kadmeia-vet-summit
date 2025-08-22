@@ -1,10 +1,7 @@
 import * as React from "react";
-import { SmartImage } from "./";
-import { SmartLink } from "@/components/navigation/SmartLink";
+import { enhancedMDXComponents } from "@/components/mdx";
 
-export const mdxComponents = {
-  img: (props: any) => <SmartImage {...props} />,
-  a: (props: any) => <SmartLink {...props} />,
-};
+// Re-export the enhanced components as the default mapping
+export const mdxComponents = enhancedMDXComponents;
 
 export default mdxComponents;

@@ -379,5 +379,15 @@ const NewsletterInlineWrapper: React.FC = () => {
   return <NewsletterInline />;
 };
 
+// Add debugging in development
+if (import.meta.env.DEV) {
+  console.log('🔧 Enhanced MDX Components loaded:', {
+    hasButtonLink: !!enhancedMDXComponents.ButtonLink,
+    hasCallout: !!enhancedMDXComponents.Callout,
+    hasMetric: !!enhancedMDXComponents.Metric,
+    totalComponents: Object.keys(enhancedMDXComponents).length
+  });
+}
+
 // Default export for convenience
 export default enhancedMDXComponents;

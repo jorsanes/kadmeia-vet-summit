@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { blogIndex, loadBlogComponent } from "@/lib/content-index";
 import { PageSeo, ArticleJsonLd } from "@/lib/seo";
-import mdxComponents from "@/components/mdx/mdx-components";
+import { enhancedMDXComponents as mdxComponents } from "@/components/mdx";
 
 export default function BlogPost() {
   const { slug = "" } = useParams();
