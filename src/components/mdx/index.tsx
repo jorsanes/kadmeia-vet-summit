@@ -120,20 +120,13 @@ export const mdxComponents = {
       {...props} 
     />
   ),
-  h2: (props: React.HTMLProps<HTMLHeadingElement>) => {
-    const isFirstH2 = React.useMemo(() => true, []); // Simplified logic
-    
-    return (
-      <>
-        <HeadingWithId 
-          level={2} 
-          className="font-serif text-2xl font-semibold text-foreground mt-12 mb-6 leading-tight" 
-          {...props} 
-        />
-        {isFirstH2 && <NewsletterInlineWrapper />}
-      </>
-    );
-  },
+  h2: (props: React.HTMLProps<HTMLHeadingElement>) => (
+    <HeadingWithId 
+      level={2} 
+      className="font-serif text-2xl font-semibold text-foreground mt-12 mb-6 leading-tight" 
+      {...props} 
+    />
+  ),
   h3: (props: React.HTMLProps<HTMLHeadingElement>) => (
     <HeadingWithId 
       level={3} 

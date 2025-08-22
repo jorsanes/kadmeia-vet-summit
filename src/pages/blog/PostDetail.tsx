@@ -114,7 +114,7 @@ export default function PostDetail() {
   if (!meta?.cover) missingFields.push('cover');
   if (!meta?.tags || meta.tags.length === 0) missingFields.push('tags');
   
-  const showQAWarning = missingFields.length > 0 && process.env.NODE_ENV === 'development';
+  const showQAWarning = missingFields.length > 0 && import.meta.env.DEV;
 
   const title = `${meta?.title || slug} | KADMEIA`;
   const desc = meta?.excerpt ?? (isEN ? 'KADMEIA article' : 'Artículo de KADMEIA');
@@ -268,7 +268,24 @@ export default function PostDetail() {
 
               {/* Content */}
               <div className="max-w-none">
-                <MDXProvider components={enhancedMDXComponents}>
+                <MDXProvider components={{
+                  ...enhancedMDXComponents,
+                  // Disable NewsletterInline in blog content to prevent intermediate CTAs
+                  NewsletterInline: () => null,
+                  // Suppress first H1 to avoid duplication with BlogHeader
+                  h1: ({ children, ...props }: React.HTMLProps<HTMLHeadingElement>) => {
+                    const [isFirstH1, setIsFirstH1] = React.useState(true);
+                    React.useEffect(() => {
+                      if (isFirstH1) {
+                        setIsFirstH1(false);
+                        return;
+                      }
+                    }, [isFirstH1]);
+                    
+                    if (isFirstH1) return null;
+                    return enhancedMDXComponents.h1({ children, ...props });
+                  }
+                }}>
                   <EnhancedProse>
                     <Comp />
                   </EnhancedProse>
