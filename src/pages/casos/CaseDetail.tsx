@@ -25,6 +25,8 @@ import { getHreflangUrl, getRelatedByTags } from '@/lib/hreflang';
 import { getAllCasesMeta } from '@/lib/content';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { FrontmatterHider } from '@/components/mdx/FrontmatterHider';
+import { KpiGrid, type Kpi } from "@/components/cases/KpiGrid";
+import { Testimonial } from "@/components/cases/Testimonial";
 import "@/styles/case-prose.css";
 
 const formatDateSafe = (iso?: string | Date, lang: 'es'|'en' = 'es') => {
@@ -42,6 +44,11 @@ export default function CaseDetail() {
   const isEN = location.pathname.startsWith("/en/");
   const lang = (isEN ? "en" : "es");
   const { trackCTA } = usePlausible();
+  
+  // Referencias y estado para KPIs y testimoniales
+  const contentRef = React.useRef<HTMLDivElement>(null);
+  const [kpis, setKpis] = React.useState<Kpi[]>([]);
+  const [testimonial, setTestimonial] = React.useState<{quote?: string; author?: string; role?: string}>({});
   
   // Track scroll depth for engagement metrics
   useScrollDepth({
@@ -114,6 +121,55 @@ export default function CaseDetail() {
 
   // Generate breadcrumbs
   const breadcrumbs = generateBreadcrumbs('cases', lang, slug, title);
+
+  // 1) Intento 1: leer desde frontmatter (nombres tolerantes)
+  React.useEffect(() => {
+    const fm: any = metaData || {};
+    const arr: Kpi[] =
+      fm.kpis || fm.highlights || fm.metrics || []; // debe ser [{label,value,description}]
+    if (Array.isArray(arr) && arr?.[0]?.label && arr?.[0]?.value) {
+      setKpis(arr);
+      setTestimonial(fm.testimonial || {});
+    }
+  }, [metaData]);
+
+  // 2) Intento 2: si no hay en frontmatter, raspar las primeras líneas del body
+  React.useEffect(() => {
+    if (kpis.length || !contentRef.current) return;
+
+    const root = contentRef.current;
+    const paras = Array.from(root.querySelectorAll("p"));
+
+    // Tomamos las primeras líneas que contengan metadatos tipo "label:" o "testimonial:"
+    const metaParas = paras.filter(p =>
+      /^(label|value|description|testimonial|author|role|draft)\s*:/i.test(p.textContent?.trim() || "")
+    );
+
+    if (!metaParas.length) return;
+
+    // Unimos el texto para parsearlo con regex por bloques
+    const joined = metaParas.map(p => p.textContent).join("\n");
+
+    // Extraer KPIs: lines del tipo  label: "X" value: "Y" description: "Z"
+    const re = /label:\s*"(.*?)"\s*value:\s*"(.*?)"\s*description:\s*"(.*?)"/g;
+    const found: Kpi[] = [];
+    let m;
+    while ((m = re.exec(joined)) !== null) {
+      found.push({ label: m[1], value: m[2], description: m[3] });
+    }
+
+    // Testimonial (si viene)
+    const q = /testimonial:\s*quote:\s*"(.*?)"/.exec(joined)?.[1];
+    const a = /author:\s*"(.*?)"/.exec(joined)?.[1];
+    const r = /role:\s*"(.*?)"/.exec(joined)?.[1];
+    setTestimonial({ quote: q, author: a, role: r });
+
+    if (found.length) {
+      setKpis(found);
+      // Ocultar esos <p> del bloque meta
+      metaParas.forEach(p => (p.style.display = "none"));
+    }
+  }, [kpis.length, contentRef.current]);
 
   return (
     <ErrorBoundary>
@@ -233,8 +289,16 @@ export default function CaseDetail() {
               </header>
             )}
 
+            {/* NUEVO: KPIs arriba */}
+            {Boolean(kpis.length) && <KpiGrid items={kpis} className="mb-6" />}
+
+            {/* NUEVO: testimonial si existe */}
+            {(testimonial?.quote) && (
+              <Testimonial quote={testimonial.quote} author={testimonial.author} role={testimonial.role} />
+            )}
+
             {/* Contenido principal */}
-            <article className="case-prose" id="article-root">
+            <article ref={contentRef} className="case-prose" id="article-root">
               <Reveal>
                 <div className="max-w-none">
                   {MDXComponent && (
