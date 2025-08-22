@@ -122,54 +122,19 @@ export default function CaseDetail() {
   // Generate breadcrumbs
   const breadcrumbs = generateBreadcrumbs('cases', lang, slug, title);
 
-  // 1) Intento 1: leer desde frontmatter (nombres tolerantes)
+  // Show KPIs and testimonial from frontmatter only
   React.useEffect(() => {
     const fm: any = metaData || {};
-    const arr: Kpi[] =
-      fm.kpis || fm.highlights || fm.metrics || []; // debe ser [{label,value,description}]
-    if (Array.isArray(arr) && arr?.[0]?.label && arr?.[0]?.value) {
+    const arr: Kpi[] = fm.kpis || [];
+    
+    if (Array.isArray(arr) && arr.length > 0 && arr[0]?.label && arr[0]?.value) {
       setKpis(arr);
-      setTestimonial(fm.testimonial || {});
+    }
+    
+    if (fm.testimonial && fm.testimonial.quote) {
+      setTestimonial(fm.testimonial);
     }
   }, [metaData]);
-
-  // 2) Intento 2: si no hay en frontmatter, raspar las primeras líneas del body
-  React.useEffect(() => {
-    if (kpis.length || !contentRef.current) return;
-
-    const root = contentRef.current;
-    const paras = Array.from(root.querySelectorAll("p"));
-
-    // Tomamos las primeras líneas que contengan metadatos tipo "label:" o "testimonial:"
-    const metaParas = paras.filter(p =>
-      /^(label|value|description|testimonial|author|role|draft)\s*:/i.test(p.textContent?.trim() || "")
-    );
-
-    if (!metaParas.length) return;
-
-    // Unimos el texto para parsearlo con regex por bloques
-    const joined = metaParas.map(p => p.textContent).join("\n");
-
-    // Extraer KPIs: lines del tipo  label: "X" value: "Y" description: "Z"
-    const re = /label:\s*"(.*?)"\s*value:\s*"(.*?)"\s*description:\s*"(.*?)"/g;
-    const found: Kpi[] = [];
-    let m;
-    while ((m = re.exec(joined)) !== null) {
-      found.push({ label: m[1], value: m[2], description: m[3] });
-    }
-
-    // Testimonial (si viene)
-    const q = /testimonial:\s*quote:\s*"(.*?)"/.exec(joined)?.[1];
-    const a = /author:\s*"(.*?)"/.exec(joined)?.[1];
-    const r = /role:\s*"(.*?)"/.exec(joined)?.[1];
-    setTestimonial({ quote: q, author: a, role: r });
-
-    if (found.length) {
-      setKpis(found);
-      // Ocultar esos <p> del bloque meta
-      metaParas.forEach(p => (p.style.display = "none"));
-    }
-  }, [kpis.length, contentRef.current]);
 
   return (
     <ErrorBoundary>
@@ -236,8 +201,8 @@ export default function CaseDetail() {
       </Helmet>
 
       <div className="container max-w-7xl py-12">
-        {/* QA Warning for missing fields */}
-        {missingFields.length > 0 && (
+        {/* QA Warning for missing fields - only show in development */}
+        {process.env.NODE_ENV === 'development' && missingFields.length > 0 && (
           <div className="mb-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
             <div className="text-sm text-yellow-800">
               <strong>⚠️ QA Warning:</strong> Faltan campos críticos en el frontmatter: {missingFields.join(', ')}
@@ -253,48 +218,50 @@ export default function CaseDetail() {
               <Breadcrumbs items={breadcrumbs} />
             </div>
 
-            {/* Case Hero Section */}
-            {(metaData as any).client && (metaData as any).sector && (metaData as any).ubicacion && (metaData as any).servicios?.length ? (
+            {/* Case Header - Always show simple header with title and date */}
+            <header className="mb-8">
               <Reveal y={16}>
-                <CaseHero meta={metaData as CaseMeta} className="mb-12" />
+                <Button 
+                  variant="ghost" 
+                  onClick={() => navigate(lang === "en" ? "/en/cases" : "/casos")}
+                  className="mb-8 hover:bg-primary/5"
+                >
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  {lang === "en" ? "Back to cases" : "Volver a casos"}
+                </Button>
+                
+                {metaData.tags && Array.isArray(metaData.tags) && metaData.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {metaData.tags.map((tag) => (
+                      <Badge key={tag} variant="secondary" className="bg-primary/10 text-primary">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+                
+                {title && <h1 className="text-4xl font-serif font-semibold tracking-tight mb-3">{title}</h1>}
+                {dateStr && (
+                  <div className="flex items-center gap-2 text-muted-foreground mb-6">
+                    <Calendar className="h-4 w-4" />
+                    <time dateTime={typeof metaData.date === 'string' ? metaData.date : metaData.date?.toISOString()}>{dateStr}</time>
+                  </div>
+                )}
               </Reveal>
-            ) : (
-              // Fallback to original header if missing critical fields
-              <header className="mb-6">
-                <Reveal y={16}>
-                  <Button 
-                    variant="ghost" 
-                    onClick={() => navigate(lang === "en" ? "/en/cases" : "/casos")}
-                    className="mb-8 hover:bg-primary/5"
-                  >
-                    <ArrowLeft className="h-4 w-4 mr-2" />
-                    {lang === "en" ? "Back to cases" : "Volver a casos"}
-                  </Button>
-                  
-                  {metaData.tags && Array.isArray(metaData.tags) && metaData.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mb-6">
-                      {metaData.tags.map((tag) => (
-                        <Badge key={tag} variant="secondary" className="bg-primary/10 text-primary">
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
-                  
-                  {title && <h1 className="text-4xl font-semibold tracking-tight">{title}</h1>}
-                  {dateStr && (
-                    <p className="mt-2 text-sm text-muted-foreground">{dateStr}</p>
-                  )}
-                </Reveal>
-              </header>
-            )}
+            </header>
 
-            {/* NUEVO: KPIs arriba */}
-            {Boolean(kpis.length) && <KpiGrid items={kpis} className="mb-6" />}
+            {/* KPIs from frontmatter */}
+            {Boolean(kpis.length) && <KpiGrid items={kpis} className="mb-8" />}
 
-            {/* NUEVO: testimonial si existe */}
+            {/* Testimonial from frontmatter */}
             {(testimonial?.quote) && (
-              <Testimonial quote={testimonial.quote} author={testimonial.author} role={testimonial.role} />
+              <div className="mb-8">
+                <Testimonial 
+                  quote={testimonial.quote} 
+                  author={testimonial.author} 
+                  role={testimonial.role} 
+                />
+              </div>
             )}
 
             {/* Contenido principal */}
