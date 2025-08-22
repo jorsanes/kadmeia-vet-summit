@@ -43,6 +43,7 @@ export const SmartImage: React.FC<SmartImageProps> = ({
       loading={priority ? 'eager' : 'lazy'}
       decoding={priority ? 'sync' : 'async'}
       sizes={sizes}
+      {...(priority && { fetchPriority: 'high' as const })}
       className={cn(
         rounded && 'rounded-2xl',
         className

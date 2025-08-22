@@ -20,6 +20,16 @@ export default function Cases() {
   
   const allCases = getAllCasesMeta().filter(c => c.lang === lang);
   
+  // Debug: mostrar casos en desarrollo
+  if (import.meta.env.DEV) {
+    console.log('📋 Cases loaded:', { 
+      total: getAllCasesMeta().length, 
+      filtered: allCases.length, 
+      lang,
+      cases: allCases.map(c => ({ slug: c.slug, title: c.title }))
+    });
+  }
+  
   // Estado para filtros
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   
