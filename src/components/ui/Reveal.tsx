@@ -33,6 +33,12 @@ export default function Reveal({
 
     const observer = new IntersectionObserver(
       ([entry]) => {
+        if (import.meta.env.DEV) {
+          console.log('🔍 Reveal intersection:', { 
+            isIntersecting: entry.isIntersecting, 
+            element: element.textContent?.slice(0, 50) + '...' 
+          });
+        }
         if (entry.isIntersecting) {
           setIsInView(true);
           if (once) {
