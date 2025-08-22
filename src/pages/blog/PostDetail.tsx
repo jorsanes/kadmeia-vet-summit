@@ -287,7 +287,7 @@ export default function PostDetail() {
                     return enhancedMDXComponents.h1({ children, ...props });
                   }
                 }}>
-                  <div id="article-root" className="case-prose">
+                  <div id="post-content" className="case-prose">
                     <Comp />
                   </div>
                 </MDXProvider>

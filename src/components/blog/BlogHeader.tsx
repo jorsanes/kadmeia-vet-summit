@@ -48,16 +48,16 @@ export const BlogHeader: React.FC<BlogHeaderProps> = ({
 
   return (
     <header className="mb-12">
-      {/* Cover Image */}
+      {/* Cover Image - Banner style */}
       {cover && (
         <div className="mb-8 -mx-6 md:mx-0">
           <SmartImage
             src={cover}
             alt={title}
-            className="w-full h-64 md:h-80 object-cover rounded-lg"
+            className="w-full h-32 md:h-48 object-cover rounded-lg"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
             width={800}
-            height={400}
+            height={192}
           />
         </div>
       )}

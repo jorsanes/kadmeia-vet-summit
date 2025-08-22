@@ -19,9 +19,9 @@ export default function Toc({ className = "", title = "Índice" }: TocProps) {
   const shouldReduceMotion = useReducedMotion();
   const observerRef = useRef<IntersectionObserver | null>(null);
 
-  // Extraer headings del contenido
+  // Extraer headings del contenido - solo del artículo
   useEffect(() => {
-    const headings = document.querySelectorAll('#article-root h2, #article-root h3');
+    const headings = document.querySelectorAll('#post-content h2, #post-content h3');
     const tocItems: TocItem[] = [];
     const slugger = new GithubSlugger();
 
