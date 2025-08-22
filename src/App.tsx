@@ -9,6 +9,8 @@ import { HelmetProvider } from 'react-helmet-async';
 import ErrorBoundary from "@/components/ErrorBoundary";
 import i18n from "@/i18n/config";
 import { LocaleProvider } from "@/i18n/LocaleProvider";
+import { LangProvider } from "@/components/accessibility/LangProvider";
+import SkipLink from "@/components/accessibility/SkipLink";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Home from "@/pages/Index";
@@ -43,7 +45,9 @@ const App = () => (
             <Sonner />
               <BrowserRouter>
                 <LocaleProvider>
+                  <LangProvider />
                   <div className="min-h-screen flex flex-col">
+                    <SkipLink />
                     <Header />
                     <main id="main-content" tabIndex={-1} className="flex-1">
                       <Routes>

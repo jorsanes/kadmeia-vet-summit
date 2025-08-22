@@ -205,6 +205,11 @@
 ## 🔧 Development Tools
 
 ```bash
+# QA Automation
+./scripts/run-qa.sh         # Full QA suite (Lighthouse + Pa11y)
+./scripts/run-lighthouse.sh # Solo Lighthouse CI
+./scripts/run-a11y.sh       # Solo tests de accesibilidad
+
 # Performance Analysis
 npm run analyze          # Bundle size visualization
 npm run build           # Production build
@@ -216,6 +221,29 @@ npm run type-check      # TypeScript validation
 
 # Testing
 npm run test            # Unit tests (if implemented)
+```
+
+## 🎯 Automated QA Setup
+
+### Lighthouse CI Configuration
+- **Configuración**: `lighthouserc.js`
+- **URLs tested**: Home, Blog, Cases, Detail pages (ES/EN)
+- **Thresholds**: Performance ≥90, Accessibility ≥90, SEO ≥95, Best Practices ≥95
+
+### Pa11y Accessibility Testing  
+- **Configuración**: `.pa11yci.json`
+- **URLs tested**: Todas las rutas principales en ES/EN
+- **Standards**: WCAG 2.1 AA compliance
+
+### Running QA Tests
+```bash
+# Ejecutar todo el suite QA
+chmod +x scripts/run-qa.sh
+./scripts/run-qa.sh
+
+# Tests individuales
+chmod +x scripts/run-lighthouse.sh && ./scripts/run-lighthouse.sh
+chmod +x scripts/run-a11y.sh && ./scripts/run-a11y.sh
 ```
 
 ## 📊 Lighthouse Thresholds

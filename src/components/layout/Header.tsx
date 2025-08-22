@@ -130,8 +130,10 @@ const Header = () => {
               variant="ghost"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="-m-2.5 p-2.5"
+              aria-expanded={isMenuOpen}
+              aria-controls="mobile-menu"
+              aria-label={isMenuOpen ? "Cerrar menú principal" : "Abrir menú principal"}
             >
-              <span className="sr-only">Open main menu</span>
               {isMenuOpen ? (
                 <X className="h-6 w-6" aria-hidden="true" />
               ) : (
@@ -146,10 +148,13 @@ const Header = () => {
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
+            id="mobile-menu"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             className="lg:hidden bg-background border-t border-border/50"
+            role="menu"
+            aria-label="Menú de navegación móvil"
           >
             <div className="space-y-2 px-6 pb-6 pt-4">
               {navigation.map((item) => (

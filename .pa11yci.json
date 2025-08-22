@@ -1,0 +1,21 @@
+{
+  "defaults": {
+    "timeout": 20000,
+    "wait": 500,
+    "chromeLaunchConfig": {
+      "args": ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]
+    }
+  },
+  "urls": [
+    "http://localhost:4173/",
+    "http://localhost:4173/blog",
+    "http://localhost:4173/casos",
+    "http://localhost:4173/blog/ia-veterinaria-2024",
+    "http://localhost:4173/casos/clinica-barcelona-ia",
+    "http://localhost:4173/en",
+    "http://localhost:4173/en/blog",
+    "http://localhost:4173/en/cases",
+    "http://localhost:4173/en/blog/ai-veterinary-diagnostics",
+    "http://localhost:4173/en/cases/london-ai-implementation"
+  ]
+}

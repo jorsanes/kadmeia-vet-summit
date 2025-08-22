@@ -132,26 +132,27 @@ export default function Toc({ className = "", title = "Índice" }: TocProps) {
     <nav 
       className={`sticky top-24 bg-background/80 backdrop-blur-sm border border-border rounded-xl p-4 max-h-[60vh] overflow-y-auto ${className}`}
       aria-label="Índice del contenido"
+      role="navigation"
     >
       <h2 className="font-semibold text-sm text-foreground mb-3 flex items-center gap-2">
         <div className="w-1 h-4 bg-primary rounded-full" />
         {title}
       </h2>
       
-      <ul className="space-y-1 text-sm">
+      <ul className="space-y-1 text-sm" role="list">
         {items.map((item) => {
           const isActive = activeId === item.id;
           const isH3 = item.level === 3;
           
           return (
-            <li key={item.id}>
+            <li key={item.id} role="listitem">
               <a
                 href={`#${item.id}`}
                 onClick={(e) => handleClick(e, item.id)}
                 className={`
                   block py-1.5 px-2 rounded-md transition-all duration-200
                   hover:bg-primary/5 hover:text-primary
-                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-1
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background
                   ${isH3 ? 'ml-4 text-xs' : 'text-sm'}
                   ${isActive 
                     ? 'text-primary bg-primary/10 font-medium border-l-2 border-primary' 
@@ -159,8 +160,14 @@ export default function Toc({ className = "", title = "Índice" }: TocProps) {
                   }
                 `}
                 aria-current={isActive ? 'location' : undefined}
+                aria-describedby={isActive ? `toc-${item.id}-desc` : undefined}
               >
                 {item.text}
+                {isActive && (
+                  <span id={`toc-${item.id}-desc`} className="sr-only">
+                    (sección actual)
+                  </span>
+                )}
               </a>
             </li>
           );

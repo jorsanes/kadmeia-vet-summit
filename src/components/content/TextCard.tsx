@@ -36,7 +36,7 @@ export function TextCard({ title, date, href, excerpt, cta = "Ver más →", cov
       <Link
         to={href} 
         aria-label={title} 
-        className="absolute inset-0 z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 rounded-2xl" 
+        className="absolute inset-0 z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-2xl" 
       />
       
       {/* Optimized cover image */}
