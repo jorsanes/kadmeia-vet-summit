@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useReducedMotion } from 'framer-motion';
+import GithubSlugger from 'github-slugger';
 
 interface TocItem {
   id: string;
@@ -22,20 +23,25 @@ export default function Toc({ className = "", title = "Índice" }: TocProps) {
   useEffect(() => {
     const headings = document.querySelectorAll('article h2, article h3');
     const tocItems: TocItem[] = [];
+    const slugger = new GithubSlugger();
 
-    headings.forEach((heading, index) => {
+    headings.forEach((heading) => {
       const level = parseInt(heading.tagName.charAt(1));
+      const text = heading.textContent || '';
       let id = heading.id;
       
-      // Generar ID si no existe
+      // Si no tiene ID, generar uno usando github-slugger (igual que rehype-slug)
       if (!id) {
-        id = `heading-${index}-${heading.textContent?.toLowerCase().replace(/[^a-z0-9]+/g, '-') || 'untitled'}`;
+        id = slugger.slug(text);
         heading.id = id;
+      } else {
+        // Reset slugger to match existing IDs if they already exist
+        slugger.slug(text, false);
       }
 
       tocItems.push({
         id,
-        text: heading.textContent || '',
+        text,
         level
       });
     });
@@ -43,9 +49,17 @@ export default function Toc({ className = "", title = "Índice" }: TocProps) {
     setItems(tocItems);
   }, []);
 
-  // Observar secciones activas
+  // Observar secciones activas y sincronizar con hash de URL
   useEffect(() => {
-    if (items.length === 0 || shouldReduceMotion) return;
+    if (items.length === 0) return;
+
+    // Sincronizar estado inicial con hash de URL
+    const initialHash = window.location.hash.slice(1);
+    if (initialHash && items.some(item => item.id === initialHash)) {
+      setActiveId(initialHash);
+    }
+
+    if (shouldReduceMotion) return;
 
     const headingElements = items.map(item => document.getElementById(item.id)).filter(Boolean);
     
@@ -56,7 +70,13 @@ export default function Toc({ className = "", title = "Índice" }: TocProps) {
         if (visibleEntries.length > 0) {
           // Tomar el primer elemento visible
           const activeEntry = visibleEntries[0];
-          setActiveId(activeEntry.target.id);
+          const newActiveId = activeEntry.target.id;
+          setActiveId(newActiveId);
+          
+          // Actualizar URL solo si es diferente del hash actual
+          if (window.location.hash !== `#${newActiveId}`) {
+            history.replaceState(null, '', `#${newActiveId}`);
+          }
         }
       },
       {
@@ -76,6 +96,13 @@ export default function Toc({ className = "", title = "Índice" }: TocProps) {
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
+    
+    // Check if we're already on this hash to avoid unnecessary history updates
+    const currentHash = window.location.hash.slice(1);
+    if (currentHash === id) {
+      return;
+    }
+    
     const element = document.getElementById(id);
     if (element) {
       const offsetTop = element.offsetTop - 100; // Espacio para header fijo
@@ -91,8 +118,10 @@ export default function Toc({ className = "", title = "Índice" }: TocProps) {
         });
       }
       
-      // Actualizar URL
-      history.replaceState(null, '', `#${id}`);
+      // Actualizar URL solo si no estamos ya en ese hash
+      if (window.location.hash !== `#${id}`) {
+        history.replaceState(null, '', `#${id}`);
+      }
       setActiveId(id);
     }
   };
