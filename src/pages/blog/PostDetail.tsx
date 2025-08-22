@@ -17,6 +17,8 @@ import { getRelatedContent, getPrevNextItems, generateBreadcrumbs } from '@/lib/
 import { usePlausible } from '@/hooks/usePlausible';
 import { useScrollDepth } from '@/hooks/useScrollDepth';
 import { UTM_PRESETS } from '@/lib/analytics';
+import { getHreflangUrl, getRelatedByTags } from '@/lib/hreflang';
+import { getAllPostsMeta } from '@/lib/content';
 
 const modules = import.meta.glob("@/content/blog/**/*.{mdx,md}");
 const allModules = import.meta.glob("@/content/blog/**/*.{mdx,md}", { eager: true });
@@ -176,6 +178,10 @@ export default function PostDetail() {
   // Generate breadcrumbs
   const breadcrumbs = generateBreadcrumbs('blog', lang, slug, meta?.title);
 
+  // Calculate hreflang URLs
+  const currentUrl = url;
+  const alternateUrl = `${siteUrl}${getHreflangUrl(slug, lang, 'blog')}`;
+
   return (
     <>
       <ReadingProgress target="#article-root" />
@@ -184,11 +190,10 @@ export default function PostDetail() {
         <Helmet>
           <title>{title}</title>
           <meta name="description" content={desc} />
-          
-          {/* Hreflang links */}
-          <link rel="alternate" hrefLang="es" href={esUrl} />
-          <link rel="alternate" hrefLang="en" href={enUrl} />
-          <link rel="alternate" hrefLang="x-default" href={esUrl} />
+          <link rel="canonical" href={currentUrl} />
+          <link rel="alternate" hrefLang={lang} href={currentUrl} />
+          <link rel="alternate" hrefLang={lang === 'es' ? 'en' : 'es'} href={alternateUrl} />
+          <link rel="alternate" hrefLang="x-default" href={lang === 'es' ? currentUrl : alternateUrl} />
           
           {/* Open Graph */}
           <meta property="og:title" content={title} />

@@ -17,6 +17,12 @@ import Toc from "@/components/ui/Toc";
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { PrevNextNavigation } from '@/components/ui/PrevNextNavigation';
 import { getRelatedContent, getPrevNextItems, generateBreadcrumbs } from '@/lib/navigation';
+import { usePlausible } from '@/hooks/usePlausible';
+import { useScrollDepth } from '@/hooks/useScrollDepth';
+import { TrackedLink } from '@/components/analytics/TrackedComponents';
+import { UTM_PRESETS } from '@/lib/analytics';
+import { getHreflangUrl, getRelatedByTags } from '@/lib/hreflang';
+import { getAllCasesMeta } from '@/lib/content';
 
 export default function CaseDetail() {
   const { slug = "" } = useParams();
@@ -25,6 +31,13 @@ export default function CaseDetail() {
   const location = useLocation();
   const isEN = location.pathname.startsWith("/en/");
   const lang = (isEN ? "en" : "es");
+  const { trackCTA } = usePlausible();
+  
+  // Track scroll depth for engagement metrics
+  useScrollDepth({
+    enableTracking: true,
+    pageName: `case-${slug}`
+  });
 
   const entry = getCaseBySlug(lang as any, slug);
 
@@ -49,24 +62,28 @@ export default function CaseDetail() {
     );
   }
 
-  const currentUrl = `https://kadmeia.com${lang === 'en' ? '/en' : ''}/casos/${slug}`;
-  const siteUrl = 'https://kadmeia.com';
-  
-  // Generate hreflang URLs
-  const esUrl = `${siteUrl}/casos/${slug}`;
-  const enUrl = `${siteUrl}/en/cases/${slug}`;
-  
-  const MDXComponent = entry.mod.default;
   const rawMeta = entry.meta;
   
   // Validate and enhance meta with CaseMeta schema
   const metaValidation = CaseMeta.safeParse(rawMeta);
   const metaData = metaValidation.success ? metaValidation.data : rawMeta;
   
-  // Get related cases and navigation
+  // Generate URLs and assets
+  const currentUrl = `https://kadmeia.com${lang === 'en' ? '/en' : ''}/casos/${slug}`;
+  const siteUrl = 'https://kadmeia.com';
+  const alternateUrl = `${siteUrl}${getHreflangUrl(slug, lang, 'cases')}`;
+  const MDXComponent = entry.mod.default;
+  
+  // OG Image with fallback to generated version
+  const ogImage = metaData.cover 
+    ? (metaData.cover.startsWith('http') ? metaData.cover : `${siteUrl}${metaData.cover}`)
+    : `${siteUrl}/og/cases/${slug}-${lang}.png`;
+  
+  // Get related cases using new logic
   const relatedCases = React.useMemo(() => {
     if (metaData.tags) {
-      return getRelatedContent('cases', slug, metaData.tags, lang, 3);
+      const allCases = getAllCasesMeta();
+      return getRelatedByTags(allCases, slug, lang, metaData.tags, 3);
     }
     return [];
   }, [slug, metaData.tags, lang]);
@@ -74,11 +91,6 @@ export default function CaseDetail() {
   const prevNext = React.useMemo(() => {
     return getPrevNextItems('cases', slug, lang);
   }, [slug, lang]);
-  
-  // OG Image with fallback to generated version
-  const ogImage = metaData.cover 
-    ? (metaData.cover.startsWith('http') ? metaData.cover : `${siteUrl}${metaData.cover}`)
-    : `${siteUrl}/og/cases/${slug}-${lang}.png`;
   
   // QA Warning for missing critical fields
   const missingFields: string[] = [];
@@ -101,9 +113,9 @@ export default function CaseDetail() {
         <meta name="description" content={metaData.excerpt || `Caso de éxito: ${title}`} />
         
         {/* Hreflang links */}
-        <link rel="alternate" hrefLang="es" href={esUrl} />
-        <link rel="alternate" hrefLang="en" href={enUrl} />
-        <link rel="alternate" hrefLang="x-default" href={esUrl} />
+        <link rel="alternate" hrefLang={lang} href={currentUrl} />
+        <link rel="alternate" hrefLang={lang === 'es' ? 'en' : 'es'} href={alternateUrl} />
+        <link rel="alternate" hrefLang="x-default" href={lang === 'es' ? currentUrl : alternateUrl} />
         
         {/* Open Graph */}
         <meta property="og:title" content={`${title} - KADMEIA`} />

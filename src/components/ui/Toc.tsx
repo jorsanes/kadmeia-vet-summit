@@ -30,14 +30,12 @@ export default function Toc({ className = "", title = "Índice" }: TocProps) {
       const text = heading.textContent || '';
       let id = heading.id;
       
-      // Si no tiene ID, generar uno usando github-slugger (igual que rehype-slug)
+      // Si ya tiene ID, usarlo; si no, generar uno con github-slugger
       if (!id) {
         id = slugger.slug(text);
         heading.id = id;
-      } else {
-        // Reset slugger to match existing IDs if they already exist
-        slugger.slug(text, false);
       }
+      // No necesitamos resetear slugger, github-slugger maneja duplicados automáticamente
 
       tocItems.push({
         id,
