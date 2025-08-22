@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { getAllCasesMeta } from "@/lib/content";
 import { SmartImage } from '@/components/mdx';
 import Reveal from '@/components/ui/Reveal';
-import { TextCard } from '@/components/content/TextCard';
+import { ContentCard as CaseCard } from '@/components/content/EnhancedContentCard';
 import TagFilter from '@/components/content/TagFilter';
 
 export default function Cases() {
@@ -95,12 +95,15 @@ export default function Cases() {
               {filteredCases.length > 0 ? (
                 filteredCases.map((caseItem, index) => (
                   <Reveal key={`${caseItem.slug}-${selectedTags.join(',')}`} delay={index * 0.1}>
-                    <TextCard
+                    <CaseCard
                       title={caseItem.title}
-                      date={new Date(caseItem.date).toLocaleDateString(lang === 'en' ? 'en-US' : 'es-ES')}
-                      href={caseItem.lang === "en" ? `/en/cases/${caseItem.slug}` : `/casos/${caseItem.slug}`}
-                      excerpt={caseItem.excerpt}
-                      cover={caseItem.cover}
+                      date={caseItem.date}
+                      slug={caseItem.slug}
+                      excerpt={caseItem.excerpt || ""}
+                      cover={caseItem.cover?.replace('/public/', '/')}
+                      tags={caseItem.tags}
+                      type="case"
+                      lang={lang}
                       cta={lang === "en" ? "View case →" : "Ver caso →"}
                     />
                   </Reveal>
