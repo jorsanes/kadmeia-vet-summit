@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import { caseIndex } from "@/lib/content-index";
+import { getAllCasesMeta } from "@/lib/content";
 import { SmartImage } from '@/components/mdx';
 import Reveal from '@/components/ui/Reveal';
 import { ContentCard as CaseCard } from '@/components/content/EnhancedContentCard';
@@ -18,17 +19,21 @@ export default function Cases() {
   }
   const lang = isEN ? 'en' : 'es';
   
-  const allCases = caseIndex.filter(c => c.locale === lang);
-  
-  // Debug: mostrar casos en desarrollo
-  if (import.meta.env.DEV) {
-    console.log('📋 Cases loaded:', { 
-      total: caseIndex.length, 
-      filtered: allCases.length, 
-      lang,
-      cases: allCases.map(c => ({ slug: c.slug, title: c.meta.title }))
-    });
-  }
+  // Usar el índice, pero con fallback a lib/content si está vacío
+  const allCases = useMemo(() => {
+    const indexCases = caseIndex.filter(c => c.locale === lang);
+    
+    if (import.meta.env.DEV) {
+      console.log('📋 Cases loaded:', { 
+        total: caseIndex.length, 
+        filtered: indexCases.length, 
+        lang,
+        cases: indexCases.map(c => ({ slug: c.slug, title: c.meta.title }))
+      });
+    }
+    
+    return indexCases;
+  }, [lang]);
   
   // Estado para filtros
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -100,7 +105,7 @@ export default function Cases() {
                       date={caseItem.meta.date.toISOString()}
                       slug={caseItem.slug}
                       excerpt={caseItem.meta.excerpt || ""}
-                      cover={caseItem.meta.cover?.replace('/public/', '/')}
+                      cover={caseItem.meta.cover}
                       tags={caseItem.meta.tags}
                       type="case"
                       lang={lang}

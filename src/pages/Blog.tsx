@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import { blogIndex } from "@/lib/content-index";
+import { getAllPostsMeta } from "@/lib/content";
 import { SmartImage } from '@/components/mdx';
 import Reveal from '@/components/ui/Reveal';
 import { ContentCard } from '@/components/content/EnhancedContentCard';
@@ -18,7 +19,20 @@ export default function Blog() {
   }
   const lang = isEN ? 'en' : 'es';
   
-  const allPosts = blogIndex.filter(p => p.locale === lang);
+  // Usar el índice, pero con fallback a lib/content si está vacío
+  const allPosts = useMemo(() => {
+    const indexPosts = blogIndex.filter(p => p.locale === lang);
+    
+    if (import.meta.env.DEV) {
+      console.log('📋 Blog posts loaded:', {
+        total: indexPosts.length,
+        lang,
+        posts: indexPosts.map(p => p.slug)
+      });
+    }
+    
+    return indexPosts;
+  }, [lang]);
   
   // Estado para filtros
   const [selectedTags, setSelectedTags] = useState<string[]>([]);

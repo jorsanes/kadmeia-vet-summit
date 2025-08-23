@@ -4,15 +4,15 @@ import { BlogMeta, CaseMeta } from "@/content/schemas";
 type Locale = "es" | "en";
 
 // MDX crudo para extraer frontmatter (eager)
-const blogRaw: Record<string, string> = import.meta.glob("/src/content/blog/**/*.mdx", { 
-  query: "?raw", 
+const blogRaw: Record<string, any> = import.meta.glob("/src/content/blog/**/*.mdx", { 
+  as: "raw", 
   eager: true 
-}) as Record<string, string>;
+});
 
-const caseRaw: Record<string, string> = import.meta.glob("/src/content/casos/**/*.mdx", { 
-  query: "?raw", 
+const caseRaw: Record<string, any> = import.meta.glob("/src/content/casos/**/*.mdx", { 
+  as: "raw", 
   eager: true 
-}) as Record<string, string>;
+});
 
 // Módulos MDX (no eager)
 const blogModules: Record<string, any> = import.meta.glob("/src/content/blog/**/*.mdx");
@@ -25,16 +25,23 @@ export type ContentItem<T> = {
   path: string; // ruta del módulo dentro de Vite
 };
 
-function buildIndex<T>(rawMap: Record<string, string>, schema: any): ContentItem<T>[] {
+function buildIndex<T>(rawMap: Record<string, any>, schema: any): ContentItem<T>[] {
   const out: ContentItem<T>[] = [];
   
   try {
     for (const p in rawMap) {
-      const raw = rawMap[p];
+      let raw = rawMap[p];
+      
+      // Aceptar tanto string directo como { default: string }
+      if (typeof raw === 'object' && raw.default) {
+        raw = raw.default;
+      }
       
       // Verificar que el contenido sea una cadena válida
       if (typeof raw !== 'string' || !raw.trim()) {
-        console.warn("[content] skipping invalid content:", p);
+        if (import.meta.env.DEV) {
+          console.warn("[content] skipping invalid content:", p, typeof raw);
+        }
         continue;
       }
       
@@ -64,6 +71,14 @@ function buildIndex<T>(rawMap: Record<string, string>, schema: any): ContentItem
 
 export const blogIndex = buildIndex<import("@/content/schemas").BlogMeta>(blogRaw, BlogMeta);
 export const caseIndex = buildIndex<import("@/content/schemas").CaseMeta>(caseRaw, CaseMeta);
+
+// Diagnostics en desarrollo
+if (import.meta.env.DEV) {
+  console.log('📚 Content Index loaded:', {
+    blog: { total: blogIndex.length, es: blogIndex.filter(p => p.locale === 'es').length, en: blogIndex.filter(p => p.locale === 'en').length },
+    cases: { total: caseIndex.length, es: caseIndex.filter(p => p.locale === 'es').length, en: caseIndex.filter(p => p.locale === 'en').length }
+  });
+}
 
 // Resolución del import dinámico de un MDX (detalle)
 export async function loadBlogComponent(locale: Locale, slug: string) {

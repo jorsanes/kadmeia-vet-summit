@@ -40,7 +40,7 @@ export const ContentCard: React.FC<ContentCardProps> = ({
   
   const basePath = lang === 'es' 
     ? (type === 'blog' ? '/blog' : '/casos')
-    : (type === 'blog' ? '/en/blog' : '/en/casos');
+    : (type === 'blog' ? '/en/blog' : '/en/cases');
   
   const href = `${basePath}/${slug}`;
 

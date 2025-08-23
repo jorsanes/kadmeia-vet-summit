@@ -68,9 +68,6 @@ const Header = () => {
                 width={24}
                 height={24}
                 priority
-                loading="eager"
-                decoding="async"
-                fetchPriority="high"
                 className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8"
               />
               <span className="font-display text-2xl font-semibold text-primary">
