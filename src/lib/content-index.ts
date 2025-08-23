@@ -30,7 +30,14 @@ function buildIndex<T>(rawMap: Record<string, string>, schema: any): ContentItem
   
   try {
     for (const p in rawMap) {
-      const raw = rawMap[p] as unknown as string;
+      const raw = rawMap[p];
+      
+      // Verificar que el contenido sea una cadena válida
+      if (typeof raw !== 'string' || !raw.trim()) {
+        console.warn("[content] skipping invalid content:", p);
+        continue;
+      }
+      
       const { data } = matter(raw);
       const segs = p.split("/");
       const locale = segs[segs.length - 2] as Locale;
@@ -41,8 +48,9 @@ function buildIndex<T>(rawMap: Record<string, string>, schema: any): ContentItem
         console.warn("[content] invalid frontmatter:", p, parsed.error.format());
         continue;
       }
+      
       // normalizamos date a Date real
-     const meta = { ...parsed.data, date: new Date(String(parsed.data.date)) };
+      const meta = { ...parsed.data, date: new Date(String(parsed.data.date)) };
       if ((meta as any).draft) continue;
 
       out.push({ slug, locale, meta, path: p });
