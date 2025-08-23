@@ -6,11 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { GitHubAPI, GitHubConfig } from '@/lib/github';
 import { useToast } from '@/hooks/use-toast';
 import { CaseMeta } from '@/content/schemas';
+import { TagPicker } from './TagPicker';
 import { enhancedMDXComponents } from '@/components/mdx';
 import { MDXProvider } from '@mdx-js/react';
 import { MdxPreview } from '@/components/mdx/MdxPreview';
@@ -161,13 +164,35 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [isLoadingFiles, setIsLoadingFiles] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
+  const [availableTags, setAvailableTags] = useState<string[]>([]);
   const { toast } = useToast();
 
   const api = new GitHubAPI(config);
 
   useEffect(() => {
     loadCaseFiles();
+    loadTags();
   }, []);
+
+  const loadTags = async () => {
+    try {
+      const esTagsResponse = await fetch('/src/content/taxonomy/tags.es.json');
+      const enTagsResponse = await fetch('/src/content/taxonomy/tags.en.json');
+      
+      if (esTagsResponse.ok && enTagsResponse.ok) {
+        const esTags = await esTagsResponse.json();
+        const enTags = await enTagsResponse.json();
+        
+        // Combine and deduplicate tags
+        const allTags = [...new Set([...esTags, ...enTags])];
+        setAvailableTags(allTags);
+      }
+    } catch (error) {
+      console.error('Error loading tags:', error);
+      // Fallback tags if loading fails
+      setAvailableTags(['Implementation', 'Consultoría', 'IA', 'AI', 'Automatización', 'Automation']);
+    }
+  };
 
   const loadCaseFiles = async () => {
     setIsLoadingFiles(true);
@@ -479,13 +504,29 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
           </TabsList>
 
           <TabsContent value="content" className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-2">Title *</label>
-              <Input
-                value={editingCase.meta.title}
-                onChange={(e) => updateEditingMeta({ title: e.target.value })}
-                placeholder="Case study title"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Title *</label>
+                <Input
+                  value={editingCase.meta.title}
+                  onChange={(e) => updateEditingMeta({ title: e.target.value })}
+                  placeholder="Case study title"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">URL Slug *</label>
+                <Input
+                  value={editingCase.slug}
+                  onChange={(e) => updateEditingCase({ 
+                    slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-'),
+                    path: `src/content/casos/${editingCase.lang}/${e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-')}.mdx`
+                  })}
+                  placeholder="case-study-slug"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  URL: /{editingCase.lang === 'es' ? 'casos' : 'en/cases'}/{editingCase.slug}
+                </p>
+              </div>
             </div>
 
             <div>
@@ -549,16 +590,12 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-2">Tags * (comma separated)</label>
-              <Input
-                value={editingCase.meta.tags.join(', ')}
-                onChange={(e) => updateEditingMeta({ 
-                  tags: e.target.value.split(',').map(tag => tag.trim()).filter(Boolean)
-                })}
-                placeholder="Implementation, AI, Automation"
-              />
-            </div>
+            <TagPicker 
+              selectedTags={editingCase.meta.tags}
+              availableTags={availableTags}
+              language={editingCase.lang}
+              onChange={(tags) => updateEditingMeta({ tags })}
+            />
 
             <div className="flex items-center space-x-2">
               <Switch

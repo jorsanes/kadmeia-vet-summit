@@ -436,13 +436,29 @@ export const BlogEditorV2: React.FC<BlogEditorV2Props> = ({ config }) => {
           </TabsList>
 
           <TabsContent value="content" className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-2">Title *</label>
-              <Input
-                value={editingPost.meta.title}
-                onChange={(e) => updateEditingMeta({ title: e.target.value })}
-                placeholder="Article title"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Title *</label>
+                <Input
+                  value={editingPost.meta.title}
+                  onChange={(e) => updateEditingMeta({ title: e.target.value })}
+                  placeholder="Article title"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">URL Slug *</label>
+                <Input
+                  value={editingPost.slug}
+                  onChange={(e) => updateEditingPost({ 
+                    slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-'),
+                    path: `src/content/blog/${editingPost.lang}/${e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-')}.mdx`
+                  })}
+                  placeholder="article-url-slug"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  URL: /{editingPost.lang === 'es' ? 'blog' : 'en/blog'}/{editingPost.slug}
+                </p>
+              </div>
             </div>
 
             <div>
