@@ -15,6 +15,7 @@ interface BlogHeaderProps {
     avatar?: string;
   };
   cover?: string;
+  banner?: string;
   lang: string;
 }
 
@@ -26,6 +27,7 @@ export const BlogHeader: React.FC<BlogHeaderProps> = ({
   tags,
   author,
   cover,
+  banner,
   lang
 }) => {
   const formatDate = (dateStr: string) => {
@@ -48,16 +50,16 @@ export const BlogHeader: React.FC<BlogHeaderProps> = ({
 
   return (
     <header className="mb-12">
-      {/* Cover Image - Banner style */}
-      {cover && (
+      {/* Banner Image - Optional and different from cover */}
+      {banner && (
         <div className="mb-8 -mx-6 md:mx-0">
           <SmartImage
-            src={cover}
+            src={banner}
             alt={title}
-            className="w-full h-32 md:h-48 object-cover rounded-lg"
+            className="w-full h-24 md:h-32 object-cover rounded-lg"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
             width={800}
-            height={192}
+            height={128}
           />
         </div>
       )}

@@ -1,6 +1,8 @@
-/* src/styles/case-prose.css */
+/* Blog post prose styling */
 .case-prose {
   line-height: 1.75;
+  color: hsl(var(--foreground));
+  font-size: 1rem;
 }
 
 /* Ocultar primer H1 para evitar duplicación con el título del frontmatter */
@@ -10,50 +12,126 @@
 }
 
 .case-prose h2 {
-  margin-top: 2rem;   /* separación entre secciones */
-  margin-bottom: 0.75rem;
-  color: #B38A3F;     /* dorado KADMEIA */
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  color: hsl(var(--secondary));
   font-weight: 600;
   font-size: 1.5rem;
+  font-family: var(--font-serif);
+  line-height: 1.3;
 }
 
 .case-prose h3 {
-  margin-top: 1.5rem;
-  margin-bottom: 0.5rem;
-  color: #B38A3F;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  color: hsl(var(--secondary));
   font-weight: 600;
   font-size: 1.25rem;
+  font-family: var(--font-serif);
+  line-height: 1.3;
 }
 
-.case-prose p,
-.case-prose ul,
-.case-prose ol,
-.case-prose blockquote {
-  margin-top: 0.75rem;
-  margin-bottom: 0.75rem;
+.case-prose h4 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: hsl(var(--foreground));
+  font-weight: 600;
+  font-size: 1.125rem;
+}
+
+.case-prose p {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  line-height: 1.7;
+  color: hsl(var(--foreground));
 }
 
 .case-prose ul,
 .case-prose ol {
-  padding-left: 1.25rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.case-prose li {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.case-prose blockquote {
+  margin: 1.5rem 0;
+  padding-left: 1rem;
+  border-left: 4px solid hsl(var(--secondary));
+  font-style: italic;
+  color: hsl(var(--muted-foreground));
+}
+
+.case-prose strong {
+  font-weight: 600;
+  color: hsl(var(--foreground));
+}
+
+.case-prose a {
+  color: hsl(var(--primary));
+  text-decoration: underline;
+  text-decoration-color: hsl(var(--primary) / 0.3);
+  transition: text-decoration-color 0.2s;
+}
+
+.case-prose a:hover {
+  text-decoration-color: hsl(var(--primary));
+}
+
+.case-prose code {
+  background: hsl(var(--muted));
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+}
+
+.case-prose pre {
+  background: hsl(var(--muted));
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.case-prose pre code {
+  background: transparent;
+  padding: 0;
 }
 
 .case-prose table {
   width: 100%;
   border-collapse: collapse;
-  margin: 1rem 0;
+  margin: 1.5rem 0;
 }
 
 .case-prose th,
 .case-prose td {
-  border: 1px solid rgba(0,0,0,0.08);
-  padding: 0.5rem 0.75rem;
-  vertical-align: top;
+  border: 1px solid hsl(var(--border));
+  padding: 0.75rem;
+  text-align: left;
 }
 
-.case-prose thead th {
+.case-prose th {
+  background: hsl(var(--muted));
   font-weight: 600;
-  background: rgba(0,0,0,0.03);
 }
 
-.case-prose + .kpis { margin-top: -0.5rem; } /* si prefieres pegarlo más al header */
+.case-prose hr {
+  margin: 2rem 0;
+  border: none;
+  height: 1px;
+  background: hsl(var(--border));
+}
+
+.case-prose img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin: 1.5rem 0;
+}

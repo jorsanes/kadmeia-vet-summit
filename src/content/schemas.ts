@@ -56,6 +56,9 @@ export const BlogMeta = BaseContentSchema.extend({
   
   // Reading time (calculated automatically)
   readingTime: z.number().optional(),
+  
+  // Banner image for blog posts (different from cover)
+  banner: z.string().optional(),
 });
 
 export type BlogMeta = z.infer<typeof BlogMeta>;

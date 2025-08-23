@@ -250,6 +250,7 @@ export default function PostDetail() {
                 tags={meta?.tags || []}
                 author={meta?.author}
                 cover={meta?.cover}
+                banner={meta?.banner}
                 lang={lang}
               />
 
