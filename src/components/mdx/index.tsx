@@ -43,7 +43,7 @@ export const SmartImage: React.FC<SmartImageProps> = ({
       loading={priority ? 'eager' : 'lazy'}
       decoding={priority ? 'sync' : 'async'}
       sizes={sizes}
-      {...(priority && { fetchPriority: 'high' as const })}
+      {...(priority && { fetchpriority: 'high' as const })}
       className={cn(
         rounded && 'rounded-2xl',
         className
@@ -163,7 +163,6 @@ export const mdxComponents = {
     
     return (
       <a 
-        className="text-primary hover:underline font-medium" 
         rel={rel} 
         target={target} 
         {...props} 

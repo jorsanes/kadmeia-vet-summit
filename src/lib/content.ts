@@ -36,12 +36,12 @@ function parseCollection(rawModules: Record<string, string>, kind: "blog" | "cas
 
 export function getAllPostsMeta(): BaseMeta[] {
   // IMPORTANTE: leer como RAW para no compilar MDX en el listado
-  const modules = import.meta.glob("/src/content/blog/**/**/*.mdx", { eager: true, as: "raw" }) as Record<string, string>;
+  const modules = import.meta.glob("/src/content/blog/**/*.mdx", { eager: true, as: "raw" }) as Record<string, string>;
   return parseCollection(modules, "blog");
 }
 
 export function getAllCasesMeta(): BaseMeta[] {
-  const modules = import.meta.glob("/src/content/casos/**/**/*.mdx", { eager: true, as: "raw" }) as Record<string, string>;
+  const modules = import.meta.glob("/src/content/casos/**/*.mdx", { eager: true, as: "raw" }) as Record<string, string>;
   return parseCollection(modules, "casos");
 }
 
@@ -78,8 +78,8 @@ const pickExcerpt = (data: any) =>
   (data?.excerpt ?? data?.summary ?? data?.resumen) ? String(data?.excerpt ?? data?.summary ?? data?.resumen) : undefined;
 
 // 1) Index MDX files with Vite
-const blogModules = import.meta.glob<MDXModule>('/src/content/blog/**/**/*.mdx', { eager: true });
-const caseModules = import.meta.glob<MDXModule>('/src/content/casos/**/**/*.mdx', { eager: true });
+const blogModules = import.meta.glob<MDXModule>('/src/content/blog/**/*.mdx', { eager: true });
+const caseModules = import.meta.glob<MDXModule>('/src/content/casos/**/*.mdx', { eager: true });
 
 // Util to build slug from path
 function pathToSlug(path: string) {

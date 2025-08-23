@@ -16,7 +16,7 @@
 .blog-prose h2 {
   margin-top: 3rem;
   margin-bottom: 1.5rem;
-  color: hsl(var(--secondary)); /* Oro corporativo #B38A3F */
+  color: hsl(var(--secondary)) !important; /* Oro corporativo #B38A3F */
   font-weight: 600;
   font-size: 1.875rem; /* text-3xl */
   font-family: 'Playfair Display', Georgia, serif;
@@ -30,7 +30,7 @@
 .blog-prose h3 {
   margin-top: 2.5rem;
   margin-bottom: 1.25rem;
-  color: hsl(var(--secondary));
+  color: hsl(var(--secondary)) !important;
   font-weight: 600;
   font-size: 1.5rem; /* text-2xl */
   font-family: 'Playfair Display', Georgia, serif;

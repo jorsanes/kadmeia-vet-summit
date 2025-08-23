@@ -46,42 +46,48 @@ export default function PostDetail() {
   React.useEffect(() => {
     if (!key) return;
     (async () => {
-      const mod: any = await modules[key]!();
-      setComp(() => mod.default);
-      // Use mod.frontmatter as primary source for metadata
-      const postMeta = mod.frontmatter || mod.meta || {};
-      setMeta(postMeta);
+      try {
+        const mod: any = await modules[key]!();
+        setComp(() => mod.default);
+        // Use mod.frontmatter as primary source for metadata
+        const postMeta = mod.frontmatter || mod.meta || {};
+        setMeta(postMeta);
 
-      // Find related posts using the new navigation utility
-      if (postMeta.tags) {
-        const related = getRelatedContent('blog', slug, postMeta.tags, lang, 3);
-        setRelatedPosts(related);
-      }
+        // Find related posts using the new navigation utility
+        if (postMeta.tags) {
+          const related = getRelatedContent('blog', slug, postMeta.tags, lang, 3);
+          setRelatedPosts(related);
+        }
 
-      // Get prev/next navigation
-      const navigation = getPrevNextItems('blog', slug, lang);
-      setPrevNext(navigation);
+        // Get prev/next navigation
+        const navigation = getPrevNextItems('blog', slug, lang);
+        setPrevNext(navigation);
 
-      // Find series posts using existing logic
-      if (postMeta.series) {
-        const allPosts = Object.entries(allModules)
-          .map(([path, module]: [string, any]) => {
-            const slug = path.split('/').pop()?.replace(/\.(mdx|md)$/, '') || '';
-            const postLang = path.includes(`/blog/en/`) ? 'en' : 'es';
-            return {
-              slug,
-              lang: postLang,
-              path,
-              ...module.meta
-            };
-          })
-          .filter(post => post.lang === lang);
+        // Find series posts using existing logic
+        if (postMeta.series) {
+          const allPosts = Object.entries(allModules)
+            .map(([path, module]: [string, any]) => {
+              const slug = path.split('/').pop()?.replace(/\.(mdx|md)$/, '') || '';
+              const postLang = path.includes(`/blog/en/`) ? 'en' : 'es';
+              return {
+                slug,
+                lang: postLang,
+                path,
+                ...module.meta
+              };
+            })
+            .filter(post => post.lang === lang);
+            
+          const seriesArticles = allPosts
+            .filter(post => post.series === postMeta.series)
+            .sort((a, b) => (a.seriesOrder || 0) - (b.seriesOrder || 0));
           
-        const seriesArticles = allPosts
-          .filter(post => post.series === postMeta.series)
-          .sort((a, b) => (a.seriesOrder || 0) - (b.seriesOrder || 0));
-        
-        setSeriesPosts(seriesArticles);
+          setSeriesPosts(seriesArticles);
+        }
+      } catch (error) {
+        console.error('Error loading blog post:', error);
+        setComp(null);
+        setMeta(null);
       }
     })();
   }, [key]);
