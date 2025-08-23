@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getAllCasesMeta } from "@/lib/content";
+import { caseIndex } from "@/lib/content-index";
 import { SmartImage } from '@/components/mdx';
 import Reveal from '@/components/ui/Reveal';
 import { ContentCard as CaseCard } from '@/components/content/EnhancedContentCard';
@@ -18,15 +18,15 @@ export default function Cases() {
   }
   const lang = isEN ? 'en' : 'es';
   
-  const allCases = getAllCasesMeta().filter(c => c.lang === lang);
+  const allCases = caseIndex.filter(c => c.locale === lang);
   
   // Debug: mostrar casos en desarrollo
   if (import.meta.env.DEV) {
     console.log('📋 Cases loaded:', { 
-      total: getAllCasesMeta().length, 
+      total: caseIndex.length, 
       filtered: allCases.length, 
       lang,
-      cases: allCases.map(c => ({ slug: c.slug, title: c.title }))
+      cases: allCases.map(c => ({ slug: c.slug, title: c.meta.title }))
     });
   }
   
@@ -35,7 +35,7 @@ export default function Cases() {
   
   // Extraer tags únicos
   const availableTags = useMemo(() => {
-    const allTags = allCases.flatMap(caseItem => caseItem.tags || []);
+    const allTags = allCases.flatMap(caseItem => caseItem.meta.tags || []);
     return [...new Set(allTags)].sort();
   }, [allCases]);
   
@@ -43,7 +43,7 @@ export default function Cases() {
   const filteredCases = useMemo(() => {
     if (selectedTags.length === 0) return allCases;
     return allCases.filter(caseItem => 
-      selectedTags.some(tag => caseItem.tags?.includes(tag))
+      selectedTags.some(tag => caseItem.meta.tags?.includes(tag))
     );
   }, [allCases, selectedTags]);
 
@@ -96,12 +96,12 @@ export default function Cases() {
                 filteredCases.map((caseItem, index) => (
                   <Reveal key={`${caseItem.slug}-${selectedTags.join(',')}`} delay={index * 0.1}>
                     <CaseCard
-                      title={caseItem.title}
-                      date={caseItem.date}
+                      title={caseItem.meta.title}
+                      date={caseItem.meta.date.toISOString()}
                       slug={caseItem.slug}
-                      excerpt={caseItem.excerpt || ""}
-                      cover={caseItem.cover?.replace('/public/', '/')}
-                      tags={caseItem.tags}
+                      excerpt={caseItem.meta.excerpt || ""}
+                      cover={caseItem.meta.cover?.replace('/public/', '/')}
+                      tags={caseItem.meta.tags}
                       type="case"
                       lang={lang}
                       cta={lang === "en" ? "View case →" : "Ver caso →"}

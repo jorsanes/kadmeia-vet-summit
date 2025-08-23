@@ -2,10 +2,10 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getAllPostsMeta } from "@/lib/content";
+import { blogIndex } from "@/lib/content-index";
 import { SmartImage } from '@/components/mdx';
 import Reveal from '@/components/ui/Reveal';
-import { TextCard } from '@/components/content/TextCard';
+import { ContentCard } from '@/components/content/EnhancedContentCard';
 import TagFilter from '@/components/content/TagFilter';
 
 export default function Blog() {
@@ -18,14 +18,14 @@ export default function Blog() {
   }
   const lang = isEN ? 'en' : 'es';
   
-  const allPosts = getAllPostsMeta().filter(p => p.lang === lang);
+  const allPosts = blogIndex.filter(p => p.locale === lang);
   
   // Estado para filtros
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   
   // Extraer tags únicos
   const availableTags = useMemo(() => {
-    const allTags = allPosts.flatMap(post => post.tags || []);
+    const allTags = allPosts.flatMap(post => post.meta.tags || []);
     return [...new Set(allTags)].sort();
   }, [allPosts]);
   
@@ -33,7 +33,7 @@ export default function Blog() {
   const filteredPosts = useMemo(() => {
     if (selectedTags.length === 0) return allPosts;
     return allPosts.filter(post => 
-      selectedTags.some(tag => post.tags?.includes(tag))
+      selectedTags.some(tag => post.meta.tags?.includes(tag))
     );
   }, [allPosts, selectedTags]);
 
@@ -84,12 +84,15 @@ export default function Blog() {
               {filteredPosts.length > 0 ? (
                 filteredPosts.map((post, index) => (
                   <Reveal key={`${post.slug}-${selectedTags.join(',')}`} delay={index * 0.1}>
-                    <TextCard
-                      title={post.title}
-                      date={new Date(post.date).toLocaleDateString(lang === 'en' ? 'en-US' : 'es-ES')}
-                      href={post.lang === "en" ? `/en/blog/${post.slug}` : `/blog/${post.slug}`}
-                      excerpt={post.excerpt}
-                      cover={post.cover}
+                    <ContentCard
+                      title={post.meta.title}
+                      date={post.meta.date.toISOString()}
+                      slug={post.slug}
+                      excerpt={post.meta.excerpt}
+                      cover={post.meta.cover}
+                      tags={post.meta.tags}
+                      type="blog"
+                      lang={lang}
                       cta={lang === "en" ? "Read article →" : "Leer artículo →"}
                     />
                   </Reveal>
