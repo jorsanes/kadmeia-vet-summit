@@ -9,14 +9,14 @@ const blogRaw: Record<string, string> = import.meta.glob("/src/content/blog/**/*
   eager: true 
 }) as Record<string, string>;
 
-const caseRaw: Record<string, string> = import.meta.glob("/src/content/cases/**/*.mdx", { 
+const caseRaw: Record<string, string> = import.meta.glob("/src/content/casos/**/*.mdx", { 
   query: "?raw", 
   eager: true 
 }) as Record<string, string>;
 
 // Módulos MDX (no eager)
 const blogModules: Record<string, any> = import.meta.glob("/src/content/blog/**/*.mdx");
-const caseModules: Record<string, any> = import.meta.glob("/src/content/cases/**/*.mdx");
+const caseModules: Record<string, any> = import.meta.glob("/src/content/casos/**/*.mdx");
 
 export type ContentItem<T> = {
   slug: string;
