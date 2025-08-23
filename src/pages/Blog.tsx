@@ -21,13 +21,40 @@ export default function Blog() {
   
   // Usar el índice, pero con fallback a lib/content si está vacío
   const allPosts = useMemo(() => {
-    const indexPosts = blogIndex.filter(p => p.locale === lang);
+    let indexPosts = blogIndex.filter(p => p.locale === lang);
+    
+    // Si el índice está vacío, usar fallback de lib/content
+    if (indexPosts.length === 0) {
+      if (import.meta.env.DEV) {
+        console.warn('📋 Blog index empty, using fallback from lib/content');
+      }
+      
+      try {
+        const fallbackPosts = getAllPostsMeta().filter(p => p.lang === lang);
+        // Convertir formato de fallback al formato del índice
+        indexPosts = fallbackPosts.map(post => ({
+          slug: post.slug,
+          locale: post.lang,
+          meta: {
+            title: post.title,
+            date: new Date(post.date),
+            excerpt: post.excerpt || '',
+            cover: post.cover || '',
+            tags: post.tags || [],
+          },
+          path: `/src/content/blog/${post.lang}/${post.slug}.mdx`
+        }));
+      } catch (error) {
+        console.error('Error loading fallback posts:', error);
+      }
+    }
     
     if (import.meta.env.DEV) {
       console.log('📋 Blog posts loaded:', {
         total: indexPosts.length,
         lang,
-        posts: indexPosts.map(p => p.slug)
+        posts: indexPosts.map(p => p.slug),
+        source: blogIndex.length > 0 ? 'index' : 'fallback'
       });
     }
     

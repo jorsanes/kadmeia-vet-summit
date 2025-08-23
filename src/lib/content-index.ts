@@ -28,8 +28,12 @@ export type ContentItem<T> = {
 function buildIndex<T>(rawMap: Record<string, any>, schema: any): ContentItem<T>[] {
   const out: ContentItem<T>[] = [];
   
-  try {
-    for (const p in rawMap) {
+  if (import.meta.env.DEV) {
+    console.log("[content] buildIndex starting:", { totalFiles: Object.keys(rawMap).length });
+  }
+  
+  for (const p in rawMap) {
+    try {
       let raw = rawMap[p];
       
       // Aceptar tanto string directo como { default: string }
@@ -75,17 +79,20 @@ function buildIndex<T>(rawMap: Record<string, any>, schema: any): ContentItem<T>
       }
       
       out.push({ slug, locale, meta, path: p });
+    } catch (itemError) {
+      // Handle error per item, don't break the whole index
+      if (import.meta.env.DEV) {
+        console.error("[content] error processing file:", p, itemError);
+      }
+      continue;
     }
-    
-    if (import.meta.env.DEV) {
-      console.log("[content] buildIndex completed:", { totalFiles: Object.keys(rawMap).length, validItems: out.length });
-    }
-    
-    return out.sort((a, b) => b.meta.date.getTime() - a.meta.date.getTime());
-  } catch (error) {
-    console.error("Error building content index:", error);
-    return [];
   }
+  
+  if (import.meta.env.DEV) {
+    console.log("[content] buildIndex completed:", { totalFiles: Object.keys(rawMap).length, validItems: out.length });
+  }
+  
+  return out.sort((a, b) => b.meta.date.getTime() - a.meta.date.getTime());
 }
 
 export const blogIndex = buildIndex<import("@/content/schemas").BlogMeta>(blogRaw, BlogMeta);
