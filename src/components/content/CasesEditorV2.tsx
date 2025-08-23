@@ -195,7 +195,10 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
   };
 
   const loadCaseFiles = async () => {
+    if (!api) return;
+    setIsLoading(true);
     setIsLoadingFiles(true);
+    
     try {
       // Use GitHub API to get the file tree
       const tree = await api.getTree('src/content/casos', true);
@@ -233,7 +236,15 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
         }
       }
 
-      setCases(loadedCases.sort((a, b) => 
+      // Remove duplicates by path and sort by date
+      const uniqueCases = loadedCases.reduce((acc, caseFile) => {
+        if (!acc.find(c => c.path === caseFile.path)) {
+          acc.push(caseFile);
+        }
+        return acc;
+      }, [] as CaseFile[]);
+
+      setCases(uniqueCases.sort((a, b) => 
         new Date(b.meta.date).getTime() - new Date(a.meta.date).getTime()
       ));
     } catch (error) {
@@ -436,6 +447,33 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
         hasErrors: false,
         errors: []
       });
+    }
+  };
+
+  const deleteCase = async (caseFile: CaseFile) => {
+    if (!window.confirm(`¿Estás seguro de que quieres eliminar "${caseFile.meta.title}"?`)) {
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      await api.deleteFile(caseFile.path, caseFile.sha!, `Delete case study: ${caseFile.meta.title}`);
+      
+      toast({
+        title: "Caso eliminado",
+        description: `"${caseFile.meta.title}" ha sido eliminado exitosamente.`,
+      });
+
+      await loadCaseFiles();
+    } catch (error) {
+      console.error('Error deleting case:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo eliminar el caso. Verifica tu conexión con GitHub.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -793,7 +831,7 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
                 )}
               </div>
               
-              <div className="flex gap-2">
+              <div className="flex gap-1">
                 <Button
                   onClick={() => setEditingCase(caseFile)}
                   className="flex-1 flex items-center gap-2"
@@ -810,6 +848,15 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
                   title={`Duplicate to ${caseFile.lang === 'es' ? 'English' : 'Spanish'}`}
                 >
                   <Languages className="h-3 w-3" />
+                </Button>
+                <Button
+                  onClick={() => deleteCase(caseFile)}
+                  variant="outline"
+                  size="sm"
+                  title="Eliminar caso"
+                  className="text-destructive hover:text-destructive"
+                >
+                  <Trash2 className="h-3 w-3" />
                 </Button>
               </div>
             </CardContent>

@@ -137,7 +137,10 @@ export const BlogEditorV2: React.FC<BlogEditorV2Props> = ({ config }) => {
   };
 
   const loadBlogFiles = async () => {
+    if (!api) return;
+    setIsLoading(true);
     setIsLoadingFiles(true);
+    
     try {
       // Use GitHub API to get the file tree
       const tree = await api.getTree('src/content/blog', true);
@@ -151,7 +154,7 @@ export const BlogEditorV2: React.FC<BlogEditorV2Props> = ({ config }) => {
       for (const file of mdxFiles) {
         try {
           const response = await api.getFile(file.path);
-          const parsed = parseAndValidateBlogPost(response.content, file.path);
+          const parsed = parseAndValidatePost(response.content, file.path);
           
           loadedPosts.push({
             ...parsed,
@@ -175,7 +178,15 @@ export const BlogEditorV2: React.FC<BlogEditorV2Props> = ({ config }) => {
         }
       }
 
-      setPosts(loadedPosts.sort((a, b) => 
+      // Remove duplicates by path and sort by date
+      const uniquePosts = loadedPosts.reduce((acc, post) => {
+        if (!acc.find(p => p.path === post.path)) {
+          acc.push(post);
+        }
+        return acc;
+      }, [] as BlogPostFile[]);
+
+      setPosts(uniquePosts.sort((a, b) => 
         new Date(b.meta.date).getTime() - new Date(a.meta.date).getTime()
       ));
     } catch (error) {
@@ -190,7 +201,7 @@ export const BlogEditorV2: React.FC<BlogEditorV2Props> = ({ config }) => {
     }
   };
 
-  const parseAndValidateBlogPost = (content: string, path: string): Omit<BlogPostFile, 'sha'> => {
+  const parseAndValidatePost = (content: string, path: string): Omit<BlogPostFile, 'sha'> => {
     const slug = path.split('/').pop()?.replace('.mdx', '') || '';
     const lang = path.includes('/en/') ? 'en' as const : 'es' as const;
     
@@ -354,6 +365,33 @@ export const BlogEditorV2: React.FC<BlogEditorV2Props> = ({ config }) => {
       toast({
         title: "Error",
         description: "Could not save post. Check your GitHub connection.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const deletePost = async (post: BlogPostFile) => {
+    if (!window.confirm(`¿Estás seguro de que quieres eliminar "${post.meta.title}"?`)) {
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      await api.deleteFile(post.path, post.sha!, `Delete blog post: ${post.meta.title}`);
+      
+      toast({
+        title: "Post eliminado",
+        description: `"${post.meta.title}" ha sido eliminado exitosamente.`,
+      });
+
+      await loadBlogFiles();
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo eliminar el post. Verifica tu conexión con GitHub.",
         variant: "destructive",
       });
     } finally {
@@ -664,7 +702,7 @@ export const BlogEditorV2: React.FC<BlogEditorV2Props> = ({ config }) => {
                 )}
               </div>
               
-              <div className="flex gap-2">
+              <div className="flex gap-1">
                 <Button
                   onClick={() => setEditingPost(post)}
                   className="flex-1 flex items-center gap-2"
@@ -681,6 +719,15 @@ export const BlogEditorV2: React.FC<BlogEditorV2Props> = ({ config }) => {
                   title={`Duplicate to ${post.lang === 'es' ? 'English' : 'Spanish'}`}
                 >
                   <Languages className="h-3 w-3" />
+                </Button>
+                <Button
+                  onClick={() => deletePost(post)}
+                  variant="outline"
+                  size="sm"
+                  title="Eliminar post"
+                  className="text-destructive hover:text-destructive"
+                >
+                  <Trash2 className="h-3 w-3" />
                 </Button>
               </div>
             </CardContent>

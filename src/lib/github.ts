@@ -93,6 +93,25 @@ export class GitHubAPI {
     }
   }
 
+  async deleteFile(path: string, sha: string, message: string): Promise<void> {
+    const response = await fetch(
+      `${this.getBaseUrl()}/contents/${path}`,
+      {
+        method: 'DELETE',
+        headers: this.getHeaders(),
+        body: JSON.stringify({
+          message,
+          sha,
+          branch: this.config.branch
+        })
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to delete file: ${response.statusText}`);
+    }
+  }
+
   async getTree(path: string = '', recursive: boolean = false): Promise<any[]> {
     const baseUrl = `https://api.github.com/repos/${this.config.owner}/${this.config.repo}`;
     
