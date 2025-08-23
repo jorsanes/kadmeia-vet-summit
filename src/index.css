@@ -253,8 +253,9 @@ All colors are HSL for consistent theming. Professional, elegant, trustworthy.
   }
 }
 
-/* Import case prose styles for blog posts */
+/* Import prose styles for content */
 @import './styles/case-prose.css';
+@import './styles/blog-prose.css';
 
 /* Screen reader only class */
 .sr-only {

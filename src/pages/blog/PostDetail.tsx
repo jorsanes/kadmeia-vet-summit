@@ -3,8 +3,8 @@ import { useParams, useLocation, Link } from 'react-router-dom';
 import { MDXProvider } from '@mdx-js/react';
 import { Helmet } from 'react-helmet-async';
 import { ArrowLeft } from 'lucide-react';
-import EnhancedProse from '@/components/prose/EnhancedProse';
-import { enhancedMDXComponents } from '@/components/mdx';
+
+import { enhancedMDXComponents, BlogArticleLayout } from '@/components/mdx';
 import ReadingProgress from '@/components/ui/ReadingProgress';
 import Toc from '@/components/ui/Toc';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
@@ -288,9 +288,9 @@ export default function PostDetail() {
                     return enhancedMDXComponents.h1({ children, ...props });
                   }
                 }}>
-                  <div id="post-content" className="case-prose">
+                  <BlogArticleLayout>
                     <Comp />
-                  </div>
+                  </BlogArticleLayout>
                 </MDXProvider>
               </div>
 

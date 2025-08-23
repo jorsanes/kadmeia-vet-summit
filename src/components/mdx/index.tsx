@@ -326,7 +326,13 @@ export const Prose: React.FC<React.PropsWithChildren> = ({ children }) => (
 );
 
 export const CaseArticleLayout: React.FC<React.PropsWithChildren> = ({ children }) => (
-  <article className="prose prose-slate max-w-none prose-headings:font-serif prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-p:leading-7 prose-li:marker:text-neutral-400">
+  <article className="case-prose">
+    {children}
+  </article>
+);
+
+export const BlogArticleLayout: React.FC<React.PropsWithChildren> = ({ children }) => (
+  <article className="blog-prose">
     {children}
   </article>
 );
