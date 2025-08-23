@@ -29,14 +29,12 @@ export type ContentCardMeta = z.infer<typeof ContentCardSchema>;
 export const BaseMeta = BaseContentSchema;
 export type BaseMeta = BaseContentMeta;
 
-// Enhanced Blog schema with mandatory fields
+// Enhanced Blog schema with reasonable defaults
 export const BlogMeta = BaseContentSchema.extend({
-  // Mandatory fields for Blog V2
-  title: z.string().min(3),
-  date: z.preprocess((v) => new Date(String(v)), z.date()),
-  excerpt: z.string().min(10),
-  cover: z.string().min(1),
-  tags: z.array(z.string()).min(1),
+  // Optional fields that can be defaulted
+  excerpt: z.string().optional(),
+  cover: z.string().optional(),
+  tags: z.array(z.string()).optional(),
   
   // Optional fields
   updatedAt: z.preprocess((v) => v ? new Date(String(v)) : undefined, z.date().optional()),

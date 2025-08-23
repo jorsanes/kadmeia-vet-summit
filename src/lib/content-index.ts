@@ -52,16 +52,35 @@ function buildIndex<T>(rawMap: Record<string, any>, schema: any): ContentItem<T>
 
       const parsed = schema.safeParse(data);
       if (!parsed.success) {
-        console.warn("[content] invalid frontmatter:", p, parsed.error.format());
+        if (import.meta.env.DEV) {
+          console.warn("[content] invalid frontmatter:", p, {
+            errors: parsed.error.format(),
+            data: data
+          });
+        }
         continue;
       }
       
       // normalizamos date a Date real
       const meta = { ...parsed.data, date: new Date(String(parsed.data.date)) };
-      if ((meta as any).draft) continue;
+      if ((meta as any).draft) {
+        if (import.meta.env.DEV) {
+          console.warn("[content] skipping draft:", p);
+        }
+        continue;
+      }
 
+      if (import.meta.env.DEV) {
+        console.log("[content] parsed successfully:", p, { slug, locale, title: meta.title });
+      }
+      
       out.push({ slug, locale, meta, path: p });
     }
+    
+    if (import.meta.env.DEV) {
+      console.log("[content] buildIndex completed:", { totalFiles: Object.keys(rawMap).length, validItems: out.length });
+    }
+    
     return out.sort((a, b) => b.meta.date.getTime() - a.meta.date.getTime());
   } catch (error) {
     console.error("Error building content index:", error);
