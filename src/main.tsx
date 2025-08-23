@@ -7,6 +7,8 @@ import { Buffer } from 'buffer'
 // Setup global Buffer for gray-matter
 window.Buffer = Buffer;
 
-setupPWA();
+if (import.meta.env.PROD) {
+  setupPWA();
+}
 
 createRoot(document.getElementById("root")!).render(<App />);

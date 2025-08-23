@@ -43,14 +43,14 @@ export default function BlogPost() {
         image={meta.meta.cover}
       />
       <main className="container py-12">
-      <article className="prose prose-neutral max-w-none">
-        <header className="mb-6">
-          <h1>{meta.meta.title}</h1>
-          <p className="text-sm opacity-70">{meta.meta.date.toLocaleDateString(locale)}</p>
-        </header>
-        {MDX ? <MDX components={mdxComponents} /> : <p>Cargando contenido…</p>}
-      </article>
-    </main>
+        <article className="blog-prose max-w-4xl mx-auto px-6 py-12">
+          <header className="mb-8">
+            <h1 className="text-4xl font-bold mb-4 text-foreground font-serif">{meta.meta.title}</h1>
+            <p className="text-sm text-muted-foreground">{meta.meta.date.toLocaleDateString(locale)}</p>
+          </header>
+          {MDX ? <MDX components={mdxComponents} /> : <p>Cargando contenido…</p>}
+        </article>
+      </main>
     </>
   );
 }

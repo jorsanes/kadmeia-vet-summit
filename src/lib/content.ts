@@ -70,6 +70,8 @@ const normalizeCover = (cover: unknown, slug: string): string | undefined => {
     return `/images/cases/${slug}.webp`;
   }
   const c = String(cover).trim();
+  // Remove /public/ prefix if present
+  if (c.startsWith('/public/')) return c.replace('/public/', '/');
   if (c.startsWith('http') || c.startsWith('/')) return c;
   return `/images/${c}`;
 };

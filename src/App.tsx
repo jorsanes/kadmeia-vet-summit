@@ -26,7 +26,6 @@ import BlogPostNew from "@/pages/blog/Post";
 import { DetailPageSkeleton } from "@/components/ui/DetailPageSkeleton";
 
 // Lazy load detail pages for better code splitting
-const PostDetail = React.lazy(() => import("@/pages/blog/PostDetail"));
 const CaseDetail = React.lazy(() => import("@/pages/casos/CaseDetail"));
 
 import ContentManager from "@/pages/ContentManager";
@@ -56,11 +55,7 @@ const App = () => (
                         <Route path="/servicios" element={<Services />} />
                         <Route path="/casos" element={<Cases />} />
                         <Route path="/blog" element={<Blog />} />
-                        <Route path="/blog/:slug" element={
-                          <Suspense fallback={<DetailPageSkeleton />}>
-                            <PostDetail />
-                          </Suspense>
-                        } />
+                        <Route path="/blog/:slug" element={<BlogPostNew />} />
                         <Route path="/casos/:slug" element={
                           <Suspense fallback={<DetailPageSkeleton />}>
                             <CaseDetail />
@@ -79,11 +74,7 @@ const App = () => (
                         <Route path="/en/services" element={<Services />} />
                         <Route path="/en/cases" element={<Cases />} />
                         <Route path="/en/blog" element={<Blog />} />
-                        <Route path="/en/blog/:slug" element={
-                          <Suspense fallback={<DetailPageSkeleton />}>
-                            <PostDetail />
-                          </Suspense>
-                        } />
+                        <Route path="/en/blog/:slug" element={<BlogPostNew />} />
                         <Route path="/en/cases/:slug" element={
                           <Suspense fallback={<DetailPageSkeleton />}>
                             <CaseDetail />
