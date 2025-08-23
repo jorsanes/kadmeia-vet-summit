@@ -3,13 +3,20 @@ import { BlogMeta, CaseMeta } from "@/content/schemas";
 
 type Locale = "es" | "en";
 
-// MDX crudo para extraer frontmatter (eager) - TEMPORAL: datos de ejemplo
-const blogRaw: Record<string, string> = {};
-const caseRaw: Record<string, string> = {};
+// MDX crudo para extraer frontmatter (eager)
+const blogRaw: Record<string, string> = import.meta.glob("/src/content/blog/**/*.mdx", { 
+  query: "?raw", 
+  eager: true 
+}) as Record<string, string>;
 
-// Módulos MDX (no eager) - TEMPORAL: vacío
-const blogModules: Record<string, any> = {};
-const caseModules: Record<string, any> = {};
+const caseRaw: Record<string, string> = import.meta.glob("/src/content/cases/**/*.mdx", { 
+  query: "?raw", 
+  eager: true 
+}) as Record<string, string>;
+
+// Módulos MDX (no eager)
+const blogModules: Record<string, any> = import.meta.glob("/src/content/blog/**/*.mdx");
+const caseModules: Record<string, any> = import.meta.glob("/src/content/cases/**/*.mdx");
 
 export type ContentItem<T> = {
   slug: string;
