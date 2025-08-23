@@ -269,7 +269,7 @@ export default function PostDetail() {
               )}
 
               {/* Content */}
-              <div className="max-w-none">
+              <div className="max-w-none" id="post-content">
                 <MDXProvider components={{
                   ...enhancedMDXComponents,
                   // Disable NewsletterInline in blog content to prevent intermediate CTAs

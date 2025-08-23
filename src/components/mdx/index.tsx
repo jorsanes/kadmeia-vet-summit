@@ -116,49 +116,43 @@ export const mdxComponents = {
   h1: (props: React.HTMLProps<HTMLHeadingElement>) => (
     <HeadingWithId 
       level={1} 
-      className="font-serif text-4xl font-bold text-foreground mb-8 leading-tight" 
       {...props} 
     />
   ),
   h2: (props: React.HTMLProps<HTMLHeadingElement>) => (
     <HeadingWithId 
       level={2} 
-      className="font-serif text-2xl font-semibold text-foreground mt-12 mb-6 leading-tight" 
       {...props} 
     />
   ),
   h3: (props: React.HTMLProps<HTMLHeadingElement>) => (
     <HeadingWithId 
       level={3} 
-      className="font-serif text-xl font-semibold text-foreground mt-8 mb-4" 
       {...props} 
     />
   ),
   h4: (props: React.HTMLProps<HTMLHeadingElement>) => (
     <HeadingWithId 
       level={4} 
-      className="font-serif text-lg font-semibold text-foreground mt-6 mb-3" 
       {...props} 
     />
   ),
   h5: (props: React.HTMLProps<HTMLHeadingElement>) => (
     <HeadingWithId 
       level={5} 
-      className="font-serif text-base font-semibold text-foreground mt-4 mb-2" 
       {...props} 
     />
   ),
   h6: (props: React.HTMLProps<HTMLHeadingElement>) => (
     <HeadingWithId 
       level={6} 
-      className="font-serif text-sm font-semibold text-foreground mt-4 mb-2" 
       {...props} 
     />
   ),
 
   // Text elements
   p: (props: React.HTMLProps<HTMLParagraphElement>) => (
-    <p className="text-muted-foreground leading-relaxed mb-6" {...props} />
+    <p {...props} />
   ),
   
   // Links
@@ -179,13 +173,13 @@ export const mdxComponents = {
 
   // Lists
   ul: (props: React.HTMLProps<HTMLUListElement>) => (
-    <ul className="list-disc list-inside text-muted-foreground space-y-2 mb-6 ml-4" {...props} />
+    <ul {...props} />
   ),
   ol: (props: React.OlHTMLAttributes<HTMLOListElement>) => (
-    <ol className="list-decimal list-inside text-muted-foreground space-y-2 mb-6 ml-4" {...props} />
+    <ol {...props} />
   ),
   li: (props: React.HTMLProps<HTMLLIElement>) => (
-    <li className="leading-relaxed" {...props} />
+    <li {...props} />
   ),
 
   // Code
