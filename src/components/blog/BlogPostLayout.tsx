@@ -30,7 +30,7 @@ export const BlogPostLayout: React.FC<BlogPostLayoutProps> = ({ children }) => {
   }, [children]);
 
   return (
-    <article className="prose prose-lg max-w-4xl mx-auto px-6 py-12">
+    <article className="blog-prose max-w-4xl mx-auto px-6 py-12">
       <div ref={contentRef}>
         {children}
       </div>
