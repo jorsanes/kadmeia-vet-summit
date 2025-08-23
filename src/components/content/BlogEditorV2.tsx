@@ -8,12 +8,15 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { GitHubAPI, GitHubConfig } from '@/lib/github';
 import { useToast } from '@/hooks/use-toast';
 import { BlogMeta } from '@/content/schemas';
 import { enhancedMDXComponents } from '@/components/mdx';
 import { MDXProvider } from '@mdx-js/react';
 import { MdxPreview } from '@/components/mdx/MdxPreview';
+import { TagPicker } from './TagPicker';
 import matter from 'gray-matter';
 import { 
   Calendar, 
@@ -27,7 +30,9 @@ import {
   CheckCircle,
   Trash2,
   RefreshCw,
-  Languages
+  Languages,
+  X,
+  ChevronDown
 } from 'lucide-react';
 
 interface BlogEditorV2Props {
@@ -101,13 +106,35 @@ export const BlogEditorV2: React.FC<BlogEditorV2Props> = ({ config }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [isLoadingFiles, setIsLoadingFiles] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
+  const [availableTags, setAvailableTags] = useState<string[]>([]);
   const { toast } = useToast();
 
   const api = new GitHubAPI(config);
 
   useEffect(() => {
     loadBlogFiles();
+    loadTags();
   }, []);
+
+  const loadTags = async () => {
+    try {
+      const esTagsResponse = await fetch('/src/content/taxonomy/tags.es.json');
+      const enTagsResponse = await fetch('/src/content/taxonomy/tags.en.json');
+      
+      if (esTagsResponse.ok && enTagsResponse.ok) {
+        const esTags = await esTagsResponse.json();
+        const enTags = await enTagsResponse.json();
+        
+        // Combine and deduplicate tags
+        const allTags = [...new Set([...esTags, ...enTags])];
+        setAvailableTags(allTags);
+      }
+    } catch (error) {
+      console.error('Error loading tags:', error);
+      // Fallback tags if loading fails
+      setAvailableTags(['IA', 'AI', 'Tecnología', 'Technology', 'Veterinaria', 'Veterinary']);
+    }
+  };
 
   const loadBlogFiles = async () => {
     setIsLoadingFiles(true);
@@ -479,16 +506,12 @@ export const BlogEditorV2: React.FC<BlogEditorV2Props> = ({ config }) => {
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-2">Tags * (comma separated)</label>
-              <Input
-                value={editingPost.meta.tags.join(', ')}
-                onChange={(e) => updateEditingMeta({ 
-                  tags: e.target.value.split(',').map(tag => tag.trim()).filter(Boolean)
-                })}
-                placeholder="AI, Diagnostics, Technology"
-              />
-            </div>
+            <TagPicker 
+              selectedTags={editingPost.meta.tags}
+              availableTags={availableTags}
+              language={editingPost.lang}
+              onChange={(tags) => updateEditingMeta({ tags })}
+            />
 
             <div className="flex items-center space-x-2">
               <Switch
