@@ -21,14 +21,40 @@ export default function Cases() {
   
   // Usar el índice, pero con fallback a lib/content si está vacío
   const allCases = useMemo(() => {
-    const indexCases = caseIndex.filter(c => c.locale === lang);
+    let indexCases = caseIndex.filter(c => c.locale === lang);
+    
+    // Si el índice está vacío, usar fallback de lib/content
+    if (indexCases.length === 0) {
+      if (import.meta.env.DEV) {
+        console.warn('📋 Cases index empty, using fallback from lib/content');
+      }
+      
+      try {
+        const fallbackCases = getAllCasesMeta().filter(c => c.lang === lang);
+        // Convertir formato de fallback al formato del índice
+        indexCases = fallbackCases.map(caseItem => ({
+          slug: caseItem.slug,
+          locale: caseItem.lang,
+          meta: {
+            title: caseItem.title,
+            date: new Date(caseItem.date),
+            excerpt: caseItem.excerpt || '',
+            cover: caseItem.cover || '',
+            tags: caseItem.tags || [],
+          },
+          path: `/src/content/casos/${caseItem.lang}/${caseItem.slug}.mdx`
+        }));
+      } catch (error) {
+        console.error('Error loading fallback cases:', error);
+      }
+    }
     
     if (import.meta.env.DEV) {
       console.log('📋 Cases loaded:', { 
-        total: caseIndex.length, 
-        filtered: indexCases.length, 
+        total: indexCases.length, 
         lang,
-        cases: indexCases.map(c => ({ slug: c.slug, title: c.meta.title }))
+        cases: indexCases.map(c => c.slug),
+        source: caseIndex.length > 0 ? 'index' : 'fallback'
       });
     }
     
