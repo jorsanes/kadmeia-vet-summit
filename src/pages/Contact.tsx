@@ -9,6 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { motion } from 'framer-motion';
 import { Mail, MapPin, Phone, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 import BrandWatermark from '@/components/brand/BrandWatermark';
 
 const Contact = () => {
@@ -40,27 +41,26 @@ const Contact = () => {
 
     try {
       // Use Supabase edge function for contact form submission
-      const response = await fetch('https://tmtokjrdmkcznvlqhxlh.supabase.co/functions/v1/contact-submit', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtdG9ranJkbWtjem52bHFoeGxoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU2ODU5MzIsImV4cCI6MjA3MTI2MTkzMn0.E_646tFbCw6eB_VjkXSoVUBW4on1dbrWeVr2wobqkMU`
-        },
-        body: JSON.stringify({
+      const { data, error } = await supabase.functions.invoke('contact-submit', {
+        body: {
           name: formData.name,
           email: formData.email,
           company: formData.company,
           phone: formData.phone,
           message: formData.message,
-          consent: formData.consent
-        })
+          consent: formData.consent,
+          honeypot: (document.querySelector('input[name="website"]') as HTMLInputElement)?.value || ''
+        }
       });
 
-      if (response.ok) {
-        const result = await response.json();
+      if (error) {
+        throw new Error(error.message || 'Error enviando el mensaje');
+      }
+
+      if (data) {
         toast({
           title: "Mensaje enviado",
-          description: result.message || "Nos pondremos en contacto con usted en breve",
+          description: data.message || "Nos pondremos en contacto con usted en breve",
         });
 
         // Reset form
@@ -72,9 +72,6 @@ const Contact = () => {
           message: '',
           consent: false
         });
-      } else {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Error enviando el mensaje');
       }
     } catch (error) {
       console.error('Error sending form:', error);
@@ -284,6 +281,15 @@ const Contact = () => {
                       onChange={(e) => handleChange('message', e.target.value)}
                       className="focus-ring"
                       placeholder="Cuéntenos sobre su proyecto o necesidades..."
+                    />
+                    
+                    {/* Honeypot field - hidden from users */}
+                    <input
+                      type="text"
+                      name="website"
+                      style={{ display: 'none' }}
+                      tabIndex={-1}
+                      autoComplete="off"
                     />
                   </div>
 
