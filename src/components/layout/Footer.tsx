@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocale } from '@/i18n/LocaleProvider';
 import { Mail, MapPin, Linkedin, Twitter } from 'lucide-react';
 import { SmartImage } from '@/components/mdx';
-import { NewsletterInline } from '@/components/ui';
+import { NewsletterFooter } from '@/components/ui';
 const Footer = () => {
   const {
     t
@@ -75,7 +75,7 @@ const Footer = () => {
             <h3 className="font-semibold text-primary-foreground mb-4">
               {t('footer.newsletter.title')}
             </h3>
-            <NewsletterInline className="space-y-3" />
+            <NewsletterFooter />
             
             {/* Social Media */}
             <div className="flex gap-4 mt-6">
