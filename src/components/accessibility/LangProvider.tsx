@@ -1,10 +1,15 @@
-import { useEffect } from 'react';
+
+import { useEffect, ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
+
+interface LangProviderProps {
+  children: ReactNode;
+}
 
 /**
  * Component that updates the HTML lang attribute based on current route
  */
-export function LangProvider() {
+export function LangProvider({ children }: LangProviderProps) {
   const location = useLocation();
   
   useEffect(() => {
@@ -16,5 +21,5 @@ export function LangProvider() {
     document.documentElement.lang = lang;
   }, [location.pathname]);
 
-  return null; // This component only manages the lang attribute
+  return <>{children}</>;
 }
