@@ -24,6 +24,7 @@ import NotFound from "@/pages/NotFound";
 import ServerError from "@/pages/ServerError";
 import ContentManager from "@/pages/ContentManager";
 import { Login } from "@/pages/admin/Login";
+import Layout from "@/components/layout/Layout";
 
 import "@/i18n/config";
 import "./App.css";
@@ -47,31 +48,31 @@ function App() {
               <LangProvider>
                 <SkipLink />
                 <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/services" element={<Services />} />
-                  <Route path="/blog" element={<Blog />} />
-                  <Route path="/blog/:slug" element={<BlogPost />} />
-                  <Route path="/cases" element={<Cases />} />
-                  <Route path="/cases/:slug" element={<CaseDetail />} />
-                  <Route path="/casos/:slug" element={<CaseDetailEs />} />
-                  <Route path="/contact" element={<Contact />} />
-                  <Route path="/privacy" element={<Privacy />} />
-                  <Route path="/legal" element={<Legal />} />
-                  <Route path="/cookies" element={<Cookies />} />
+                  <Route path="/" element={<Layout><Index /></Layout>} />
+                  <Route path="/about" element={<Layout><About /></Layout>} />
+                  <Route path="/services" element={<Layout><Services /></Layout>} />
+                  <Route path="/blog" element={<Layout><Blog /></Layout>} />
+                  <Route path="/blog/:slug" element={<Layout><BlogPost /></Layout>} />
+                  <Route path="/cases" element={<Layout><Cases /></Layout>} />
+                  <Route path="/cases/:slug" element={<Layout><CaseDetail /></Layout>} />
+                  <Route path="/casos/:slug" element={<Layout><CaseDetailEs /></Layout>} />
+                  <Route path="/contact" element={<Layout><Contact /></Layout>} />
+                  <Route path="/privacy" element={<Layout><Privacy /></Layout>} />
+                  <Route path="/legal" element={<Layout><Legal /></Layout>} />
+                  <Route path="/cookies" element={<Layout><Cookies /></Layout>} />
                   
                   {/* English routes */}
-                  <Route path="/en" element={<Index />} />
-                  <Route path="/en/about" element={<About />} />
-                  <Route path="/en/services" element={<Services />} />
-                  <Route path="/en/blog" element={<Blog />} />
-                  <Route path="/en/blog/:slug" element={<BlogPost />} />
-                  <Route path="/en/cases" element={<Cases />} />
-                  <Route path="/en/cases/:slug" element={<CaseDetail />} />
-                  <Route path="/en/contact" element={<Contact />} />
-                  <Route path="/en/privacy" element={<Privacy />} />
-                  <Route path="/en/legal" element={<Legal />} />
-                  <Route path="/en/cookies" element={<Cookies />} />
+                  <Route path="/en" element={<Layout><Index /></Layout>} />
+                  <Route path="/en/about" element={<Layout><About /></Layout>} />
+                  <Route path="/en/services" element={<Layout><Services /></Layout>} />
+                  <Route path="/en/blog" element={<Layout><Blog /></Layout>} />
+                  <Route path="/en/blog/:slug" element={<Layout><BlogPost /></Layout>} />
+                  <Route path="/en/cases" element={<Layout><Cases /></Layout>} />
+                  <Route path="/en/cases/:slug" element={<Layout><CaseDetail /></Layout>} />
+                  <Route path="/en/contact" element={<Layout><Contact /></Layout>} />
+                  <Route path="/en/privacy" element={<Layout><Privacy /></Layout>} />
+                  <Route path="/en/legal" element={<Layout><Legal /></Layout>} />
+                  <Route path="/en/cookies" element={<Layout><Cookies /></Layout>} />
                   
                   {/* Admin routes */}
                   <Route path="/admin/login" element={<Login />} />
