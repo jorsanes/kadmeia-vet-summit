@@ -6,13 +6,8 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-interface ContactFormData {
-  name: string;
+interface NewsletterSubscriptionData {
   email: string;
-  company: string;
-  phone?: string;
-  message: string;
-  consent: boolean;
   honeypot?: string;
 }
 
@@ -27,12 +22,12 @@ serve(async (req) => {
     const clientIP = req.headers.get('x-forwarded-for') || 'unknown'
     
     // Parse request body
-    const formData: ContactFormData = await req.json()
+    const formData: NewsletterSubscriptionData = await req.json()
     
     // Validation
-    if (!formData.name || !formData.email || !formData.message || !formData.consent) {
+    if (!formData.email) {
       return new Response(
-        JSON.stringify({ error: 'Faltan campos requeridos' }),
+        JSON.stringify({ error: 'Email es requerido' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
@@ -61,28 +56,69 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // Store in database
+    // Check if email already exists
+    const { data: existingSubscriber, error: checkError } = await supabase
+      .from('newsletter_subscribers')
+      .select('id, unsubscribed')
+      .eq('email', formData.email)
+      .single()
+
+    if (checkError && checkError.code !== 'PGRST116') { // PGRST116 = no rows found
+      console.error('Database check error:', checkError)
+      return new Response(
+        JSON.stringify({ error: 'Error verificando suscripción' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    if (existingSubscriber) {
+      if (existingSubscriber.unsubscribed) {
+        // Reactivate subscription
+        const { error: updateError } = await supabase
+          .from('newsletter_subscribers')
+          .update({ unsubscribed: false, client_ip: clientIP })
+          .eq('email', formData.email)
+
+        if (updateError) {
+          console.error('Database update error:', updateError)
+          return new Response(
+            JSON.stringify({ error: 'Error reactivando suscripción' }),
+            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          )
+        }
+      }
+      // Email already subscribed and active
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          message: 'Ya estás suscrito a nuestro newsletter.' 
+        }),
+        { 
+          status: 200, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
+    }
+
+    // Store new subscription in database
     const { data, error: dbError } = await supabase
-      .from('contact_messages')
+      .from('newsletter_subscribers')
       .insert({
-        name: formData.name,
         email: formData.email,
-        company: formData.company,
-        phone: formData.phone || null,
-        message: formData.message,
         client_ip: clientIP,
+        confirmed: true, // Auto-confirm for now
         created_at: new Date().toISOString(),
       })
 
     if (dbError) {
       console.error('Database error:', dbError)
       return new Response(
-        JSON.stringify({ error: 'Error guardando mensaje' }),
+        JSON.stringify({ error: 'Error guardando suscripción' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
-    // Send email notification using Resend
+    // Send notification email to admin using Resend
     const resendApiKey = Deno.env.get('RESEND_API_KEY')
     if (resendApiKey) {
       try {
@@ -93,31 +129,19 @@ serve(async (req) => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            from: 'KADMEIA Contact <onboarding@resend.dev>',
+            from: 'KADMEIA Newsletter <onboarding@resend.dev>',
             to: ['info@kadmeia.com'],
-            reply_to: [formData.email],
-            subject: `Nuevo contacto de ${formData.name}`,
+            subject: `Nueva suscripción al newsletter: ${formData.email}`,
             html: `
-              <h2>Nuevo mensaje de contacto</h2>
-              <p><strong>Nombre:</strong> ${formData.name}</p>
+              <h2>Nueva suscripción al newsletter</h2>
               <p><strong>Email:</strong> ${formData.email}</p>
-              <p><strong>Empresa:</strong> ${formData.company}</p>
-              ${formData.phone ? `<p><strong>Teléfono:</strong> ${formData.phone}</p>` : ''}
-              <p><strong>Mensaje:</strong></p>
-              <p>${formData.message.replace(/\n/g, '<br>')}</p>
               <hr>
               <p><small>IP: ${clientIP} | Fecha: ${new Date().toLocaleString('es-ES')}</small></p>
             `,
             text: `
-              Nuevo mensaje de contacto
+              Nueva suscripción al newsletter
               
-              Nombre: ${formData.name}
               Email: ${formData.email}
-              Empresa: ${formData.company}
-              ${formData.phone ? `Teléfono: ${formData.phone}` : ''}
-              
-              Mensaje:
-              ${formData.message}
               
               ---
               IP: ${clientIP} | Fecha: ${new Date().toLocaleString('es-ES')}
@@ -134,12 +158,12 @@ serve(async (req) => {
       }
     }
 
-    console.log('Contact form submitted successfully:', { name: formData.name, email: formData.email, company: formData.company })
+    console.log('Newsletter subscription successful:', { email: formData.email })
 
     return new Response(
       JSON.stringify({ 
         success: true, 
-        message: 'Mensaje enviado correctamente. Te contactaremos pronto.' 
+        message: '¡Gracias! Te has suscrito correctamente a nuestro newsletter.' 
       }),
       { 
         status: 200, 
@@ -148,7 +172,7 @@ serve(async (req) => {
     )
 
   } catch (error) {
-    console.error('Contact form error:', error)
+    console.error('Newsletter subscription error:', error)
     return new Response(
       JSON.stringify({ error: 'Error interno del servidor' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

@@ -1,9 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { useLocale } from '@/i18n/LocaleProvider';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Mail, MapPin, Linkedin, Twitter } from 'lucide-react';
 import { SmartImage } from '@/components/mdx';
+import { NewsletterInline } from '@/components/ui';
 const Footer = () => {
   const {
     t
@@ -76,12 +75,7 @@ const Footer = () => {
             <h3 className="font-semibold text-primary-foreground mb-4">
               {t('footer.newsletter.title')}
             </h3>
-            <div className="space-y-3">
-              <Input type="email" placeholder={t('footer.newsletter.placeholder')} className="bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/60" />
-              <Button variant="secondary" size="sm" className="w-full btn-secondary">
-                {t('footer.newsletter.cta')}
-              </Button>
-            </div>
+            <NewsletterInline className="space-y-3" />
             
             {/* Social Media */}
             <div className="flex gap-4 mt-6">

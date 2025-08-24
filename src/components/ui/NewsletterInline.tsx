@@ -11,6 +11,7 @@ import { Mail, Send, Check } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useLocale } from '@/i18n/LocaleProvider';
 import { motion } from 'framer-motion';
+import { supabase } from '@/integrations/supabase/client';
 
 const newsletterSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -52,37 +53,35 @@ export const NewsletterInline: React.FC<NewsletterInlineProps> = ({ className = 
     setIsSubmitting(true);
     
     try {
-      const response = await fetch('/api/lead', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const response = await supabase.functions.invoke('newsletter-subscribe', {
+        body: {
           email: data.email,
-          source: 'newsletter_inline',
-          rgpd_consent: data.rgpdConsent,
-          locale: locale
-        }),
+          honeypot: '', // Anti-bot protection
+        },
       });
 
-      if (!response.ok) {
-        throw new Error('Error al enviar los datos');
+      if (response.data && response.data.success) {
+        toast({
+          title: locale === 'es' ? '¡Suscripción exitosa!' : 'Subscription successful!',
+          description: response.data.message || (locale === 'es' 
+            ? 'Te has suscrito correctamente a nuestro newsletter.'
+            : 'You have successfully subscribed to our newsletter.'),
+        });
+        setIsSubmitted(true);
+        reset();
+        
+        // Reset submitted state after 3 seconds
+        setTimeout(() => setIsSubmitted(false), 3000);
+      } else {
+        const errorMessage = response.error?.message || response.data?.error || (locale === 'es' 
+          ? 'Ha ocurrido un error. Inténtalo de nuevo.'
+          : 'An error occurred. Please try again.');
+        toast({
+          title: locale === 'es' ? 'Error' : 'Error',
+          description: errorMessage,
+          variant: 'destructive',
+        });
       }
-
-      setIsSubmitted(true);
-      reset();
-      
-      toast({
-        title: locale === 'es' ? '¡Suscripción exitosa!' : 'Subscription successful!',
-        description: locale === 'es' 
-          ? 'Recibirá nuestros análisis directamente en su email.'
-          : 'You will receive our insights directly in your email.',
-        duration: 5000,
-      });
-
-      // Reset submitted state after 3 seconds
-      setTimeout(() => setIsSubmitted(false), 3000);
-
     } catch (error) {
       console.error('Error:', error);
       toast({
