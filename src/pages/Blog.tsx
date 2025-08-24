@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import { blogIndex } from "@/lib/content-index";
 import { getAllPostsMeta } from "@/lib/content";
+import { getPublishedDbPosts, dbPostToMdxFormat } from '@/lib/blog-db';
 import { SmartImage } from '@/components/mdx';
 import Reveal from '@/components/ui/Reveal';
 import { ContentCard } from '@/components/content/EnhancedContentCard';
@@ -19,46 +20,85 @@ export default function Blog() {
   }
   const lang = isEN ? 'en' : 'es';
   
-  // Usar el índice, pero con fallback a lib/content si está vacío
-  const allPosts = useMemo(() => {
-    let indexPosts = blogIndex.filter(p => p.locale === lang);
-    
-    // Si el índice está vacío, usar fallback de lib/content
-    if (indexPosts.length === 0) {
-      if (import.meta.env.DEV) {
-        console.warn('📋 Blog index empty, using fallback from lib/content');
-      }
-      
+  // Load posts from both MDX and database
+  const [allPosts, setAllPosts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadAllPosts = async () => {
       try {
-        const fallbackPosts = getAllPostsMeta().filter(p => p.lang === lang);
-        // Convertir formato de fallback al formato del índice
-        indexPosts = fallbackPosts.map(post => ({
+        // Get MDX posts from index
+        let indexPosts = blogIndex.filter(p => p.locale === lang);
+        
+        // If index is empty, use fallback from lib/content
+        if (indexPosts.length === 0) {
+          if (import.meta.env.DEV) {
+            console.warn('📋 Blog index empty, using fallback from lib/content');
+          }
+          
+          try {
+            const fallbackPosts = getAllPostsMeta().filter(p => p.lang === lang);
+            // Convert fallback format to index format
+            indexPosts = fallbackPosts.map(post => ({
+              slug: post.slug,
+              locale: post.lang,
+              meta: {
+                title: post.title,
+                date: new Date(post.date),
+                excerpt: post.excerpt || '',
+                cover: post.cover || '',
+                tags: post.tags || [],
+              },
+              path: `/src/content/blog/${post.lang}/${post.slug}.mdx`,
+              isFromDb: false,
+            }));
+          } catch (error) {
+            console.error('Error loading fallback posts:', error);
+          }
+        } else {
+          // Mark as not from DB
+          indexPosts = indexPosts.map(post => ({ ...post, isFromDb: false }));
+        }
+
+        // Get database posts
+        const dbPosts = await getPublishedDbPosts(lang);
+        const dbPostsFormatted = dbPosts.map(post => ({
           slug: post.slug,
           locale: post.lang,
           meta: {
             title: post.title,
-            date: new Date(post.date),
+            date: new Date(post.published_at || post.created_at),
             excerpt: post.excerpt || '',
-            cover: post.cover || '',
+            cover: post.cover_image || '',
             tags: post.tags || [],
           },
-          path: `/src/content/blog/${post.lang}/${post.slug}.mdx`
+          path: `/blog/${post.slug}`,
+          isFromDb: true,
+          dbPost: post,
         }));
+
+        // Combine and sort by date
+        const combinedPosts = [...indexPosts, ...dbPostsFormatted]
+          .sort((a, b) => b.meta.date.getTime() - a.meta.date.getTime());
+
+        setAllPosts(combinedPosts);
+
+        if (import.meta.env.DEV) {
+          console.log('📋 Blog posts loaded:', {
+            total: combinedPosts.length,
+            mdx: indexPosts.length,
+            db: dbPostsFormatted.length,
+            lang,
+          });
+        }
       } catch (error) {
-        console.error('Error loading fallback posts:', error);
+        console.error('Error loading posts:', error);
+      } finally {
+        setLoading(false);
       }
-    }
-    
-    if (import.meta.env.DEV) {
-      console.log('📋 Blog posts loaded:', {
-        total: indexPosts.length,
-        lang,
-        posts: indexPosts.map(p => p.slug),
-        source: blogIndex.length > 0 ? 'index' : 'fallback'
-      });
-    }
-    
-    return indexPosts;
+    };
+
+    loadAllPosts();
   }, [lang]);
   
   // Estado para filtros

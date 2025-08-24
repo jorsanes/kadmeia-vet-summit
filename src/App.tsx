@@ -29,6 +29,7 @@ import { DetailPageSkeleton } from "@/components/ui/DetailPageSkeleton";
 const CaseDetail = React.lazy(() => import("@/pages/casos/CaseDetail"));
 
 import ContentManager from "@/pages/ContentManager";
+import { BlogAdmin } from "@/pages/admin/BlogAdmin";
 import NotFound from "./pages/NotFound";
 import ServerError from "./pages/ServerError";
 
@@ -67,9 +68,10 @@ const App = () => (
                         <Route path="/aviso-legal" element={<Legal />} />
                         <Route path="/cookies" element={<Cookies />} />
                         
-                        <Route path="/content" element={<ContentManager />} />
-                        
-                        {/* English routes */}
+                         <Route path="/content" element={<ContentManager />} />
+                         <Route path="/admin/blog" element={<BlogAdmin />} />
+                         
+                         {/* English routes */}
                         <Route path="/en" element={<Home />} />
                         <Route path="/en/services" element={<Services />} />
                         <Route path="/en/cases" element={<Cases />} />
