@@ -5,6 +5,7 @@ import { blogIndex, loadBlogComponent } from "@/lib/content-index";
 import { getBlogPost } from "@/lib/mdx";
 import { PageSeo, ArticleJsonLd } from "@/lib/seo";
 import { enhancedMDXComponents as mdxComponents } from "@/components/mdx";
+import { MDXProvider } from '@mdx-js/react';
 
 export default function BlogPost() {
   const { slug = "" } = useParams();
@@ -69,16 +70,16 @@ export default function BlogPost() {
               <h1 className="text-4xl font-bold mb-4 text-foreground font-serif">{metaData.meta.title}</h1>
               <p className="text-sm text-muted-foreground">{metaData.meta.date.toLocaleDateString(locale)}</p>
             </header>
-            {Component ? <Component /> : 
-             MDX ? <MDX /> : 
-             <p>Cargando contenido…</p>}
+            <MDXProvider components={mdxComponents}>
+              {Component ? <Component /> : 
+               MDX ? <MDX /> : 
+               <p>Cargando contenido…</p>}
+            </MDXProvider>
           </article>
         </main>
       </>
     );
   }
-
-  const currentUrl = `https://kadmeia.com${locale === 'en' ? '/en' : ''}/blog/${slug}`;
 
   return renderPost(meta);
 }
