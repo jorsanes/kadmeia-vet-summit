@@ -22,6 +22,7 @@ import { I18nEditor } from '@/components/content/I18nEditor';
 import { MDXPageEditor } from '@/components/content/MDXPageEditor';
 import { BlogAdminV2 } from '@/components/admin/BlogAdminV2';
 import { CasesEditorV2 } from '@/components/content/CasesEditorV2';
+import { QAPanel } from '@/components/admin/QAPanel';
 import { PageSeo } from '@/components/seo/PageSeo';
 
 export default function ContentManager() {
@@ -137,7 +138,7 @@ export default function ContentManager() {
       {/* Content */}
       <div className="max-w-7xl mx-auto p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="blog" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               Blog WYSIWYG
@@ -153,6 +154,10 @@ export default function ContentManager() {
             <TabsTrigger value="cases" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               Casos
+            </TabsTrigger>
+            <TabsTrigger value="qa" className="flex items-center gap-2">
+              <AlertCircle className="h-4 w-4" />
+              QA
             </TabsTrigger>
             <TabsTrigger value="seo" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
@@ -213,6 +218,10 @@ export default function ContentManager() {
                 </CardContent>
               </Card>
             )}
+          </TabsContent>
+
+          <TabsContent value="qa">
+            <QAPanel />
           </TabsContent>
 
           <TabsContent value="seo">

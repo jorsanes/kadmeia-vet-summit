@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { generateHTML } from '@tiptap/html';
+import { WysiwygEditor } from '@/components/admin/WysiwygEditor';
+import { TiptapRenderer } from '@/components/blog/TiptapRenderer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -14,9 +16,15 @@ import { GitHubAPI, GitHubConfig } from '@/lib/github';
 import { useToast } from '@/hooks/use-toast';
 import { CaseMeta } from '@/content/schemas';
 import { TagPicker } from './TagPicker';
-import { enhancedMDXComponents } from '@/components/mdx';
-import { MDXProvider } from '@mdx-js/react';
-import { MdxPreview } from '@/components/mdx/MdxPreview';
+import StarterKit from '@tiptap/starter-kit';
+import Image from '@tiptap/extension-image';
+import Link from '@tiptap/extension-link';
+import { TextStyle } from '@tiptap/extension-text-style';
+import Color from '@tiptap/extension-color';
+import { Table } from '@tiptap/extension-table';
+import TableRow from '@tiptap/extension-table-row';
+import TableHeader from '@tiptap/extension-table-header';
+import TableCell from '@tiptap/extension-table-cell';
 import matter from 'gray-matter';
 import { 
   Calendar, 
@@ -45,6 +53,7 @@ interface CaseFile {
   lang: 'es' | 'en';
   meta: CaseMeta;
   content: string;
+  editorContent: any; // TipTap JSON content
   sha?: string;
   hasErrors: boolean;
   errors: string[];
@@ -165,6 +174,7 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
   const [isLoadingFiles, setIsLoadingFiles] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
   const [availableTags, setAvailableTags] = useState<string[]>([]);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { toast } = useToast();
 
   const api = new GitHubAPI(config);
@@ -216,7 +226,8 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
           
           loadedCases.push({
             ...parsed,
-            sha: response.sha
+            sha: response.sha,
+            editorContent: null // Will be set when editing
           });
         } catch (error) {
           console.error(`Error loading ${file.path}:`, error);
@@ -230,6 +241,7 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
             lang,
             meta: createDefaultCaseMeta(slug, lang),
             content: '',
+            editorContent: null,
             hasErrors: true,
             errors: ['Failed to load file']
           });
@@ -279,6 +291,7 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
           lang,
           meta: createDefaultCaseMeta(slug, lang),
           content: bodyContent,
+          editorContent: null,
           hasErrors: true,
           errors: validation.error.errors.map(err => 
             `${err.path.join('.')}: ${err.message}`
@@ -292,6 +305,7 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
         lang,
         meta: validation.data,
         content: bodyContent,
+        editorContent: null,
         hasErrors: false,
         errors: []
       };
@@ -302,6 +316,7 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
         lang,
         meta: createDefaultCaseMeta(slug, lang),
         content: '',
+        editorContent: null,
         hasErrors: true,
         errors: [`Parse error: ${error instanceof Error ? error.message : 'Unknown error'}`]
       };
@@ -338,6 +353,7 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
       lang,
       meta: createDefaultCaseMeta(slug, lang),
       content: template.content,
+      editorContent: null,
       hasErrors: false,
       errors: []
     };
@@ -367,6 +383,7 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
         servicios: template.servicios
       },
       content: template.content,
+      editorContent: null,
       hasErrors: false,
       errors: []
     };
@@ -409,7 +426,27 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
 
     setIsSaving(true);
     try {
-      const frontmatter = matter.stringify(caseFile.content, {
+      // Convert TipTap JSON to HTML if we have editor content
+      let contentToSave = caseFile.content;
+      if (caseFile.editorContent) {
+        const extensions = [
+          StarterKit,
+          Image,
+          Link.configure({ openOnClick: false }),
+          TextStyle,
+          Color,
+          Table.configure({
+            resizable: true,
+          }),
+          TableRow,
+          TableHeader,
+          TableCell,
+        ];
+        
+        contentToSave = generateHTML(caseFile.editorContent, extensions);
+      }
+
+      const frontmatter = matter.stringify(contentToSave, {
         ...caseFile.meta,
         date: new Date(caseFile.meta.date).toISOString().split('T')[0]
       });
@@ -474,6 +511,53 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
       });
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const deleteAllCases = async () => {
+    const confirmText = "ELIMINAR TODO";
+    const userInput = window.prompt(
+      `⚠️ PELIGRO: Esto eliminará TODOS los casos de estudio.\n\nEscribe "${confirmText}" para confirmar:`
+    );
+    
+    if (userInput !== confirmText) {
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      // Get all case files
+      const tree = await api.getTree('src/content/casos', true);
+      const mdxFiles = tree.filter(item => 
+        item.path.endsWith('.mdx') && 
+        (item.path.includes('/es/') || item.path.includes('/en/'))
+      );
+
+      // Delete each file
+      for (const file of mdxFiles) {
+        try {
+          const response = await api.getFile(file.path);
+          await api.deleteFile(file.path, response.sha, `Delete case study: ${file.path}`);
+        } catch (error) {
+          console.error(`Error deleting ${file.path}:`, error);
+        }
+      }
+
+      toast({
+        title: "Casos eliminados",
+        description: `Se eliminaron ${mdxFiles.length} casos de estudio.`,
+      });
+
+      await loadCaseFiles();
+    } catch (error) {
+      console.error('Error deleting all cases:', error);
+      toast({
+        title: "Error",
+        description: "No se pudieron eliminar todos los casos.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -568,13 +652,10 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Content (MDX) *</label>
-              <Textarea
-                value={editingCase.content}
-                onChange={(e) => updateEditingCase({ content: e.target.value })}
-                placeholder="# Case Study&#10;&#10;Write your case study content here..."
-                rows={20}
-                className="font-mono text-sm"
+              <label className="block text-sm font-medium mb-2">Content (WYSIWYG) *</label>
+              <WysiwygEditor
+                content={editingCase.editorContent}
+                onChange={(content) => updateEditingCase({ editorContent: content })}
               />
             </div>
           </TabsContent>
@@ -611,11 +692,10 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
 
             <div>
               <label className="block text-sm font-medium mb-2">Executive Summary *</label>
-              <Textarea
+              <Input
                 value={editingCase.meta.excerpt || ''}
                 onChange={(e) => updateEditingMeta({ excerpt: e.target.value })}
                 placeholder="Brief case study description highlighting main results"
-                rows={3}
               />
             </div>
 
@@ -711,11 +791,13 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
                 </CardHeader>
                 <CardContent>
                   <div className="prose max-w-none">
-                    <MdxPreview>
-                      <MDXProvider components={enhancedMDXComponents}>
-                        <div dangerouslySetInnerHTML={{ __html: editingCase.content }} />
-                      </MDXProvider>
-                    </MdxPreview>
+                    {editingCase.editorContent ? (
+                      <TiptapRenderer content={editingCase.editorContent} />
+                    ) : (
+                      <div className="text-muted-foreground text-center py-8">
+                        No content available for preview
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -734,6 +816,20 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
           <p className="text-muted-foreground">Manage case studies with validation and preview</p>
         </div>
         <div className="flex gap-2">
+          <Button
+            onClick={deleteAllCases}
+            variant="destructive"
+            size="sm"
+            disabled={isDeleting || isLoadingFiles}
+            className="flex items-center gap-2"
+          >
+            {isDeleting ? (
+              <RefreshCw className="h-4 w-4 animate-spin" />
+            ) : (
+              <Trash2 className="h-4 w-4" />
+            )}
+            Eliminar Todos
+          </Button>
           <Button
             onClick={() => loadCaseFiles()}
             variant="outline"
