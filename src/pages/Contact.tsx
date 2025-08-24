@@ -39,31 +39,28 @@ const Contact = () => {
     setIsSubmitting(true);
 
     try {
-      // Formspree integration
-      const formspreeId = import.meta.env.VITE_FORMSPREE_ID || 'xeoqqkpa'; // Default form ID
-      const formElement = e.target as HTMLFormElement;
-      const formDataToSend = new FormData(formElement);
-      
-      // Add form data manually to FormData (in case form elements don't have proper names)
-      formDataToSend.set('name', formData.name);
-      formDataToSend.set('email', formData.email);
-      formDataToSend.set('company', formData.company);
-      formDataToSend.set('phone', formData.phone);
-      formDataToSend.set('message', formData.message);
-      formDataToSend.set('_subject', `Nuevo contacto de ${formData.name} - KADMEIA`);
-
-      const response = await fetch(`https://formspree.io/f/${formspreeId}`, {
+      // Use Supabase edge function for contact form submission
+      const response = await fetch('https://tmtokjrdmkcznvlqhxlh.supabase.co/functions/v1/contact-submit', {
         method: 'POST',
         headers: {
-          'Accept': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtdG9ranJkbWtjem52bHFoeGxoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU2ODU5MzIsImV4cCI6MjA3MTI2MTkzMn0.E_646tFbCw6eB_VjkXSoVUBW4on1dbrWeVr2wobqkMU`
         },
-        body: formDataToSend
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          company: formData.company,
+          phone: formData.phone,
+          message: formData.message,
+          consent: formData.consent
+        })
       });
 
       if (response.ok) {
+        const result = await response.json();
         toast({
           title: "Mensaje enviado",
-          description: "Nos pondremos en contacto con usted en breve",
+          description: result.message || "Nos pondremos en contacto con usted en breve",
         });
 
         // Reset form
@@ -76,8 +73,8 @@ const Contact = () => {
           consent: false
         });
       } else {
-        // If Formspree fails, show error but don't expose technical details
-        throw new Error('Formspree submission failed');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Error enviando el mensaje');
       }
     } catch (error) {
       console.error('Error sending form:', error);

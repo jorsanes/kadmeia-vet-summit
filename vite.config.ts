@@ -133,6 +133,11 @@ export default defineConfig(({ mode, command }) => {
     optimizeDeps: {
       include: ['buffer', 'gray-matter']
     },
+    esbuild: {
+      define: {
+        global: 'globalThis',
+      },
+    },
     build: {
       sourcemap: mode === "analyze",
       rollupOptions: {
