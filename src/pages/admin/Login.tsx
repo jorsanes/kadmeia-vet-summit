@@ -7,15 +7,19 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LogIn, AlertCircle } from 'lucide-react';
 import { PageSeo } from '@/components/seo/PageSeo';
+import { SignUpForm } from '@/components/auth/SignUpForm';
+import { ResetPasswordForm } from '@/components/auth/ResetPasswordForm';
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signIn, user, isAdmin } = useAuth();
+  const [activeTab, setActiveTab] = useState('login');
+  const { signIn, user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,6 +42,14 @@ export const Login: React.FC = () => {
     setLoading(false);
   };
 
+  const handleSignUpSuccess = () => {
+    setActiveTab('login');
+  };
+
+  const handleResetSuccess = () => {
+    setActiveTab('login');
+  };
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <PageSeo 
@@ -53,46 +65,64 @@ export const Login: React.FC = () => {
             Acceso Administrador
           </CardTitle>
           <CardDescription>
-            Ingresa tus credenciales para acceder al panel de administración
+            Gestiona tu acceso al panel de administración
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {error && (
-            <Alert variant="destructive" className="mb-4">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-          
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                disabled={loading}
-              />
-            </div>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="login">Iniciar Sesión</TabsTrigger>
+              <TabsTrigger value="signup">Registrarse</TabsTrigger>
+              <TabsTrigger value="reset">Recuperar</TabsTrigger>
+            </TabsList>
             
-            <div>
-              <Label htmlFor="password">Contraseña</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                disabled={loading}
-              />
-            </div>
+            <TabsContent value="login" className="mt-6">
+              {error && (
+                <Alert variant="destructive" className="mb-4">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+              
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    disabled={loading}
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="password">Contraseña</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    disabled={loading}
+                  />
+                </div>
+                
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+                </Button>
+              </form>
+            </TabsContent>
             
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
-            </Button>
-          </form>
+            <TabsContent value="signup" className="mt-6">
+              <SignUpForm onSuccess={handleSignUpSuccess} />
+            </TabsContent>
+            
+            <TabsContent value="reset" className="mt-6">
+              <ResetPasswordForm onSuccess={handleResetSuccess} />
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
     </div>

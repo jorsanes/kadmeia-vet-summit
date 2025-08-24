@@ -9,7 +9,9 @@ interface AuthContextType {
   isAdmin: boolean;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<{ error: any }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,13 +32,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const checkAdminRole = async (userId: string) => {
     try {
-      // Temporalmente, marcamos como admin si el email contiene "admin"
-      // Esto se puede cambiar cuando los tipos de Supabase estén actualizados
-      if (session?.user?.email?.includes('admin')) {
-        return true;
+      const { data, error } = await supabase.rpc('has_role', {
+        _user_id: userId,
+        _role: 'admin'
+      });
+      
+      if (error) {
+        console.error('Error checking admin role:', error);
+        return false;
       }
-      return false;
-    } catch {
+      
+      return !!data;
+    } catch (error) {
+      console.error('Error checking admin role:', error);
       return false;
     }
   };
@@ -49,10 +57,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          // Check admin role
+          // Use setTimeout to avoid blocking the auth state change
           setTimeout(async () => {
             const adminRole = await checkAdminRole(session.user.id);
-            setIsAdmin(!!adminRole);
+            setIsAdmin(adminRole);
           }, 0);
         } else {
           setIsAdmin(false);
@@ -69,19 +77,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       if (session?.user) {
         const adminRole = await checkAdminRole(session.user.id);
-        setIsAdmin(!!adminRole);
+        setIsAdmin(adminRole);
       }
       
       setLoading(false);
     });
 
     return () => subscription.unsubscribe();
-  }, [session]);
+  }, []);
 
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
+    });
+    return { error };
+  };
+
+  const signUp = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/admin/login`
+      }
+    });
+    return { error };
+  };
+
+  const resetPassword = async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/admin/login`
     });
     return { error };
   };
@@ -96,7 +122,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     isAdmin,
     loading,
     signIn,
+    signUp,
     signOut,
+    resetPassword,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
