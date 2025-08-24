@@ -43,8 +43,8 @@ function App() {
       <HelmetProvider>
         <ErrorBoundary>
           <AuthProvider>
-            <LangProvider>
-              <Router>
+            <Router>
+              <LangProvider>
                 <SkipLink />
                 <Routes>
                   <Route path="/" element={<Index />} />
@@ -82,8 +82,8 @@ function App() {
                   <Route path="*" element={<NotFound />} />
                 </Routes>
                 <Toaster />
-              </Router>
-            </LangProvider>
+              </LangProvider>
+            </Router>
           </AuthProvider>
         </ErrorBoundary>
       </HelmetProvider>
