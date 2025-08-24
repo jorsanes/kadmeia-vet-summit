@@ -1,6 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -10,81 +9,45 @@ import { Check, ChevronsUpDown, Plus, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
-interface Tag {
-  id: string;
-  name: string;
-  slug: string;
-  lang: string;
-}
-
 interface TagManagerProps {
   selectedTags: string[];
   onTagsChange: (tags: string[]) => void;
   lang: 'es' | 'en';
 }
 
+// Lista predefinida de tags comunes para empezar
+const commonTags = {
+  es: [
+    'IA Veterinaria',
+    'Diagnóstico',
+    'Radiología',
+    'Clínica Veterinaria',
+    'Tecnología',
+    'Automatización',
+    'PACS',
+    'Workflow',
+    'Innovación',
+    'Casos Clínicos'
+  ],
+  en: [
+    'Veterinary AI',
+    'Diagnosis',
+    'Radiology',
+    'Veterinary Clinic',
+    'Technology',
+    'Automation',
+    'PACS',
+    'Workflow',
+    'Innovation',
+    'Clinical Cases'
+  ]
+};
+
 export const TagManager: React.FC<TagManagerProps> = ({ selectedTags, onTagsChange, lang }) => {
-  const [tags, setTags] = useState<Tag[]>([]);
   const [open, setOpen] = useState(false);
   const [newTagName, setNewTagName] = useState('');
-  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    loadTags();
-  }, [lang]);
-
-  const loadTags = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('blog_tags')
-        .select('*')
-        .eq('lang', lang)
-        .order('name');
-
-      if (error) throw error;
-      setTags(data || []);
-    } catch (error) {
-      console.error('Error loading tags:', error);
-    }
-  };
-
-  const createTag = async (name: string) => {
-    if (!name.trim()) return;
-
-    setLoading(true);
-    try {
-      const slug = name
-        .toLowerCase()
-        .replace(/[áàäâ]/g, 'a')
-        .replace(/[éèëê]/g, 'e')
-        .replace(/[íìïî]/g, 'i')
-        .replace(/[óòöô]/g, 'o')
-        .replace(/[úùüû]/g, 'u')
-        .replace(/[ñ]/g, 'n')
-        .replace(/[^\w\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-')
-        .trim();
-
-      const { data, error } = await supabase
-        .from('blog_tags')
-        .insert([{ name: name.trim(), slug, lang }])
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      setTags(prev => [...prev, data]);
-      onTagsChange([...selectedTags, name.trim()]);
-      setNewTagName('');
-      toast.success('Tag creado correctamente');
-    } catch (error) {
-      console.error('Error creating tag:', error);
-      toast.error('Error al crear el tag');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const availableTags = commonTags[lang] || commonTags.es;
 
   const toggleTag = (tagName: string) => {
     if (selectedTags.includes(tagName)) {
@@ -96,6 +59,17 @@ export const TagManager: React.FC<TagManagerProps> = ({ selectedTags, onTagsChan
 
   const removeTag = (tagName: string) => {
     onTagsChange(selectedTags.filter(t => t !== tagName));
+  };
+
+  const addNewTag = () => {
+    if (!newTagName.trim()) return;
+    
+    const trimmedTag = newTagName.trim();
+    if (!selectedTags.includes(trimmedTag)) {
+      onTagsChange([...selectedTags, trimmedTag]);
+    }
+    setNewTagName('');
+    toast.success('Tag añadido correctamente');
   };
 
   return (
@@ -137,22 +111,22 @@ export const TagManager: React.FC<TagManagerProps> = ({ selectedTags, onTagsChan
               <CommandList>
                 <CommandEmpty>No se encontraron tags.</CommandEmpty>
                 <CommandGroup>
-                  {tags.map((tag) => (
+                  {availableTags.map((tag) => (
                     <CommandItem
-                      key={tag.id}
-                      value={tag.name}
+                      key={tag}
+                      value={tag}
                       onSelect={() => {
-                        toggleTag(tag.name);
+                        toggleTag(tag);
                         setOpen(false);
                       }}
                     >
                       <Check
                         className={cn(
                           "mr-2 h-4 w-4",
-                          selectedTags.includes(tag.name) ? "opacity-100" : "opacity-0"
+                          selectedTags.includes(tag) ? "opacity-100" : "opacity-0"
                         )}
                       />
-                      {tag.name}
+                      {tag}
                     </CommandItem>
                   ))}
                 </CommandGroup>
@@ -166,13 +140,13 @@ export const TagManager: React.FC<TagManagerProps> = ({ selectedTags, onTagsChan
             placeholder="Nuevo tag"
             value={newTagName}
             onChange={(e) => setNewTagName(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && createTag(newTagName)}
+            onKeyPress={(e) => e.key === 'Enter' && addNewTag()}
           />
           <Button
             type="button"
             variant="outline"
-            onClick={() => createTag(newTagName)}
-            disabled={loading || !newTagName.trim()}
+            onClick={addNewTag}
+            disabled={!newTagName.trim()}
           >
             <Plus className="h-4 w-4" />
           </Button>

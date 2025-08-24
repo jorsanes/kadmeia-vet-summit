@@ -1,11 +1,12 @@
+
 import * as React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/sonner";
-import { ErrorBoundary } from "@/components/ErrorBoundary";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import { LangProvider } from "@/components/accessibility/LangProvider";
-import { SkipLink } from "@/components/accessibility/SkipLink";
+import SkipLink from "@/components/accessibility/SkipLink";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "@/pages/Index";
 import About from "@/pages/About";
