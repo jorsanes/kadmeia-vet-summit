@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -42,7 +43,7 @@ export const TiptapRenderer: React.FC<TiptapRendererProps> = ({
   }
 
   return (
-    <div className={className}>
+    <div className={`${className} [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:font-serif [&_h1]:text-foreground [&_h1]:mb-6 [&_h1]:leading-tight [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:font-serif [&_h2]:text-foreground [&_h2]:mb-4 [&_h2]:leading-snug [&_h3]:text-xl [&_h3]:font-medium [&_h3]:font-serif [&_h3]:text-foreground [&_h3]:mb-3 [&_h3]:leading-normal`}>
       <EditorContent editor={editor} />
     </div>
   );

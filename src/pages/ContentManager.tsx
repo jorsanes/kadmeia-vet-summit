@@ -1,44 +1,42 @@
+
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/contexts/AuthContext';
 import { GitHubAPI, GitHubConfig } from '@/lib/github';
 import { useToast } from '@/hooks/use-toast';
 import { 
   Settings, 
   FileText, 
   Globe, 
-  Save, 
-  RefreshCw, 
+  LogOut,
   AlertCircle,
-  CheckCircle,
-  LogOut
+  User
 } from 'lucide-react';
 import { I18nEditor } from '@/components/content/I18nEditor';
 import { MDXPageEditor } from '@/components/content/MDXPageEditor';
-import { BlogEditorV2 } from '@/components/content/BlogEditorV2';
+import { BlogAdminV2 } from '@/components/admin/BlogAdminV2';
 import { CasesEditorV2 } from '@/components/content/CasesEditorV2';
 import { PageSeo } from '@/components/seo/PageSeo';
 
 export default function ContentManager() {
   const { t, i18n } = useTranslation();
   const { toast } = useToast();
+  const { user, isAdmin, loading: authLoading, signOut } = useAuth();
+  const navigate = useNavigate();
   const [config, setConfig] = useState<GitHubConfig | null>(null);
-  const [isAuthenticating, setIsAuthenticating] = useState(false);
-  const [activeTab, setActiveTab] = useState('i18n');
+  const [activeTab, setActiveTab] = useState('blog');
 
-  // Form state for GitHub authentication
-  const [formData, setFormData] = useState({
-    token: '',
-    owner: 'jorsanes',
-    repo: 'kadmeia-vet-summit',
-    branch: 'main'
-  });
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate('/admin/login');
+    }
+  }, [user, authLoading, navigate]);
 
   useEffect(() => {
     const storedConfig = GitHubAPI.getStoredConfig();
@@ -47,47 +45,22 @@ export default function ContentManager() {
     }
   }, []);
 
-  const handleAuthenticate = async () => {
-    setIsAuthenticating(true);
-    try {
-      // Test the configuration by attempting to fetch a file
-      const testConfig = { ...formData };
-      const api = new GitHubAPI(testConfig);
-      
-      // Try to fetch the main i18n file to validate access
-      await api.getFile('src/i18n/locales/es.json');
-      
-      // If successful, store the config
-      GitHubAPI.storeConfig(testConfig);
-      setConfig(testConfig);
-      
-      toast({
-        title: "Autenticación exitosa",
-        description: "Conectado correctamente al repositorio de GitHub",
-      });
-      
-    } catch (error) {
-      toast({
-        title: "Error de autenticación",
-        description: "No se pudo conectar al repositorio. Verifica tu token y permisos.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsAuthenticating(false);
-    }
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/admin/login');
   };
 
-  const handleLogout = () => {
-    GitHubAPI.clearConfig();
-    setConfig(null);
-    setFormData({ ...formData, token: '' });
-    toast({
-      title: "Sesión cerrada",
-      description: "Configuración de GitHub eliminada",
-    });
-  };
+  if (authLoading) {
+    return <div className="min-h-screen bg-background p-6 flex items-center justify-center">
+      Cargando...
+    </div>;
+  }
 
-  if (!config) {
+  if (!user) {
+    return null;
+  }
+
+  if (!isAdmin) {
     return (
       <div className="min-h-screen bg-background p-6">
         <PageSeo 
@@ -97,87 +70,18 @@ export default function ContentManager() {
         />
         
         <div className="max-w-2xl mx-auto">
-          <div className="text-center mb-8">
-            <h1 className="font-display text-3xl font-semibold text-foreground mb-4">
-              Gestor de Contenido KADMEIA
-            </h1>
-            <p className="text-muted-foreground">
-              Conecta con GitHub para editar el contenido de la web
-            </p>
-          </div>
-
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Settings className="h-5 w-5" />
-                Configuración de GitHub
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="pt-6">
               <Alert>
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  Necesitas un token de acceso personal (PAT) de GitHub con permisos de repositorio.
-                  <a 
-                    href="https://github.com/settings/tokens" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline ml-1"
-                  >
-                    Crear token aquí
-                  </a>
+                  No tienes permisos de administrador para acceder a esta sección.
+                  Si crees que esto es un error, contacta al administrador del sistema.
                 </AlertDescription>
               </Alert>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="owner">Propietario</Label>
-                  <Input
-                    id="owner"
-                    value={formData.owner}
-                    onChange={(e) => setFormData({ ...formData, owner: e.target.value })}
-                    placeholder="jorsanes"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="repo">Repositorio</Label>
-                  <Input
-                    id="repo"
-                    value={formData.repo}
-                    onChange={(e) => setFormData({ ...formData, repo: e.target.value })}
-                    placeholder="kadmeia-vet-summit"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="branch">Rama</Label>
-                <Input
-                  id="branch"
-                  value={formData.branch}
-                  onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
-                  placeholder="main"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="token">Token de Acceso Personal</Label>
-                <Input
-                  id="token"
-                  type="password"
-                  value={formData.token}
-                  onChange={(e) => setFormData({ ...formData, token: e.target.value })}
-                  placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
-                />
-              </div>
-
-              <Button 
-                onClick={handleAuthenticate}
-                disabled={!formData.token || isAuthenticating}
-                className="w-full"
-              >
-                {isAuthenticating && <RefreshCw className="h-4 w-4 mr-2 animate-spin" />}
-                Conectar con GitHub
+              <Button onClick={handleLogout} className="mt-4">
+                <LogOut className="h-4 w-4 mr-2" />
+                Cerrar Sesión
               </Button>
             </CardContent>
           </Card>
@@ -203,17 +107,28 @@ export default function ContentManager() {
                 Gestor de Contenido
               </h1>
               <div className="flex items-center gap-2 mt-1">
-                <Badge variant="secondary" className="text-xs">
-                  {config.owner}/{config.repo}
+                <Badge variant="secondary" className="text-xs flex items-center gap-1">
+                  <User className="h-3 w-3" />
+                  {user.email}
                 </Badge>
                 <Badge variant="outline" className="text-xs">
-                  {config.branch}
+                  Admin
                 </Badge>
+                {config && (
+                  <>
+                    <Badge variant="secondary" className="text-xs">
+                      {config.owner}/{config.repo}
+                    </Badge>
+                    <Badge variant="outline" className="text-xs">
+                      {config.branch}
+                    </Badge>
+                  </>
+                )}
               </div>
             </div>
             <Button variant="ghost" size="sm" onClick={handleLogout}>
               <LogOut className="h-4 w-4 mr-2" />
-              Desconectar
+              Cerrar Sesión
             </Button>
           </div>
         </div>
@@ -223,6 +138,10 @@ export default function ContentManager() {
       <div className="max-w-7xl mx-auto p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-5">
+            <TabsTrigger value="blog" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              Blog WYSIWYG
+            </TabsTrigger>
             <TabsTrigger value="i18n" className="flex items-center gap-2">
               <Globe className="h-4 w-4" />
               Textos de Interfaz
@@ -230,10 +149,6 @@ export default function ContentManager() {
             <TabsTrigger value="pages" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               Páginas MDX
-            </TabsTrigger>
-            <TabsTrigger value="blog" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              Blog
             </TabsTrigger>
             <TabsTrigger value="cases" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
@@ -245,20 +160,59 @@ export default function ContentManager() {
             </TabsTrigger>
           </TabsList>
 
+          <TabsContent value="blog">
+            <BlogAdminV2 />
+          </TabsContent>
+
           <TabsContent value="i18n">
-            <I18nEditor config={config} />
+            {config ? (
+              <I18nEditor config={config} />
+            ) : (
+              <Card>
+                <CardContent className="pt-6">
+                  <Alert>
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      GitHub no está configurado. La edición de textos de interfaz requiere configuración de GitHub.
+                    </AlertDescription>
+                  </Alert>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="pages">
-            <MDXPageEditor config={config} />
-          </TabsContent>
-
-          <TabsContent value="blog">
-            <BlogEditorV2 config={config} />
+            {config ? (
+              <MDXPageEditor config={config} />
+            ) : (
+              <Card>
+                <CardContent className="pt-6">
+                  <Alert>
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      GitHub no está configurado. La edición de páginas MDX requiere configuración de GitHub.
+                    </AlertDescription>
+                  </Alert>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="cases">
-            <CasesEditorV2 config={config} />
+            {config ? (
+              <CasesEditorV2 config={config} />
+            ) : (
+              <Card>
+                <CardContent className="pt-6">
+                  <Alert>
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      GitHub no está configurado. La edición de casos requiere configuración de GitHub.
+                    </AlertDescription>
+                  </Alert>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="seo">

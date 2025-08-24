@@ -1,110 +1,93 @@
-import React, { Suspense } from "react";
-import { I18nextProvider } from "react-i18next";
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import * as React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { HelmetProvider } from 'react-helmet-async';
-import ErrorBoundary from "@/components/ErrorBoundary";
-import i18n from "@/i18n/config";
-import { LocaleProvider } from "@/i18n/LocaleProvider";
+import { Toaster } from "@/components/ui/sonner";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { LangProvider } from "@/components/accessibility/LangProvider";
-import SkipLink from "@/components/accessibility/SkipLink";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
-import Home from "@/pages/Index";
-import Contact from "@/pages/Contact";
-import Services from "@/pages/Services";
-import Cases from "@/pages/Cases";
-import Blog from "@/pages/Blog";
+import { SkipLink } from "@/components/accessibility/SkipLink";
+import { AuthProvider } from "@/contexts/AuthContext";
+import Index from "@/pages/Index";
 import About from "@/pages/About";
+import Services from "@/pages/Services";
+import Blog from "@/pages/Blog";
+import BlogPost from "@/pages/blog/Post";
+import Cases from "@/pages/Cases";
+import CaseDetail from "@/pages/cases/CaseDetail";
+import CaseDetailEs from "@/pages/casos/CaseDetail";
+import Contact from "@/pages/Contact";
 import Privacy from "@/pages/Privacy";
 import Legal from "@/pages/Legal";
 import Cookies from "@/pages/Cookies";
-import BlogPostNew from "@/pages/blog/Post";
-import { DetailPageSkeleton } from "@/components/ui/DetailPageSkeleton";
-
-// Lazy load detail pages for better code splitting
-const CaseDetail = React.lazy(() => import("@/pages/casos/CaseDetail"));
-
+import NotFound from "@/pages/NotFound";
+import ServerError from "@/pages/ServerError";
 import ContentManager from "@/pages/ContentManager";
-import { BlogAdmin } from "@/pages/admin/BlogAdmin";
-import NotFound from "./pages/NotFound";
-import ServerError from "./pages/ServerError";
+import { Login } from "@/pages/admin/Login";
 
-const queryClient = new QueryClient();
+import "@/i18n/config";
+import "./App.css";
 
-const App = () => (
-  <HelmetProvider>
-    <ErrorBoundary>
-      <I18nextProvider i18n={i18n}>
-        <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-              <BrowserRouter>
-                <LocaleProvider>
-                  <LangProvider />
-                  <div className="min-h-screen flex flex-col">
-                    <SkipLink />
-                    <Header />
-                    <main id="main-content" tabIndex={-1} className="flex-1">
-                      <Routes>
-                        {/* Spanish routes (default) */}
-                        <Route path="/" element={<Home />} />
-                        <Route path="/servicios" element={<Services />} />
-                        <Route path="/casos" element={<Cases />} />
-                        <Route path="/blog" element={<Blog />} />
-                        <Route path="/blog/:slug" element={<BlogPostNew />} />
-                        <Route path="/casos/:slug" element={
-                          <Suspense fallback={<DetailPageSkeleton />}>
-                            <CaseDetail />
-                          </Suspense>
-                        } />
-                        <Route path="/sobre" element={<About />} />
-                        <Route path="/contacto" element={<Contact />} />
-                        <Route path="/privacidad" element={<Privacy />} />
-                        <Route path="/aviso-legal" element={<Legal />} />
-                        <Route path="/cookies" element={<Cookies />} />
-                        
-                         <Route path="/content" element={<ContentManager />} />
-                         <Route path="/admin/blog" element={<BlogAdmin />} />
-                         
-                         {/* English routes */}
-                        <Route path="/en" element={<Home />} />
-                        <Route path="/en/services" element={<Services />} />
-                        <Route path="/en/cases" element={<Cases />} />
-                        <Route path="/en/blog" element={<Blog />} />
-                        <Route path="/en/blog/:slug" element={<BlogPostNew />} />
-                        <Route path="/en/cases/:slug" element={
-                          <Suspense fallback={<DetailPageSkeleton />}>
-                            <CaseDetail />
-                          </Suspense>
-                        } />
-                        <Route path="/en/about" element={<About />} />
-                        <Route path="/en/contact" element={<Contact />} />
-                        <Route path="/en/privacy" element={<Privacy />} />
-                        <Route path="/en/legal" element={<Legal />} />
-                        <Route path="/en/cookies" element={<Cookies />} />
-                        
-                        {/* Error pages */}
-                        <Route path="/404" element={<NotFound />} />
-                        <Route path="/500" element={<ServerError />} />
-                        
-                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                        <Route path="*" element={<NotFound />} />
-                      </Routes>
-                    </main>
-                    <Footer />
-                  </div>
-              </LocaleProvider>
-            </BrowserRouter>
-          </TooltipProvider>
-        </QueryClientProvider>
-      </I18nextProvider>
-    </ErrorBoundary>
-  </HelmetProvider>
-);
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000,
+      retry: 1,
+    },
+  },
+});
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <HelmetProvider>
+        <ErrorBoundary>
+          <AuthProvider>
+            <LangProvider>
+              <Router>
+                <SkipLink />
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/services" element={<Services />} />
+                  <Route path="/blog" element={<Blog />} />
+                  <Route path="/blog/:slug" element={<BlogPost />} />
+                  <Route path="/cases" element={<Cases />} />
+                  <Route path="/cases/:slug" element={<CaseDetail />} />
+                  <Route path="/casos/:slug" element={<CaseDetailEs />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/privacy" element={<Privacy />} />
+                  <Route path="/legal" element={<Legal />} />
+                  <Route path="/cookies" element={<Cookies />} />
+                  
+                  {/* English routes */}
+                  <Route path="/en" element={<Index />} />
+                  <Route path="/en/about" element={<About />} />
+                  <Route path="/en/services" element={<Services />} />
+                  <Route path="/en/blog" element={<Blog />} />
+                  <Route path="/en/blog/:slug" element={<BlogPost />} />
+                  <Route path="/en/cases" element={<Cases />} />
+                  <Route path="/en/cases/:slug" element={<CaseDetail />} />
+                  <Route path="/en/contact" element={<Contact />} />
+                  <Route path="/en/privacy" element={<Privacy />} />
+                  <Route path="/en/legal" element={<Legal />} />
+                  <Route path="/en/cookies" element={<Cookies />} />
+                  
+                  {/* Admin routes */}
+                  <Route path="/admin/login" element={<Login />} />
+                  <Route path="/content-manager" element={<ContentManager />} />
+                  
+                  {/* Error routes */}
+                  <Route path="/500" element={<ServerError />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+                <Toaster />
+              </Router>
+            </LangProvider>
+          </AuthProvider>
+        </ErrorBoundary>
+      </HelmetProvider>
+    </QueryClientProvider>
+  );
+}
 
 export default App;
