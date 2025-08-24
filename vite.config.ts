@@ -36,6 +36,7 @@ export default defineConfig(({ mode, command }) => {
         [rehypeAutolinkHeadings, { behavior: "wrap" }],
         rehypeRemoveNewsletter,
       ],
+      providerImportSource: "@mdx-js/react",
     }),
     react(),
     splitVendorChunkPlugin(),
