@@ -21,7 +21,7 @@ import {
 import { I18nEditor } from '@/components/content/I18nEditor';
 import { MDXPageEditor } from '@/components/content/MDXPageEditor';
 import { BlogAdminV2 } from '@/components/admin/BlogAdminV2';
-import { CasesEditorV2 } from '@/components/content/CasesEditorV2';
+import { CasesAdminV2 } from '@/components/admin/CasesAdminV2';
 import { QAPanel } from '@/components/admin/QAPanel';
 import { PageSeo } from '@/components/seo/PageSeo';
 
@@ -204,20 +204,7 @@ export default function ContentManager() {
           </TabsContent>
 
           <TabsContent value="cases">
-            {config ? (
-              <CasesEditorV2 config={config} />
-            ) : (
-              <Card>
-                <CardContent className="pt-6">
-                  <Alert>
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>
-                      GitHub no está configurado. La edición de casos requiere configuración de GitHub.
-                    </AlertDescription>
-                  </Alert>
-                </CardContent>
-              </Card>
-            )}
+            <CasesAdminV2 config={config} />
           </TabsContent>
 
           <TabsContent value="qa">

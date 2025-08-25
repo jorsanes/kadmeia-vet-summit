@@ -59,6 +59,63 @@ export type Database = {
         }
         Relationships: []
       }
+      case_studies: {
+        Row: {
+          client: string | null
+          content: Json
+          cover_image: string | null
+          created_at: string
+          excerpt: string | null
+          id: string
+          lang: string
+          published_at: string | null
+          sector: string | null
+          servicios: string[] | null
+          slug: string
+          status: string
+          tags: string[] | null
+          title: string
+          ubicacion: string | null
+          updated_at: string
+        }
+        Insert: {
+          client?: string | null
+          content?: Json
+          cover_image?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          lang?: string
+          published_at?: string | null
+          sector?: string | null
+          servicios?: string[] | null
+          slug: string
+          status?: string
+          tags?: string[] | null
+          title: string
+          ubicacion?: string | null
+          updated_at?: string
+        }
+        Update: {
+          client?: string | null
+          content?: Json
+          cover_image?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          lang?: string
+          published_at?: string | null
+          sector?: string | null
+          servicios?: string[] | null
+          slug?: string
+          status?: string
+          tags?: string[] | null
+          title?: string
+          ubicacion?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contact_messages: {
         Row: {
           client_ip: string | null
