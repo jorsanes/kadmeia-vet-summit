@@ -5,6 +5,7 @@ import { blogIndex, loadBlogComponent } from "@/lib/content-index";
 import { getBlogPost } from "@/lib/mdx";
 import { getDbPostBySlug } from "@/lib/blog-db";
 import { TiptapRenderer } from "@/components/blog/TiptapRenderer";
+import { BlogHeader } from "@/components/blog/BlogHeader";
 import { PageSeo, ArticleJsonLd } from "@/lib/seo";
 
 export default function BlogPost() {
@@ -48,6 +49,19 @@ export default function BlogPost() {
     return <div className="container py-12">Cargando...</div>;
   }
 
+  // Helper function to calculate reading time from Tiptap content
+  const calculateReadingTime = (content: any): number => {
+    if (!content) return 0;
+    try {
+      const contentStr = typeof content === 'string' ? content : JSON.stringify(content);
+      const words = contentStr.replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean);
+      const wordsPerMinute = locale === 'es' ? 200 : 220;
+      return Math.ceil(words.length / wordsPerMinute);
+    } catch {
+      return 0;
+    }
+  };
+
   // If database post exists, render it
   if (dbPost) {
     const currentUrl = `https://kadmeia.com${locale === 'en' ? '/en' : ''}/blog/${slug}`;
@@ -71,20 +85,20 @@ export default function BlogPost() {
         />
         <main className="container py-12">
           <article className="blog-prose max-w-4xl mx-auto px-6 py-12">
-            <header className="mb-8">
-              <h1 className="text-4xl font-bold mb-4 text-foreground font-serif">{dbPost.title}</h1>
-              <p className="text-sm text-muted-foreground">
-                {new Date(dbPost.published_at || dbPost.created_at).toLocaleDateString(locale)}
-              </p>
-              {dbPost.cover_image && (
-                <img 
-                  src={dbPost.cover_image} 
-                  alt={dbPost.title}
-                  className="w-full h-64 object-cover rounded-lg mt-6"
-                />
-              )}
-            </header>
-            <TiptapRenderer content={dbPost.content} />
+            <BlogHeader
+              title={dbPost.title}
+              date={dbPost.published_at || dbPost.created_at}
+              updatedAt={dbPost.updated_at}
+              readingTime={calculateReadingTime(dbPost.content)}
+              tags={dbPost.tags}
+              cover={dbPost.cover_image || ''}
+              banner={dbPost.cover_image || ''}
+              excerpt={dbPost.excerpt || ''}
+              lang={locale}
+            />
+            <div className="max-w-none blog-prose [&>h1:first-child]:hidden">
+              <TiptapRenderer content={dbPost.content} />
+            </div>
           </article>
         </main>
       </>
@@ -136,13 +150,21 @@ export default function BlogPost() {
         />
         <main className="container py-12">
           <article className="blog-prose max-w-4xl mx-auto px-6 py-12">
-            <header className="mb-8">
-              <h1 className="text-4xl font-bold mb-4 text-foreground font-serif">{metaData.meta.title}</h1>
-              <p className="text-sm text-muted-foreground">{metaData.meta.date.toLocaleDateString(locale)}</p>
-            </header>
-            {Component ? <Component /> : 
-             MDX ? <MDX /> : 
-             <p>Cargando contenido…</p>}
+            <BlogHeader
+              title={metaData.meta.title}
+              date={metaData.meta.date.toISOString()}
+              readingTime={metaData.meta.readingTime || 5}
+              tags={metaData.meta.tags || []}
+              cover={metaData.meta.cover || ''}
+              banner={metaData.meta.cover || ''}
+              excerpt={metaData.meta.excerpt || ''}
+              lang={locale}
+            />
+            <div className="max-w-none blog-prose [&>h1:first-child]:hidden">
+              {Component ? <Component /> : 
+               MDX ? <MDX /> : 
+               <p>Cargando contenido…</p>}
+            </div>
           </article>
         </main>
       </>
