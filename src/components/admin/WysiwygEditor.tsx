@@ -58,7 +58,9 @@ export const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ content, onChange 
 
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        link: false, // Disable the built-in link extension to avoid conflicts
+      }),
       Image.configure({
         HTMLAttributes: {
           class: 'rounded-lg max-w-full h-auto',
