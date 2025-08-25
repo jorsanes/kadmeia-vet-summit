@@ -84,7 +84,7 @@ export default function BlogPost() {
           image={dbPost.cover_image || ''}
         />
         <main className="container py-12">
-          <article className="blog-prose max-w-4xl mx-auto px-6 py-12">
+          <article className="max-w-4xl mx-auto px-6 py-12">
             <BlogHeader
               title={dbPost.title}
               date={dbPost.published_at || dbPost.created_at}
@@ -149,7 +149,7 @@ export default function BlogPost() {
           image={metaData.meta.cover}
         />
         <main className="container py-12">
-          <article className="blog-prose max-w-4xl mx-auto px-6 py-12">
+          <article className="max-w-4xl mx-auto px-6 py-12">
             <BlogHeader
               title={metaData.meta.title}
               date={metaData.meta.date.toISOString()}
