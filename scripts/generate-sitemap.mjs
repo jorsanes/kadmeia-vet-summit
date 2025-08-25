@@ -138,6 +138,7 @@ async function collectDbEntries() {
   } catch (error) {
     console.warn(`[sitemap] Could not fetch database content: ${error.message}`);
     return [];
+  }
 }
 
 // -------- Main --------
