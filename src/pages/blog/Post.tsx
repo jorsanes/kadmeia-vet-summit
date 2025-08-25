@@ -96,7 +96,7 @@ export default function BlogPost() {
               excerpt={dbPost.excerpt || ''}
               lang={locale}
             />
-            <div className="max-w-none blog-prose [&>h1:first-child]:hidden">
+            <div className="max-w-none blog-prose">
               <TiptapRenderer content={dbPost.content} />
             </div>
           </article>
