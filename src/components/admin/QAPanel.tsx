@@ -28,9 +28,63 @@ export const QAPanel: React.FC = () => {
   const runAudit = async () => {
     setIsRunning(true);
     try {
-      // Import and run the audit script
-      const { auditOrphanPages } = await import('../../../scripts/find-orphans.mjs');
-      const auditResults = await auditOrphanPages();
+      // Read App.tsx to extract routes
+      const appFiles = import.meta.glob('/src/App.tsx', { 
+        eager: true, 
+        query: '?raw', 
+        import: 'default' 
+      }) as Record<string, string>;
+      
+      // Read layout components for navigation links
+      const layoutFiles = import.meta.glob('/src/components/layout/*.{tsx,jsx}', { 
+        eager: true, 
+        query: '?raw', 
+        import: 'default' 
+      }) as Record<string, string>;
+      
+      // Read content files for internal links
+      const contentFiles = import.meta.glob('/src/content/**/*.{md,mdx}', { 
+        eager: true, 
+        query: '?raw', 
+        import: 'default' 
+      }) as Record<string, string>;
+
+      // Extract routes from App.tsx
+      const appContent = Object.values(appFiles)[0] || '';
+      const routeMatches = appContent.match(/path=["']([^"']+)["']/g) || [];
+      const routes = routeMatches
+        .map(match => match.replace(/path=["']([^"']+)["']/, '$1'))
+        .filter(route => !route.includes(':') && !route.includes('*'))
+        .map(route => route === '/' ? '/' : route.replace(/\/$/, ''));
+
+      // Extract internal links from all files
+      const allContent = [
+        ...Object.values(layoutFiles),
+        ...Object.values(contentFiles)
+      ].join('\n');
+      
+      const linkMatches = allContent.match(/href=["']([^"']*?)["']/g) || [];
+      const links = linkMatches
+        .map(match => match.replace(/href=["']([^"']+)["']/, '$1'))
+        .filter(link => link.startsWith('/') && !link.startsWith('//'))
+        .filter(link => !link.includes('#') && !link.includes('?'))
+        .map(link => link.replace(/\/$/, '') || '/')
+        .filter((link, index, arr) => arr.indexOf(link) === index);
+
+      // Find broken links and orphaned routes
+      const normalizedRoutes = routes.map(r => r.replace(/\/$/, '') || '/');
+      const normalizedLinks = links.map(l => l.replace(/\/$/, '') || '/');
+      
+      const brokenLinks = normalizedLinks.filter(link => !normalizedRoutes.includes(link));
+      const orphanedRoutes = normalizedRoutes.filter(route => !normalizedLinks.includes(route));
+
+      const auditResults = {
+        routes: normalizedRoutes,
+        links: normalizedLinks,
+        brokenLinks,
+        orphanedRoutes
+      };
+
       setResults(auditResults);
       
       toast({

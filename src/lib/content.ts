@@ -36,12 +36,12 @@ function parseCollection(rawModules: Record<string, string>, kind: "blog" | "cas
 
 export function getAllPostsMeta(): BaseMeta[] {
   // IMPORTANTE: leer como RAW para no compilar MDX en el listado
-  const modules = import.meta.glob("/src/content/blog/**/*.mdx", { eager: true, as: "raw" }) as Record<string, string>;
+  const modules = import.meta.glob("/src/content/blog/**/*.mdx", { eager: true, query: '?raw', import: 'default' }) as Record<string, string>;
   return parseCollection(modules, "blog");
 }
 
 export function getAllCasesMeta(): BaseMeta[] {
-  const modules = import.meta.glob("/src/content/casos/**/*.mdx", { eager: true, as: "raw" }) as Record<string, string>;
+  const modules = import.meta.glob("/src/content/casos/**/*.mdx", { eager: true, query: '?raw', import: 'default' }) as Record<string, string>;
   return parseCollection(modules, "casos");
 }
 

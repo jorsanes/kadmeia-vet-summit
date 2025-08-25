@@ -39,7 +39,6 @@ export default defineConfig(({ mode, command }) => {
       providerImportSource: "@mdx-js/react",
     }),
     react(),
-    splitVendorChunkPlugin(),
     compression({ algorithm: "brotliCompress", ext: ".br", deleteOriginFile: false }),
     compression({ algorithm: "gzip", ext: ".gz", deleteOriginFile: false }),
     VitePWA({
@@ -142,17 +141,26 @@ export default defineConfig(({ mode, command }) => {
     build: {
       sourcemap: mode === "analyze",
       rollupOptions: {
-        external: [
-          // Exclude scripts folder from build
-          /^\/scripts\//,
-        ],
         output: {
-          manualChunks: {
-            vendor: ["react", "react-dom"],
-            ui: ["@radix-ui/react-accordion", "@radix-ui/react-dialog", "@radix-ui/react-dropdown-menu"],
-            utils: ["clsx", "tailwind-merge", "class-variance-authority"],
-            router: ["react-router-dom"],
-            mdx: ["@mdx-js/react", "remark-gfm"],
+          manualChunks: (id) => {
+            if (id.includes('node_modules')) {
+              if (id.includes('react') || id.includes('react-dom')) {
+                return 'vendor';
+              }
+              if (id.includes('@radix-ui')) {
+                return 'ui';
+              }
+              if (id.includes('clsx') || id.includes('tailwind-merge') || id.includes('class-variance-authority')) {
+                return 'utils';
+              }
+              if (id.includes('react-router')) {
+                return 'router';
+              }
+              if (id.includes('@mdx-js') || id.includes('remark')) {
+                return 'mdx';
+              }
+              return 'vendor';
+            }
           },
         },
       },

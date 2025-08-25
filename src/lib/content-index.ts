@@ -5,12 +5,14 @@ type Locale = "es" | "en";
 
 // MDX crudo para extraer frontmatter (eager)
 const blogRaw: Record<string, any> = import.meta.glob("/src/content/blog/**/*.mdx", { 
-  as: "raw", 
+  query: '?raw', 
+  import: 'default',
   eager: true 
 });
 
 const caseRaw: Record<string, any> = import.meta.glob("/src/content/casos/**/*.mdx", { 
-  as: "raw", 
+  query: '?raw', 
+  import: 'default',
   eager: true 
 });
 
