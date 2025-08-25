@@ -130,7 +130,7 @@ serve(async (req) => {
           },
           body: JSON.stringify({
             from: 'KADMEIA Newsletter <noreply@kadmeia.com>',
-            to: ['info@kadmeia.com'],
+            to: ['jorge.sanchez@kadmeia.com'],
             subject: `Nueva suscripción al newsletter: ${formData.email}`,
             html: `
               <h2>Nueva suscripción al newsletter</h2>

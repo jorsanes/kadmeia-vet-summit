@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { useLocale } from '@/i18n/LocaleProvider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -19,6 +20,7 @@ import { SmartImage } from '@/components/mdx';
 
 const Services = () => {
   const { t } = useTranslation();
+  const { locale } = useLocale();
 
   const fadeInUp = {
     initial: { opacity: 0, y: 20 },
@@ -34,7 +36,68 @@ const Services = () => {
     }
   };
 
-  const services = [
+  const services = locale === 'en' ? [
+    {
+      icon: Network,
+      title: "Strategic Consulting",
+      subtitle: "Science-business-technology bridge",
+      description: "We connect scientific evidence with business opportunities and practical technological solutions for the veterinary sector.",
+      deliverables: [
+        "Specialized market analysis",
+        "Evidence-based product strategy",
+        "Personalized technology roadmap",
+        "Detailed implementation plan"
+      ],
+      process: [
+        "Initial diagnosis and needs analysis",
+        "Market research and benchmarking",
+        "Strategy and roadmap development",
+        "Results presentation and follow-up"
+      ],
+      duration: "4-8 weeks",
+      target: "Manufacturers and distributors"
+    },
+    {
+      icon: Brain,
+      title: "AI and software for clinics",
+      subtitle: "Distribution and implementation",
+      description: "We implement and distribute artificial intelligence solutions that optimize clinical management and improve results.",
+      deliverables: [
+        "Personalized AI software",
+        "Integration with existing systems",
+        "Complete team training",
+        "Ongoing technical support"
+      ],
+      process: [
+        "Technical evaluation and requirements",
+        "Customization and integration",
+        "Testing and validation",
+        "Training and deployment"
+      ],
+      duration: "6-12 weeks",
+      target: "Clinics and veterinary groups"
+    },
+    {
+      icon: Workflow,
+      title: "No-Code Automation",
+      subtitle: "Workflows with Make and n8n",
+      description: "We create automated workflows that free up time for what really matters: quality veterinary care.",
+      deliverables: [
+        "Personalized automated workflows",
+        "Cross-platform integration",
+        "Monitoring dashboard",
+        "Documentation and maintenance"
+      ],
+      process: [
+        "Current process analysis",
+        "Automation design",
+        "Implementation and testing",
+        "Optimization and training"
+      ],
+      duration: "3-6 weeks",
+      target: "All types of organizations"
+    }
+  ] : [
     {
       icon: Network,
       title: "Consultoría estratégica",
@@ -109,12 +172,15 @@ const Services = () => {
         >
           <Reveal y={12}>
             <h1 className="font-display text-4xl font-semibold tracking-tight text-foreground sm:text-5xl mb-6">
-              Nuestros servicios
+              {locale === 'en' ? 'Our Services' : 'Nuestros servicios'}
             </h1>
           </Reveal>
           <Reveal delay={0.05}>
             <p className="text-xl text-muted-foreground">
-              Soluciones especializadas que transforman el sector veterinario a través de la ciencia, la tecnología y la innovación práctica.
+              {locale === 'en' 
+                ? 'Specialized solutions that transform the veterinary sector through science, technology and practical innovation.'
+                : 'Soluciones especializadas que transforman el sector veterinario a través de la ciencia, la tecnología y la innovación práctica.'
+              }
             </p>
           </Reveal>
           
@@ -169,13 +235,13 @@ const Services = () => {
                         </div>
                         <div className="flex items-center gap-2">
                           <Target className="h-4 w-4 text-secondary" />
-                          Resultados medibles
+                          {locale === 'en' ? 'Measurable results' : 'Resultados medibles'}
                         </div>
                       </div>
 
                       <Button asChild className="btn-primary">
-                        <Link to="/contacto" className="gap-2">
-                          Consultar proyecto
+                        <Link to={locale === 'en' ? '/en/contact' : '/contacto'} className="gap-2">
+                          {locale === 'en' ? 'Consult project' : 'Consultar proyecto'}
                           <ArrowRight className="h-4 w-4" />
                         </Link>
                       </Button>
@@ -190,7 +256,7 @@ const Services = () => {
                     <CardHeader>
                       <CardTitle className="text-lg flex items-center gap-2">
                         <CheckCircle className="h-5 w-5 text-success" />
-                        Entregables
+                        {locale === 'en' ? 'Deliverables' : 'Entregables'}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -210,7 +276,7 @@ const Services = () => {
                     <CardHeader>
                       <CardTitle className="text-lg flex items-center gap-2">
                         <Workflow className="h-5 w-5 text-secondary" />
-                        Proceso
+                        {locale === 'en' ? 'Process' : 'Proceso'}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -244,14 +310,17 @@ const Services = () => {
             <CardContent className="p-12">
               <Users className="h-12 w-12 text-secondary mx-auto mb-6" />
               <h3 className="font-display text-2xl font-semibold text-foreground mb-4">
-                ¿No encuentra lo que busca?
+                {locale === 'en' ? "Can't find what you're looking for?" : '¿No encuentra lo que busca?'}
               </h3>
               <p className="text-muted-foreground mb-8">
-                Cada proyecto es único. Hablemos sobre sus necesidades específicas y diseñemos una solución a medida.
+                {locale === 'en' 
+                  ? "Every project is unique. Let's talk about your specific needs and design a custom solution."
+                  : 'Cada proyecto es único. Hablemos sobre sus necesidades específicas y diseñemos una solución a medida.'
+                }
               </p>
               <Button asChild size="lg" className="btn-primary">
-                <Link to="/contacto" className="gap-2">
-                  Consulta personalizada
+                <Link to={locale === 'en' ? '/en/contact' : '/contacto'} className="gap-2">
+                  {locale === 'en' ? 'Personalized consultation' : 'Consulta personalizada'}
                   <ArrowRight className="h-5 w-5" />
                 </Link>
               </Button>

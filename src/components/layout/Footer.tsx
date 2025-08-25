@@ -21,10 +21,10 @@ const Footer = () => {
             <div className="flex items-center gap-3 mb-4">
               <SmartImage src="/assets/brand/logo-kad-mark-gold.png" alt="" width={20} height={20} loading="lazy" decoding="async" className="w-5 h-5" />
               <div>
-                <div className="font-display text-lg font-semibold text-primary-foreground">KADMEIA SLU — ES-B21932926</div>
+                <div className="font-display text-lg font-semibold text-primary-foreground">{t('footer.company')}</div>
                 <div className="text-sm text-primary-foreground/80">
                   Camino de los Malatones, 63 - J3<br />
-                  28119 Algete (Madrid), España
+                  28119 Algete (Madrid), {locale === 'en' ? 'Spain' : 'España'}
                 </div>
               </div>
             </div>
@@ -93,7 +93,7 @@ const Footer = () => {
         <div className="mt-12 pt-8 border-t border-primary-foreground/20">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-primary-foreground/60">
-              © 2024 KADMEIA. Todos los derechos reservados.
+              © 2024 KADMEIA. {t('footer.copyright')}.
             </p>
             <div className="flex gap-6">
               <a href={getLocalizedHref(locale === 'en' ? '/privacy' : '/privacidad')} className="text-sm text-primary-foreground/60 hover:text-secondary transition-colors">

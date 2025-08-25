@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useLocale } from '@/i18n/LocaleProvider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -14,6 +15,7 @@ import BrandWatermark from '@/components/brand/BrandWatermark';
 
 const Contact = () => {
   const { t } = useTranslation();
+  const { locale } = useLocale();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
@@ -147,17 +149,17 @@ const Contact = () => {
             <Card className="card-premium">
               <CardHeader>
                 <CardTitle className="font-display text-xl">
-                  Información de contacto
+                  {t('contact.info.address')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex items-start gap-4">
                   <MapPin className="h-5 w-5 text-secondary mt-1 flex-shrink-0" />
                   <div>
-                    <div className="font-medium text-foreground mb-1">Dirección</div>
+                    <div className="font-medium text-foreground mb-1">{t('contact.info.address')}</div>
                     <div className="text-sm text-muted-foreground">
                       Camino de los Malatones, 63 - J3<br />
-                      28119 Algete, Madrid, España
+                      28119 Algete, Madrid, {locale === 'en' ? 'Spain' : 'España'}
                     </div>
                   </div>
                 </div>
@@ -165,7 +167,7 @@ const Contact = () => {
                 <div className="flex items-start gap-4">
                   <Mail className="h-5 w-5 text-secondary mt-1 flex-shrink-0" />
                   <div>
-                    <div className="font-medium text-foreground mb-1">Email</div>
+                    <div className="font-medium text-foreground mb-1">{t('contact.info.email')}</div>
                     <div className="text-sm text-muted-foreground">
                       info@kadmeia.com
                     </div>
@@ -175,7 +177,7 @@ const Contact = () => {
                 <div className="flex items-start gap-4">
                   <Phone className="h-5 w-5 text-secondary mt-1 flex-shrink-0" />
                   <div>
-                    <div className="font-medium text-foreground mb-1">Teléfono</div>
+                    <div className="font-medium text-foreground mb-1">{t('contact.info.phone')}</div>
                     <div className="text-sm text-muted-foreground">
                       +34 696 138 139
                     </div>
@@ -185,10 +187,10 @@ const Contact = () => {
                 <div className="flex items-start gap-4">
                   <Clock className="h-5 w-5 text-secondary mt-1 flex-shrink-0" />
                   <div>
-                    <div className="font-medium text-foreground mb-1">Horario</div>
+                    <div className="font-medium text-foreground mb-1">{t('contact.info.hours')}</div>
                     <div className="text-sm text-muted-foreground">
-                      Lunes - Viernes: 9:00 - 18:00<br />
-                      Sábados: 10:00 - 14:00
+                      {locale === 'en' ? 'Monday - Friday: 9:00 - 18:00' : 'Lunes - Viernes: 9:00 - 18:00'}<br />
+                      {locale === 'en' ? 'Saturdays: 10:00 - 14:00' : 'Sábados: 10:00 - 14:00'}
                     </div>
                   </div>
                 </div>
@@ -280,7 +282,7 @@ const Contact = () => {
                       value={formData.message}
                       onChange={(e) => handleChange('message', e.target.value)}
                       className="focus-ring"
-                      placeholder="Cuéntenos sobre su proyecto o necesidades..."
+                      placeholder={t('contact.form.message')}
                     />
                     
                     {/* Honeypot field - hidden from users */}

@@ -52,6 +52,8 @@
     "description": "Veterinary consulting and technology with scientific basis and practical vision.",
     "address": "Camino de los Malatones, 63 - J3<br>28119 Algete, Madrid, Spain",
     "email": "info@kadmeia.com",
+    "company": "KADMEIA SLU — ES-B21932926",
+    "copyright": "All rights reserved",
     "links": {
       "privacy": "Privacy",
       "legal": "Legal notice",
@@ -66,12 +68,18 @@
   "contact": {
     "title": "Contact",
     "subtitle": "Let's talk about your project",
+    "info": {
+      "address": "Address",
+      "email": "Email",
+      "phone": "Phone", 
+      "hours": "Hours"
+    },
     "form": {
       "name": "Full name",
       "email": "Email",
       "company": "Company",
       "phone": "Phone",
-      "message": "Message",
+      "message": "Tell us about your project or needs...",
       "consent": "I accept the processing of my personal data according to the privacy policy",
       "submit": "Send message"
     }

@@ -11,6 +11,7 @@ import SkipLink from "@/components/accessibility/SkipLink";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "@/pages/Index";
 import About from "@/pages/About";
+import AboutEnPage from "@/pages/AboutEnPage";
 import Services from "@/pages/Services";
 import Blog from "@/pages/Blog";
 import BlogPost from "@/pages/blog/Post";
@@ -65,7 +66,7 @@ function App() {
                   
                   {/* English routes */}
                   <Route path="/en" element={<Layout><Index /></Layout>} />
-                  <Route path="/en/about" element={<Layout><About /></Layout>} />
+                  <Route path="/en/about" element={<Layout><AboutEnPage /></Layout>} />
                   <Route path="/en/services" element={<Layout><Services /></Layout>} />
                   <Route path="/en/blog" element={<Layout><Blog /></Layout>} />
                   <Route path="/en/blog/:slug" element={<Layout><BlogPost /></Layout>} />

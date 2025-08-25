@@ -52,6 +52,8 @@
     "description": "Consultoría y tecnología veterinaria con base científica y visión práctica.",
     "address": "Camino de los Malatones, 63 - J3<br>28119 Algete, Madrid, España",
     "email": "info@kadmeia.com",
+    "company": "KADMEIA SLU — ES-B21932926",
+    "copyright": "Todos los derechos reservados",
     "links": {
       "privacy": "Privacidad",
       "legal": "Aviso legal",
@@ -66,6 +68,12 @@
   "contact": {
     "title": "Contacto",
     "subtitle": "Hablemos de su proyecto",
+    "info": {
+      "address": "Dirección",
+      "email": "Email", 
+      "phone": "Teléfono",
+      "hours": "Horario"
+    },
     "form": {
       "name": "Nombre completo",
       "email": "Email",
