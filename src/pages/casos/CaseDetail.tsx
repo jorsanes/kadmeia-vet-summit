@@ -87,6 +87,66 @@ export default function CaseDetail() {
     fetchData();
   }, [slug, lang]);
 
+  // Determine the primary data source - moved before early returns
+  const caseData = dbCase || (MDX ? MDX.meta : null);
+  const rawMeta = caseData;
+  
+  // Validate and enhance meta with CaseMeta schema
+  const metaValidation = CaseMeta.safeParse(rawMeta);
+  const metaData = metaValidation.success ? metaValidation.data : rawMeta;
+  
+  // Generate URLs and assets
+  const currentUrl = `https://kadmeia.com${lang === 'en' ? '/en' : ''}/casos/${slug}`;
+  const siteUrl = 'https://kadmeia.com';
+  const alternateUrl = `${siteUrl}${getHreflangUrl(slug, lang, 'cases')}`;
+  const MDXComponent = MDX?.mod?.default;
+  
+  // OG Image with fallback to generated version
+  const ogImage = metaData?.cover 
+    ? (metaData.cover.startsWith('http') ? metaData.cover : `${siteUrl}${metaData.cover}`)
+    : `${siteUrl}/og/cases/${slug}-${lang}.png`;
+  
+  // Get related cases using new logic - ALL useMemo hooks BEFORE early returns
+  const relatedCases = React.useMemo(() => {
+    if (metaData?.tags) {
+      const allCases = getAllCasesMeta();
+      return getRelatedByTags(allCases, slug, lang, metaData.tags, 3);
+    }
+    return [];
+  }, [slug, metaData?.tags, lang]);
+
+  const prevNext = React.useMemo(() => {
+    return getPrevNextItems('cases', slug, lang);
+  }, [slug, lang]);
+  
+  // QA Warning for missing critical fields
+  const missingFields: string[] = [];
+  if (!(metaData as any)?.client) missingFields.push('client');
+  if (!(metaData as any)?.sector) missingFields.push('sector'); 
+  if (!(metaData as any)?.ubicacion) missingFields.push('ubicacion');
+  if (!(metaData as any)?.servicios?.length) missingFields.push('servicios');
+  
+  const title = metaData?.title ?? '';
+  const dateStr = formatDateSafe(metaData?.date, lang);
+
+  // Generate breadcrumbs
+  const breadcrumbs = generateBreadcrumbs('cases', lang, slug, title);
+
+  // Show KPIs and testimonial from frontmatter only
+  React.useEffect(() => {
+    const fm: any = metaData || {};
+    const arr: Kpi[] = fm.kpis || [];
+    
+    if (Array.isArray(arr) && arr.length > 0 && arr[0]?.label && arr[0]?.value) {
+      setKpis(arr);
+    }
+    
+    if (fm.testimonial && fm.testimonial.quote) {
+      setTestimonial(fm.testimonial);
+    }
+  }, [metaData]);
+
+  // Early returns AFTER all hooks
   if (loading) {
     return (
       <div className="container py-12">
@@ -117,65 +177,6 @@ export default function CaseDetail() {
       </div>
     );
   }
-
-  // Determine the primary data source
-  const caseData = dbCase || (MDX ? MDX.meta : null);
-  const rawMeta = caseData;
-  
-  // Validate and enhance meta with CaseMeta schema
-  const metaValidation = CaseMeta.safeParse(rawMeta);
-  const metaData = metaValidation.success ? metaValidation.data : rawMeta;
-  
-  // Generate URLs and assets
-  const currentUrl = `https://kadmeia.com${lang === 'en' ? '/en' : ''}/casos/${slug}`;
-  const siteUrl = 'https://kadmeia.com';
-  const alternateUrl = `${siteUrl}${getHreflangUrl(slug, lang, 'cases')}`;
-  const MDXComponent = MDX?.mod?.default;
-  
-  // OG Image with fallback to generated version
-  const ogImage = metaData.cover 
-    ? (metaData.cover.startsWith('http') ? metaData.cover : `${siteUrl}${metaData.cover}`)
-    : `${siteUrl}/og/cases/${slug}-${lang}.png`;
-  
-  // Get related cases using new logic
-  const relatedCases = React.useMemo(() => {
-    if (metaData.tags) {
-      const allCases = getAllCasesMeta();
-      return getRelatedByTags(allCases, slug, lang, metaData.tags, 3);
-    }
-    return [];
-  }, [slug, metaData.tags, lang]);
-
-  const prevNext = React.useMemo(() => {
-    return getPrevNextItems('cases', slug, lang);
-  }, [slug, lang]);
-  
-  // QA Warning for missing critical fields
-  const missingFields: string[] = [];
-  if (!(metaData as any).client) missingFields.push('client');
-  if (!(metaData as any).sector) missingFields.push('sector'); 
-  if (!(metaData as any).ubicacion) missingFields.push('ubicacion');
-  if (!(metaData as any).servicios?.length) missingFields.push('servicios');
-  
-  const title = metaData?.title ?? '';
-  const dateStr = formatDateSafe(metaData?.date, lang);
-
-  // Generate breadcrumbs
-  const breadcrumbs = generateBreadcrumbs('cases', lang, slug, title);
-
-  // Show KPIs and testimonial from frontmatter only
-  React.useEffect(() => {
-    const fm: any = metaData || {};
-    const arr: Kpi[] = fm.kpis || [];
-    
-    if (Array.isArray(arr) && arr.length > 0 && arr[0]?.label && arr[0]?.value) {
-      setKpis(arr);
-    }
-    
-    if (fm.testimonial && fm.testimonial.quote) {
-      setTestimonial(fm.testimonial);
-    }
-  }, [metaData]);
 
   return (
     <ErrorBoundary>
