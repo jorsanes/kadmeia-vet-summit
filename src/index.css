@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import prose styles for content */
+@import './styles/case-prose.css';
+@import './styles/blog-prose.css';
+
 
 /* KADMEIA Design System - Premium Veterinary Corporate Identity
 All colors are HSL for consistent theming. Professional, elegant, trustworthy.
@@ -253,9 +257,6 @@ All colors are HSL for consistent theming. Professional, elegant, trustworthy.
   }
 }
 
-/* Import prose styles for content */
-@import './styles/case-prose.css';
-@import './styles/blog-prose.css';
 
 /* Screen reader only class */
 .sr-only {
