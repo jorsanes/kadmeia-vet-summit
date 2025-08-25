@@ -49,17 +49,27 @@ function App() {
                 <SkipLink />
                 <Routes>
                   <Route path="/" element={<Layout><Index /></Layout>} />
-                  <Route path="/about" element={<Layout><About /></Layout>} />
-                  <Route path="/services" element={<Layout><Services /></Layout>} />
+                  
+                  {/* Spanish routes */}
+                  <Route path="/sobre" element={<Layout><About /></Layout>} />
+                  <Route path="/servicios" element={<Layout><Services /></Layout>} />
                   <Route path="/blog" element={<Layout><Blog /></Layout>} />
                   <Route path="/blog/:slug" element={<Layout><BlogPost /></Layout>} />
+                  <Route path="/casos" element={<Layout><Cases /></Layout>} />
+                  <Route path="/casos/:slug" element={<Layout><CaseDetailEs /></Layout>} />
+                  <Route path="/contacto" element={<Layout><Contact /></Layout>} />
+                  <Route path="/privacidad" element={<Layout><Privacy /></Layout>} />
+                  <Route path="/aviso-legal" element={<Layout><Legal /></Layout>} />
+                  <Route path="/cookies" element={<Layout><Cookies /></Layout>} />
+                  
+                  {/* English routes (original paths) */}
+                  <Route path="/about" element={<Layout><About /></Layout>} />
+                  <Route path="/services" element={<Layout><Services /></Layout>} />
                   <Route path="/cases" element={<Layout><Cases /></Layout>} />
                   <Route path="/cases/:slug" element={<Layout><CaseDetail /></Layout>} />
-                  <Route path="/casos/:slug" element={<Layout><CaseDetailEs /></Layout>} />
                   <Route path="/contact" element={<Layout><Contact /></Layout>} />
                   <Route path="/privacy" element={<Layout><Privacy /></Layout>} />
                   <Route path="/legal" element={<Layout><Legal /></Layout>} />
-                  <Route path="/cookies" element={<Layout><Cookies /></Layout>} />
                   
                   {/* English routes */}
                   <Route path="/en" element={<Layout><Index /></Layout>} />
