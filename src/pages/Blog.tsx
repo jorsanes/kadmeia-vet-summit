@@ -3,7 +3,6 @@ import { useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import { blogIndex } from "@/lib/content-index";
-import { getAllPostsMeta } from "@/lib/content";
 import { getPublishedDbPosts, dbPostToMdxFormat } from '@/lib/blog-db';
 import { SmartImage } from '@/components/mdx';
 import Reveal from '@/components/ui/Reveal';
@@ -30,30 +29,10 @@ export default function Blog() {
         // Get MDX posts from index
         let indexPosts = blogIndex.filter(p => p.locale === lang);
         
-        // If index is empty, use fallback from lib/content
+        // If index is empty, show warning but continue with empty array
         if (indexPosts.length === 0) {
           if (import.meta.env.DEV) {
-            console.warn('📋 Blog index empty, using fallback from lib/content');
-          }
-          
-          try {
-            const fallbackPosts = getAllPostsMeta().filter(p => p.lang === lang);
-            // Convert fallback format to index format
-            indexPosts = fallbackPosts.map(post => ({
-              slug: post.slug,
-              locale: post.lang,
-              meta: {
-                title: post.title,
-                date: new Date(post.date),
-                excerpt: post.excerpt || '',
-                cover: post.cover || '',
-                tags: post.tags || [],
-              },
-              path: `/src/content/blog/${post.lang}/${post.slug}.mdx`,
-              isFromDb: false,
-            }));
-          } catch (error) {
-            console.error('Error loading fallback posts:', error);
+            console.warn('📋 Blog index empty - no MDX blog posts found');
           }
         } else {
           // Mark as not from DB

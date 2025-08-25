@@ -3,7 +3,6 @@ import { useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import { caseIndex } from "@/lib/content-index";
-import { getAllCasesMeta } from "@/lib/content";
 import { getPublishedDbCases, dbCaseToMdxFormat } from '@/lib/case-db';
 import { SmartImage } from '@/components/mdx';
 import Reveal from '@/components/ui/Reveal';
@@ -69,29 +68,10 @@ export default function Cases() {
     // Fallback al índice existente
     let indexCases = caseIndex.filter(c => c.locale === lang);
     
-    // Si el índice está vacío, usar fallback de lib/content
+    // If the index is empty, show warning but continue with empty array
     if (indexCases.length === 0) {
       if (import.meta.env.DEV) {
-        console.warn('📋 Cases index empty, using fallback from lib/content');
-      }
-      
-      try {
-        const fallbackCases = getAllCasesMeta().filter(c => c.lang === lang);
-        // Convertir formato de fallback al formato del índice
-        indexCases = fallbackCases.map(caseItem => ({
-          slug: caseItem.slug,
-          locale: caseItem.lang,
-          meta: {
-            title: caseItem.title,
-            date: new Date(caseItem.date),
-            excerpt: caseItem.excerpt || '',
-            cover: caseItem.cover || '',
-            tags: caseItem.tags || [],
-          },
-          path: `/src/content/casos/${caseItem.lang}/${caseItem.slug}.mdx`
-        }));
-      } catch (error) {
-        console.error('Error loading fallback cases:', error);
+        console.warn('📋 Cases index empty - no MDX case studies found');
       }
     }
     

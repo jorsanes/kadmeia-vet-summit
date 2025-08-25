@@ -14,8 +14,7 @@ import Services from "@/pages/Services";
 import Blog from "@/pages/Blog";
 import BlogPost from "@/pages/blog/Post";
 import Cases from "@/pages/Cases";
-import CaseDetail from "@/pages/cases/CaseDetail";
-import CaseDetailEs from "@/pages/casos/CaseDetail";
+import CaseDetail from "@/pages/casos/CaseDetail";
 import Contact from "@/pages/Contact";
 import Privacy from "@/pages/Privacy";
 import Legal from "@/pages/Legal";
@@ -56,7 +55,7 @@ function App() {
                   <Route path="/blog" element={<Layout><Blog /></Layout>} />
                   <Route path="/blog/:slug" element={<Layout><BlogPost /></Layout>} />
                   <Route path="/casos" element={<Layout><Cases /></Layout>} />
-                  <Route path="/casos/:slug" element={<Layout><CaseDetailEs /></Layout>} />
+                  <Route path="/casos/:slug" element={<Layout><CaseDetail /></Layout>} />
                   <Route path="/contacto" element={<Layout><Contact /></Layout>} />
                   <Route path="/privacidad" element={<Layout><Privacy /></Layout>} />
                   <Route path="/aviso-legal" element={<Layout><Legal /></Layout>} />

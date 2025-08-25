@@ -1,5 +1,8 @@
 import matter from "gray-matter";
 
+// DEPRECATED: This file contains legacy functions for compatibility.
+// New code should use content-index.ts instead.
+
 export type Lang = "es" | "en";
 
 export type BaseMeta = {
@@ -34,13 +37,16 @@ function parseCollection(rawModules: Record<string, string>, kind: "blog" | "cas
   return items.sort((a, b) => (a.date > b.date ? -1 : 1));
 }
 
+// DEPRECATED: Use blogIndex from content-index.ts instead
 export function getAllPostsMeta(): BaseMeta[] {
-  // IMPORTANTE: leer como RAW para no compilar MDX en el listado
+  console.warn('getAllPostsMeta is deprecated. Use blogIndex from content-index.ts');
   const modules = import.meta.glob("/src/content/blog/**/*.mdx", { eager: true, query: '?raw', import: 'default' }) as Record<string, string>;
   return parseCollection(modules, "blog");
 }
 
+// DEPRECATED: Use caseIndex from content-index.ts instead
 export function getAllCasesMeta(): BaseMeta[] {
+  console.warn('getAllCasesMeta is deprecated. Use caseIndex from content-index.ts');
   const modules = import.meta.glob("/src/content/casos/**/*.mdx", { eager: true, query: '?raw', import: 'default' }) as Record<string, string>;
   return parseCollection(modules, "casos");
 }

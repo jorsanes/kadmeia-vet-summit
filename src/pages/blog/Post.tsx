@@ -2,7 +2,6 @@ import * as React from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { blogIndex, loadBlogComponent } from "@/lib/content-index";
-import { getBlogPost } from "@/lib/mdx";
 import { getDbPostBySlug } from "@/lib/blog-db";
 import { TiptapRenderer } from "@/components/blog/TiptapRenderer";
 import { BlogHeader } from "@/components/blog/BlogHeader";
@@ -108,24 +107,7 @@ export default function BlogPost() {
   const meta = blogIndex.find((p) => p.slug === slug && p.locale === locale);
 
   if (!meta) {
-    // Try fallback with getBlogPost from lib/mdx
-    const fallbackPost = getBlogPost(slug, locale);
-    if (!fallbackPost) {
-      return <div className="container py-12">Post no encontrado.</div>;
-    }
-    // Convert fallback to expected format
-    const fallbackMeta = {
-      slug: fallbackPost.slug,
-      locale,
-      meta: {
-        title: fallbackPost.title,
-        excerpt: fallbackPost.excerpt,
-        date: new Date(fallbackPost.date),
-        cover: fallbackPost.cover,
-        tags: fallbackPost.tags
-      }
-    };
-    return renderPost(fallbackMeta, fallbackPost.Component);
+    return <div className="container py-12">Post no encontrado.</div>;
   }
 
   function renderPost(metaData: any, Component?: React.ComponentType) {
