@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { Textarea } from '@/components/ui/textarea';
 import { WysiwygEditor } from './WysiwygEditor';
 import { 
   getEditablePageContent, 
@@ -268,6 +270,15 @@ const ContentEditor: React.FC<ContentEditorProps> = ({ content, onChange, pageKe
     });
   };
 
+  const updateArrayItem = (sectionKey: string, index: number, field: string, value: any) => {
+    const section = content[sectionKey];
+    if (section && section[field] && Array.isArray(section[field])) {
+      const newArray = [...section[field]];
+      newArray[index] = { ...newArray[index], [field === 'services' ? field : Object.keys(newArray[index])[0]]: value };
+      updateSection(sectionKey, { ...section, [field]: newArray });
+    }
+  };
+
   const renderSectionEditor = (sectionKey: string, sectionData: any) => {
     if (!sectionData) return null;
 
@@ -313,12 +324,14 @@ const ContentEditor: React.FC<ContentEditorProps> = ({ content, onChange, pageKe
           {sectionData.content !== undefined && (
             <div className="space-y-2">
               <Label>Contenido</Label>
-              <WysiwygEditor
-                content={sectionData.content || {}}
-                onChange={(newContent) => updateSection(sectionKey, {
+              <Textarea
+                value={sectionData.content || ''}
+                onChange={(e) => updateSection(sectionKey, {
                   ...sectionData,
-                  content: newContent
+                  content: e.target.value
                 })}
+                placeholder="Contenido de la sección"
+                rows={4}
               />
             </div>
           )}
@@ -353,7 +366,7 @@ const ContentEditor: React.FC<ContentEditorProps> = ({ content, onChange, pageKe
             </div>
           )}
 
-          {/* Services array for home page */}
+          {/* Services array for home and services pages */}
           {sectionData.services && Array.isArray(sectionData.services) && (
             <div className="space-y-4">
               <Label>Servicios</Label>
@@ -372,7 +385,7 @@ const ContentEditor: React.FC<ContentEditorProps> = ({ content, onChange, pageKe
                       }}
                       placeholder="Título del servicio"
                     />
-                    <Input
+                    <Textarea
                       value={service.description || ''}
                       onChange={(e) => {
                         const updatedServices = [...sectionData.services];
@@ -383,6 +396,232 @@ const ContentEditor: React.FC<ContentEditorProps> = ({ content, onChange, pageKe
                         });
                       }}
                       placeholder="Descripción del servicio"
+                      rows={2}
+                    />
+                    {service.subtitle && (
+                      <Input
+                        value={service.subtitle || ''}
+                        onChange={(e) => {
+                          const updatedServices = [...sectionData.services];
+                          updatedServices[index] = { ...service, subtitle: e.target.value };
+                          updateSection(sectionKey, {
+                            ...sectionData,
+                            services: updatedServices
+                          });
+                        }}
+                        placeholder="Subtítulo del servicio"
+                      />
+                    )}
+                  </div>
+                </Card>
+              ))}
+            </div>
+          )}
+
+          {/* Metrics array for results */}
+          {sectionData.metrics && Array.isArray(sectionData.metrics) && (
+            <div className="space-y-4">
+              <Label>Métricas</Label>
+              {sectionData.metrics.map((metric: any, index: number) => (
+                <Card key={index} className="p-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    <Input
+                      value={metric.value || ''}
+                      onChange={(e) => {
+                        const updatedMetrics = [...sectionData.metrics];
+                        updatedMetrics[index] = { ...metric, value: e.target.value };
+                        updateSection(sectionKey, {
+                          ...sectionData,
+                          metrics: updatedMetrics
+                        });
+                      }}
+                      placeholder="Valor"
+                    />
+                    <Input
+                      value={metric.unit || ''}
+                      onChange={(e) => {
+                        const updatedMetrics = [...sectionData.metrics];
+                        updatedMetrics[index] = { ...metric, unit: e.target.value };
+                        updateSection(sectionKey, {
+                          ...sectionData,
+                          metrics: updatedMetrics
+                        });
+                      }}
+                      placeholder="Unidad"
+                    />
+                    <Input
+                      value={metric.title || ''}
+                      onChange={(e) => {
+                        const updatedMetrics = [...sectionData.metrics];
+                        updatedMetrics[index] = { ...metric, title: e.target.value };
+                        updateSection(sectionKey, {
+                          ...sectionData,
+                          metrics: updatedMetrics
+                        });
+                      }}
+                      placeholder="Título"
+                    />
+                    <Input
+                      value={metric.description || ''}
+                      onChange={(e) => {
+                        const updatedMetrics = [...sectionData.metrics];
+                        updatedMetrics[index] = { ...metric, description: e.target.value };
+                        updateSection(sectionKey, {
+                          ...sectionData,
+                          metrics: updatedMetrics
+                        });
+                      }}
+                      placeholder="Descripción"
+                    />
+                  </div>
+                </Card>
+              ))}
+            </div>
+          )}
+
+          {/* Cases array */}
+          {sectionData.cases && Array.isArray(sectionData.cases) && (
+            <div className="space-y-4">
+              <Label>Casos</Label>
+              {sectionData.cases.map((caseItem: any, index: number) => (
+                <Card key={index} className="p-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    <Input
+                      value={caseItem.title || ''}
+                      onChange={(e) => {
+                        const updatedCases = [...sectionData.cases];
+                        updatedCases[index] = { ...caseItem, title: e.target.value };
+                        updateSection(sectionKey, {
+                          ...sectionData,
+                          cases: updatedCases
+                        });
+                      }}
+                      placeholder="Título del caso"
+                    />
+                    <Input
+                      value={caseItem.sector || ''}
+                      onChange={(e) => {
+                        const updatedCases = [...sectionData.cases];
+                        updatedCases[index] = { ...caseItem, sector: e.target.value };
+                        updateSection(sectionKey, {
+                          ...sectionData,
+                          cases: updatedCases
+                        });
+                      }}
+                      placeholder="Sector"
+                    />
+                    <Input
+                      value={caseItem.metric || ''}
+                      onChange={(e) => {
+                        const updatedCases = [...sectionData.cases];
+                        updatedCases[index] = { ...caseItem, metric: Number(e.target.value) };
+                        updateSection(sectionKey, {
+                          ...sectionData,
+                          cases: updatedCases
+                        });
+                      }}
+                      placeholder="Métrica (número)"
+                      type="number"
+                    />
+                    <Input
+                      value={caseItem.unit || ''}
+                      onChange={(e) => {
+                        const updatedCases = [...sectionData.cases];
+                        updatedCases[index] = { ...caseItem, unit: e.target.value };
+                        updateSection(sectionKey, {
+                          ...sectionData,
+                          cases: updatedCases
+                        });
+                      }}
+                      placeholder="Unidad de medida"
+                    />
+                  </div>
+                </Card>
+              ))}
+            </div>
+          )}
+
+          {/* Testimonials array */}
+          {sectionData.testimonials && Array.isArray(sectionData.testimonials) && (
+            <div className="space-y-4">
+              <Label>Testimonios</Label>
+              {sectionData.testimonials.map((testimonial: any, index: number) => (
+                <Card key={index} className="p-4">
+                  <div className="space-y-3">
+                    <Textarea
+                      value={testimonial.quote || ''}
+                      onChange={(e) => {
+                        const updatedTestimonials = [...sectionData.testimonials];
+                        updatedTestimonials[index] = { ...testimonial, quote: e.target.value };
+                        updateSection(sectionKey, {
+                          ...sectionData,
+                          testimonials: updatedTestimonials
+                        });
+                      }}
+                      placeholder="Cita del testimonio"
+                      rows={3}
+                    />
+                    <Input
+                      value={testimonial.author || ''}
+                      onChange={(e) => {
+                        const updatedTestimonials = [...sectionData.testimonials];
+                        updatedTestimonials[index] = { ...testimonial, author: e.target.value };
+                        updateSection(sectionKey, {
+                          ...sectionData,
+                          testimonials: updatedTestimonials
+                        });
+                      }}
+                      placeholder="Autor"
+                    />
+                    <Input
+                      value={testimonial.position || ''}
+                      onChange={(e) => {
+                        const updatedTestimonials = [...sectionData.testimonials];
+                        updatedTestimonials[index] = { ...testimonial, position: e.target.value };
+                        updateSection(sectionKey, {
+                          ...sectionData,
+                          testimonials: updatedTestimonials
+                        });
+                      }}
+                      placeholder="Posición/Cargo"
+                    />
+                  </div>
+                </Card>
+              ))}
+            </div>
+          )}
+
+          {/* Values array for about page */}
+          {sectionData.values && Array.isArray(sectionData.values) && (
+            <div className="space-y-4">
+              <Label>Valores</Label>
+              {sectionData.values.map((value: any, index: number) => (
+                <Card key={index} className="p-4">
+                  <div className="space-y-3">
+                    <Input
+                      value={value.title || ''}
+                      onChange={(e) => {
+                        const updatedValues = [...sectionData.values];
+                        updatedValues[index] = { ...value, title: e.target.value };
+                        updateSection(sectionKey, {
+                          ...sectionData,
+                          values: updatedValues
+                        });
+                      }}
+                      placeholder="Título del valor"
+                    />
+                    <Textarea
+                      value={value.description || ''}
+                      onChange={(e) => {
+                        const updatedValues = [...sectionData.values];
+                        updatedValues[index] = { ...value, description: e.target.value };
+                        updateSection(sectionKey, {
+                          ...sectionData,
+                          values: updatedValues
+                        });
+                      }}
+                      placeholder="Descripción del valor"
+                      rows={3}
                     />
                   </div>
                 </Card>
