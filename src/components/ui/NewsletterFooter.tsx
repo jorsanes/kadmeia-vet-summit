@@ -146,14 +146,14 @@ export const NewsletterFooter: React.FC<NewsletterFooterProps> = ({ className = 
           {locale === 'es' ? (
             <>
               Al suscribirte, aceptas nuestra{' '}
-              <a href="/privacy" className="text-secondary hover:underline">
+              <a href={locale === 'es' ? '/privacy' : '/en/privacy'} className="text-secondary hover:underline">
                 política de privacidad
               </a>.
             </>
           ) : (
             <>
               By subscribing, you accept our{' '}
-              <a href="/privacy" className="text-secondary hover:underline">
+              <a href={'/en/privacy'} className="text-secondary hover:underline">
                 privacy policy
               </a>.
             </>

@@ -62,15 +62,6 @@ function App() {
                   <Route path="/aviso-legal" element={<Layout><Legal /></Layout>} />
                   <Route path="/cookies" element={<Layout><Cookies /></Layout>} />
                   
-                  {/* English routes (original paths) */}
-                  <Route path="/about" element={<Layout><About /></Layout>} />
-                  <Route path="/services" element={<Layout><Services /></Layout>} />
-                  <Route path="/cases" element={<Layout><Cases /></Layout>} />
-                  <Route path="/cases/:slug" element={<Layout><CaseDetail /></Layout>} />
-                  <Route path="/contact" element={<Layout><Contact /></Layout>} />
-                  <Route path="/privacy" element={<Layout><Privacy /></Layout>} />
-                  <Route path="/legal" element={<Layout><Legal /></Layout>} />
-                  
                   {/* English routes */}
                   <Route path="/en" element={<Layout><Index /></Layout>} />
                   <Route path="/en/about" element={<Layout><About /></Layout>} />

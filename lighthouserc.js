@@ -8,13 +8,11 @@ module.exports = {
         'http://localhost:4173/',
         'http://localhost:4173/blog',
         'http://localhost:4173/casos',
-        'http://localhost:4173/blog/ia-veterinaria-2024',
-        'http://localhost:4173/casos/clinica-barcelona-ia',
+        'http://localhost:4173/blog/oportunidades-reales-en-ia-para-veterinarios-que-si-se-notan-en-el-dia-a-dia',
+        'http://localhost:4173/casos/implantacion-ia-madrid',
         'http://localhost:4173/en',
         'http://localhost:4173/en/blog',
-        'http://localhost:4173/en/cases',
-        'http://localhost:4173/en/blog/ai-veterinary-diagnostics',
-        'http://localhost:4173/en/cases/london-ai-implementation'
+        'http://localhost:4173/en/cases'
       ],
       numberOfRuns: 1
     },

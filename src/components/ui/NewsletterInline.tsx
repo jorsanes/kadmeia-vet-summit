@@ -190,7 +190,7 @@ export const NewsletterInline: React.FC<NewsletterInlineProps> = ({ className = 
                 {locale === 'es' ? (
                   <>
                     Acepto el tratamiento de mis datos según la{' '}
-                    <a href="/privacy" className="text-primary hover:underline">
+                    <a href={locale === 'es' ? '/privacy' : '/en/privacy'} className="text-primary hover:underline">
                       política de privacidad
                     </a>{' '}
                     para recibir análisis veterinarios de KADMEIA.
@@ -198,7 +198,7 @@ export const NewsletterInline: React.FC<NewsletterInlineProps> = ({ className = 
                 ) : (
                   <>
                     I accept the processing of my data according to the{' '}
-                    <a href="/privacy" className="text-primary hover:underline">
+                    <a href={'/en/privacy'} className="text-primary hover:underline">
                       privacy policy
                     </a>{' '}
                     to receive veterinary insights from KADMEIA.
