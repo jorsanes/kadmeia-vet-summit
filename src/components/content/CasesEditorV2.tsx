@@ -1,34 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { generateHTML } from '@tiptap/html';
-import { WysiwygEditor } from '@/components/admin/WysiwygEditor';
-import { TiptapRenderer } from '@/components/blog/TiptapRenderer';
+import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { GitHubAPI, GitHubConfig } from '@/lib/github';
 import { useToast } from '@/hooks/use-toast';
 import { CaseMeta } from '@/content/schemas';
+import { enhancedMDXComponents } from '@/components/mdx';
+import { MDXProvider } from '@mdx-js/react';
+import { MdxPreview } from '@/components/mdx/MdxPreview';
 import { TagPicker } from './TagPicker';
-import StarterKit from '@tiptap/starter-kit';
-import Image from '@tiptap/extension-image';
-import Link from '@tiptap/extension-link';
-import { TextStyle } from '@tiptap/extension-text-style';
-import Color from '@tiptap/extension-color';
-import { Table } from '@tiptap/extension-table';
-import TableRow from '@tiptap/extension-table-row';
-import TableHeader from '@tiptap/extension-table-header';
-import TableCell from '@tiptap/extension-table-cell';
 import matter from 'gray-matter';
 import { 
   Calendar, 
-  Building,
+  Clock, 
   FileText, 
   Plus, 
   Edit, 
@@ -39,8 +31,8 @@ import {
   Trash2,
   RefreshCw,
   Languages,
-  MapPin,
-  Users
+  X,
+  ChevronDown
 } from 'lucide-react';
 
 interface CasesEditorV2Props {
@@ -53,7 +45,6 @@ interface CaseFile {
   lang: 'es' | 'en';
   meta: CaseMeta;
   content: string;
-  editorContent: any; // TipTap JSON content
   sha?: string;
   hasErrors: boolean;
   errors: string[];
@@ -226,8 +217,7 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
           
           loadedCases.push({
             ...parsed,
-            sha: response.sha,
-            editorContent: null // Will be set when editing
+            sha: response.sha
           });
         } catch (error) {
           console.error(`Error loading ${file.path}:`, error);
@@ -241,7 +231,6 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
             lang,
             meta: createDefaultCaseMeta(slug, lang),
             content: '',
-            editorContent: null,
             hasErrors: true,
             errors: ['Failed to load file']
           });
@@ -291,7 +280,6 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
           lang,
           meta: createDefaultCaseMeta(slug, lang),
           content: bodyContent,
-          editorContent: null,
           hasErrors: true,
           errors: validation.error.errors.map(err => 
             `${err.path.join('.')}: ${err.message}`
@@ -305,7 +293,6 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
         lang,
         meta: validation.data,
         content: bodyContent,
-        editorContent: null,
         hasErrors: false,
         errors: []
       };
@@ -316,7 +303,6 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
         lang,
         meta: createDefaultCaseMeta(slug, lang),
         content: '',
-        editorContent: null,
         hasErrors: true,
         errors: [`Parse error: ${error instanceof Error ? error.message : 'Unknown error'}`]
       };
@@ -353,7 +339,6 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
       lang,
       meta: createDefaultCaseMeta(slug, lang),
       content: template.content,
-      editorContent: null,
       hasErrors: false,
       errors: []
     };
@@ -383,7 +368,6 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
         servicios: template.servicios
       },
       content: template.content,
-      editorContent: null,
       hasErrors: false,
       errors: []
     };
@@ -426,27 +410,7 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
 
     setIsSaving(true);
     try {
-      // Convert TipTap JSON to HTML if we have editor content
-      let contentToSave = caseFile.content;
-      if (caseFile.editorContent) {
-        const extensions = [
-          StarterKit,
-          Image,
-          Link.configure({ openOnClick: false }),
-          TextStyle,
-          Color,
-          Table.configure({
-            resizable: true,
-          }),
-          TableRow,
-          TableHeader,
-          TableCell,
-        ];
-        
-        contentToSave = generateHTML(caseFile.editorContent, extensions);
-      }
-
-      const frontmatter = matter.stringify(contentToSave, {
+      const frontmatter = matter.stringify(caseFile.content, {
         ...caseFile.meta,
         date: new Date(caseFile.meta.date).toISOString().split('T')[0]
       });
@@ -481,6 +445,17 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
       setEditingCase({ 
         ...editingCase, 
         ...updates,
+        hasErrors: false,
+        errors: []
+      });
+    }
+  };
+
+  const updateEditingMeta = (updates: Partial<CaseMeta>) => {
+    if (editingCase) {
+      setEditingCase({ 
+        ...editingCase, 
+        meta: { ...editingCase.meta, ...updates },
         hasErrors: false,
         errors: []
       });
@@ -558,17 +533,6 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
       });
     } finally {
       setIsDeleting(false);
-    }
-  };
-
-  const updateEditingMeta = (updates: Partial<CaseMeta>) => {
-    if (editingCase) {
-      setEditingCase({ 
-        ...editingCase, 
-        meta: { ...editingCase.meta, ...updates },
-        hasErrors: false,
-        errors: []
-      });
     }
   };
 
@@ -652,11 +616,16 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Content (WYSIWYG) *</label>
-              <WysiwygEditor
-                content={editingCase.editorContent}
-                onChange={(content) => updateEditingCase({ editorContent: content })}
+              <label className="block text-sm font-medium mb-2">Content *</label>
+              <Textarea
+                value={editingCase.content}
+                onChange={(e) => updateEditingCase({ content: e.target.value })}
+                placeholder="Write your case study content here using Markdown..."
+                className="min-h-[400px] font-mono text-sm"
               />
+              <p className="text-xs text-muted-foreground mt-1">
+                Use Markdown syntax for formatting
+              </p>
             </div>
           </TabsContent>
 
@@ -791,13 +760,11 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
                 </CardHeader>
                 <CardContent>
                   <div className="prose max-w-none">
-                    {editingCase.editorContent ? (
-                      <TiptapRenderer content={editingCase.editorContent} />
-                    ) : (
-                      <div className="text-muted-foreground text-center py-8">
-                        No content available for preview
-                      </div>
-                    )}
+                    <MDXProvider components={enhancedMDXComponents}>
+                      <MdxPreview>
+                        {editingCase.content}
+                      </MdxPreview>
+                    </MDXProvider>
                   </div>
                 </CardContent>
               </Card>
@@ -881,11 +848,11 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
               
               <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
                 <div className="flex items-center gap-1">
-                  <Building className="h-3 w-3" />
+                  <FileText className="h-3 w-3" />
                   {caseFile.meta.client}
                 </div>
                 <div className="flex items-center gap-1">
-                  <MapPin className="h-3 w-3" />
+                  <Clock className="h-3 w-3" />
                   {caseFile.meta.ubicacion}
                 </div>
                 <div className="flex items-center gap-1">
@@ -893,7 +860,7 @@ export const CasesEditorV2: React.FC<CasesEditorV2Props> = ({ config }) => {
                   {new Date(caseFile.meta.date).toLocaleDateString()}
                 </div>
                 <div className="flex items-center gap-1">
-                  <Users className="h-3 w-3" />
+                  <FileText className="h-3 w-3" />
                   {caseFile.meta.sector}
                 </div>
               </div>
