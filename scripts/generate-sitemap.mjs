@@ -3,13 +3,14 @@
  * Generate sitemap.xml for KADMEIA
  * - Usa SITE_URL si existe; si no, https://kadmeia.com
  * - Salta en PREVIEW (lovable.app o SITE_ENV=preview)
- * - Incluye rutas ES/EN + MDX (blog/casos), sin duplicados
+ * - Incluye rutas ES/EN + MDX (blog/casos) + DB content, sin duplicados
  */
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync, statSync } from "node:fs";
 import * as path from "node:path";
 import fg from "fast-glob";
 import matter from "gray-matter";
+import { createClient } from '@supabase/supabase-js';
 
 // Detect output directory (dist for production builds, public for development)
 const outDir = existsSync('dist') ? 'dist' : 'public';
@@ -85,6 +86,60 @@ async function collectMdxEntries() {
   return entries;
 }
 
+async function collectDbEntries() {
+  // Skip DB content in preview environments
+  if (IS_PREVIEW) return [];
+  
+  try {
+    const supabaseUrl = process.env.SUPABASE_URL || 'https://tmtokjrdmkcznvlqhxlh.supabase.co';
+    const supabaseKey = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtdG9ranJkbWtjem52bHFoeGxoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU2ODU5MzIsImV4cCI6MjA3MTI2MTkzMn0.E_646tFbCw6eB_VjkXSoVUBW4on1dbrWeVr2wobqkMU';
+    
+    const supabase = createClient(supabaseUrl, supabaseKey);
+    const entries = [];
+
+    // Get published blog posts from DB
+    const { data: blogPosts } = await supabase
+      .from('blog_posts')
+      .select('slug, lang, published_at')
+      .eq('status', 'published');
+
+    if (blogPosts) {
+      for (const post of blogPosts) {
+        const route = post.lang === 'en' ? `/en/blog/${post.slug}` : `/blog/${post.slug}`;
+        entries.push({
+          loc: `${BASE_URL}${route}`,
+          lastmod: new Date(post.published_at || new Date()).toISOString().split("T")[0],
+          changefreq: "monthly",
+          priority: "0.7"
+        });
+      }
+    }
+
+    // Get published case studies from DB
+    const { data: caseStudies } = await supabase
+      .from('case_studies')
+      .select('slug, lang, published_at')
+      .eq('status', 'published');
+
+    if (caseStudies) {
+      for (const caseStudy of caseStudies) {
+        const route = caseStudy.lang === 'en' ? `/en/cases/${caseStudy.slug}` : `/casos/${caseStudy.slug}`;
+        entries.push({
+          loc: `${BASE_URL}${route}`,
+          lastmod: new Date(caseStudy.published_at || new Date()).toISOString().split("T")[0],
+          changefreq: "monthly",
+          priority: "0.7"
+        });
+      }
+    }
+
+    console.log(`[sitemap] Collected ${entries.length} database entries`);
+    return entries;
+  } catch (error) {
+    console.warn(`[sitemap] Could not fetch database content: ${error.message}`);
+    return [];
+}
+
 // -------- Main --------
 async function main() {
   console.log(`[sitemap] Generating for base: ${BASE_URL}`);
@@ -98,14 +153,18 @@ async function main() {
 
   // 2) MDX dinámico
   const dynamic = await collectMdxEntries();
-  urls = urls.concat(dynamic);
+  
+  // 3) DB content
+  const dbEntries = await collectDbEntries();
+  
+  urls = urls.concat(dynamic, dbEntries);
 
-  // 3) De-dup + orden
+  // 4) De-dup + orden
   const map = new Map();
   for (const u of urls) map.set(u.loc, u);
   urls = Array.from(map.values()).sort((a, b) => a.loc.localeCompare(b.loc));
 
-  // 4) XML
+  // 5) XML
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map(u => `  <url>
