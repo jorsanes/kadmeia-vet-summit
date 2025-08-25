@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,13 +16,15 @@ import {
   Globe, 
   LogOut,
   AlertCircle,
-  User
+  User,
+  Home
 } from 'lucide-react';
 import { I18nEditor } from '@/components/content/I18nEditor';
 import { MDXPageEditor } from '@/components/content/MDXPageEditor';
 import { BlogAdminV2 } from '@/components/admin/BlogAdminV2';
 import { CasesAdminV2 } from '@/components/admin/CasesAdminV2';
 import { QAPanel } from '@/components/admin/QAPanel';
+import { PageEditor } from '@/components/admin/PageEditor';
 import { PageSeo } from '@/components/seo/PageSeo';
 
 export default function ContentManager() {
@@ -30,8 +32,9 @@ export default function ContentManager() {
   const { toast } = useToast();
   const { user, isAdmin, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [config, setConfig] = useState<GitHubConfig | null>(null);
-  const [activeTab, setActiveTab] = useState('blog');
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'blog');
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -45,6 +48,11 @@ export default function ContentManager() {
       setConfig(storedConfig);
     }
   }, []);
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    setSearchParams({ tab: value });
+  };
 
   const handleLogout = async () => {
     await signOut();
@@ -137,8 +145,12 @@ export default function ContentManager() {
 
       {/* Content */}
       <div className="max-w-7xl mx-auto p-6">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-7">
+            <TabsTrigger value="landing" className="flex items-center gap-2">
+              <Home className="h-4 w-4" />
+              Páginas (WYSIWYG)
+            </TabsTrigger>
             <TabsTrigger value="blog" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               Blog WYSIWYG
@@ -164,6 +176,10 @@ export default function ContentManager() {
               SEO
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="landing">
+            <PageEditor />
+          </TabsContent>
 
           <TabsContent value="blog">
             <BlogAdminV2 />

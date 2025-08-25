@@ -1,6 +1,6 @@
 
 import * as React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/sonner";
@@ -83,7 +83,7 @@ function App() {
                    {/* Admin routes */}
                    <Route path="/admin/login" element={<Login />} />
                    <Route path="/admin" element={<Layout><AdminDashboard /></Layout>} />
-                   <Route path="/admin/pages" element={<Layout><PageAdminDashboard /></Layout>} />
+                   <Route path="/admin/pages" element={<Navigate to="/content-manager?tab=landing" replace />} />
                    <Route path="/admin/blog" element={<Layout><BlogAdmin /></Layout>} />
                    <Route path="/content-manager" element={<ContentManager />} />
                   

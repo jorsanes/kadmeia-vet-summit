@@ -20,7 +20,7 @@ const AdminDashboard: React.FC = () => {
       title: 'Editor de Páginas',
       description: 'Edita el contenido de las páginas principales (Inicio, Servicios, Sobre)',
       icon: Edit,
-      path: '/admin/pages',
+      path: '/content-manager?tab=landing',
       color: 'text-blue-600',
       bgColor: 'bg-blue-50'
     },
