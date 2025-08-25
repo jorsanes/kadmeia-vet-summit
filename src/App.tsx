@@ -25,6 +25,9 @@ import NotFound from "@/pages/NotFound";
 import ServerError from "@/pages/ServerError";
 import ContentManager from "@/pages/ContentManager";
 import { Login } from "@/pages/admin/Login";
+import AdminDashboard from "@/pages/admin/AdminDashboard";
+import PageAdminDashboard from "@/pages/admin/PageAdminDashboard";
+import { BlogAdmin } from "@/pages/admin/BlogAdmin";
 import Layout from "@/components/layout/Layout";
 
 import "@/i18n/config";
@@ -77,9 +80,12 @@ function App() {
                   <Route path="/en/legal" element={<Layout><Legal /></Layout>} />
                   <Route path="/en/cookies" element={<Layout><Cookies /></Layout>} />
                   
-                  {/* Admin routes */}
-                  <Route path="/admin/login" element={<Login />} />
-                  <Route path="/content-manager" element={<ContentManager />} />
+                   {/* Admin routes */}
+                   <Route path="/admin/login" element={<Login />} />
+                   <Route path="/admin" element={<Layout><AdminDashboard /></Layout>} />
+                   <Route path="/admin/pages" element={<Layout><PageAdminDashboard /></Layout>} />
+                   <Route path="/admin/blog" element={<Layout><BlogAdmin /></Layout>} />
+                   <Route path="/content-manager" element={<ContentManager />} />
                   
                   {/* Error routes */}
                   <Route path="/500" element={<ServerError />} />

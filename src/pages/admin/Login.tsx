@@ -24,7 +24,7 @@ export const Login: React.FC = () => {
 
   useEffect(() => {
     if (user) {
-      navigate('/content-manager');
+      navigate('/admin');
     }
   }, [user, navigate]);
 

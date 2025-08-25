@@ -176,6 +176,33 @@ export type Database = {
         }
         Relationships: []
       }
+      editable_pages: {
+        Row: {
+          content: Json
+          created_at: string
+          id: string
+          lang: string
+          last_modified: string
+          page_key: string
+        }
+        Insert: {
+          content: Json
+          created_at?: string
+          id?: string
+          lang?: string
+          last_modified?: string
+          page_key: string
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          id?: string
+          lang?: string
+          last_modified?: string
+          page_key?: string
+        }
+        Relationships: []
+      }
       newsletter_subscribers: {
         Row: {
           client_ip: string | null
