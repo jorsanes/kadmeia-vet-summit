@@ -60,7 +60,7 @@ export function CasesAdminV2({ config }: { config?: any }) {
   const [previewMode, setPreviewMode] = useState(false);
   const [editorContent, setEditorContent] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
 
   const form = useForm<CaseFormData>({
     defaultValues: {
@@ -127,7 +127,7 @@ export function CasesAdminV2({ config }: { config?: any }) {
       ubicacion: caseStudy.ubicacion || '',
       servicios: caseStudy.servicios?.join(', ') || ''
     });
-    setEditorContent(JSON.stringify(caseStudy.content || {}));
+    setEditorContent(typeof caseStudy.content === 'string' ? caseStudy.content : JSON.stringify(caseStudy.content || {}));
     setSelectedTags(caseStudy.tags || []);
     setPreviewMode(false);
   };
@@ -171,7 +171,7 @@ export function CasesAdminV2({ config }: { config?: any }) {
         title: data.title,
         slug: data.slug,
         excerpt: data.excerpt,
-        content: editorContent ? JSON.parse(editorContent) : {},
+        content: editorContent ? (typeof editorContent === 'string' && editorContent.startsWith('{') ? JSON.parse(editorContent) : editorContent) : {},
         cover_image: data.cover_image,
         lang: data.lang,
         tags: selectedTags,
@@ -301,7 +301,7 @@ export function CasesAdminV2({ config }: { config?: any }) {
     );
   }
 
-  if (!user?.email?.includes('@') || user?.user_metadata?.role !== 'admin') {
+  if (!isAdmin) {
     return (
       <Alert>
         <AlertDescription>
