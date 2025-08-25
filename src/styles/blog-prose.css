@@ -12,6 +12,12 @@
   display: none;
 }
 
+/* Editor override: show first H1 in editor */
+.editor-prose h1:first-child,
+.editor-prose > div > h1:first-child {
+  display: block !important;
+}
+
 /* H1 - Títulos principales (cuando no es el primero) */
 .blog-prose h1:not(:first-child) {
   margin-top: 3.5rem;
