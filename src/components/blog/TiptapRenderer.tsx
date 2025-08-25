@@ -33,12 +33,12 @@ export const TiptapRenderer: React.FC<TiptapRendererProps> = ({
       }),
       BulletList.configure({
         HTMLAttributes: {
-          class: 'list-disc pl-6 space-y-1 my-4',
+          class: 'list-disc pl-6 space-y-1 my-2',
         },
       }),
       OrderedList.configure({
         HTMLAttributes: {
-          class: 'list-decimal pl-6 space-y-1 my-4',
+          class: 'list-decimal pl-6 space-y-1 my-2',
         },
       }),
       ListItem.configure({
@@ -92,7 +92,7 @@ export const TiptapRenderer: React.FC<TiptapRendererProps> = ({
   }
 
   return (
-    <div className={`${className} [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:font-serif [&_h1]:text-foreground [&_h1]:mb-6 [&_h1]:leading-tight [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:font-serif [&_h2]:text-foreground [&_h2]:mb-4 [&_h2]:leading-snug [&_h3]:text-xl [&_h3]:font-medium [&_h3]:font-serif [&_h3]:text-foreground [&_h3]:mb-3 [&_h3]:leading-normal [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-1 [&_ul]:my-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:space-y-1 [&_ol]:my-4 [&_li]:leading-relaxed [&_table]:my-4 [&_table]:border-collapse [&_td]:border [&_td]:border-border [&_td]:px-3 [&_td]:py-2 [&_th]:border [&_th]:border-border [&_th]:bg-muted/50 [&_th]:px-3 [&_th]:py-2 [&_th]:font-semibold`}>
+    <div className={`${className} [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:font-serif [&_h1]:text-foreground [&_h1]:mb-6 [&_h1]:leading-tight [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:font-serif [&_h2]:text-foreground [&_h2]:mb-4 [&_h2]:leading-snug [&_h3]:text-xl [&_h3]:font-medium [&_h3]:font-serif [&_h3]:text-foreground [&_h3]:mb-3 [&_h3]:leading-normal [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-1 [&_ul]:my-2 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:space-y-1 [&_ol]:my-2 [&_li]:leading-relaxed [&_table]:my-4 [&_table]:border-collapse [&_td]:border [&_td]:border-border [&_td]:px-3 [&_td]:py-2 [&_th]:border [&_th]:border-border [&_th]:bg-muted/50 [&_th]:px-3 [&_th]:py-2 [&_th]:font-semibold`}>
       <EditorContent editor={editor} />
     </div>
   );
