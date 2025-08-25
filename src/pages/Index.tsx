@@ -117,7 +117,7 @@ const Home = () => {
                 size="lg" 
                 className="btn-primary text-lg px-8 py-4 h-auto"
               >
-                <Link to="/contacto" className="gap-2">
+                <Link to={getLocalizedHref(locale === 'en' ? '/contact' : '/contacto')} className="gap-2">
                   {t('hero.cta_primary')}
                   <ArrowRight className="h-5 w-5" />
                 </Link>
@@ -128,7 +128,7 @@ const Home = () => {
                 size="lg"
                 className="text-lg px-8 py-4 h-auto border-2 hover:bg-primary hover:text-primary-foreground"
               >
-                <Link to="/servicios">
+                <Link to={getLocalizedHref(locale === 'en' ? '/services' : '/servicios')}>
                   {t('hero.cta_secondary')}
                 </Link>
               </Button>
@@ -284,10 +284,13 @@ const Home = () => {
           <Reveal>
             <div className="mx-auto max-w-2xl text-center mb-16">
               <h2 className="font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl mb-4">
-                Resultados obtenidos
+                {locale === 'en' ? 'Results Achieved' : 'Resultados obtenidos'}
               </h2>
               <p className="text-lg text-muted-foreground">
-                Métricas reales de nuestros proyectos de consultoría e implementación tecnológica
+                {locale === 'en' 
+                  ? 'Real metrics from our consulting and technology implementation projects'
+                  : 'Métricas reales de nuestros proyectos de consultoría e implementación tecnológica'
+                }
               </p>
             </div>
           </Reveal>
@@ -301,10 +304,10 @@ const Home = () => {
                       <MetricCounter value={99.7} suffix="%" decimals={1} duration={1.2} />
                     </div>
                     <h3 className="font-semibold text-lg text-foreground mb-2">
-                      Tasa de éxito
+                      {locale === 'en' ? 'Success Rate' : 'Tasa de éxito'}
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      En implementaciones de IA veterinaria
+                      {locale === 'en' ? 'In veterinary AI implementations' : 'En implementaciones de IA veterinaria'}
                     </p>
                   </CardContent>
                 </Card>
@@ -314,13 +317,13 @@ const Home = () => {
                 <Card className="card-premium text-center">
                   <CardContent className="p-8">
                     <div className="text-4xl font-bold text-primary mb-2">
-                      <MetricCounter value={6.5} suffix=" semanas" decimals={1} duration={1.2} />
+                      <MetricCounter value={6.5} suffix={locale === 'en' ? ' weeks' : ' semanas'} decimals={1} duration={1.2} />
                     </div>
                     <h3 className="font-semibold text-lg text-foreground mb-2">
-                      Tiempo promedio
+                      {locale === 'en' ? 'Average Time' : 'Tiempo promedio'}
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      De proyecto a resultados medibles
+                      {locale === 'en' ? 'From project to measurable results' : 'De proyecto a resultados medibles'}
                     </p>
                   </CardContent>
                 </Card>
@@ -333,10 +336,10 @@ const Home = () => {
                       <MetricCounter value={150} suffix="+" duration={1.2} />
                     </div>
                     <h3 className="font-semibold text-lg text-foreground mb-2">
-                      Clínicas transformadas
+                      {locale === 'en' ? 'Clinics Transformed' : 'Clínicas transformadas'}
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      En España, Portugal y Reino Unido
+                      {locale === 'en' ? 'In Spain, Portugal and United Kingdom' : 'En España, Portugal y Reino Unido'}
                     </p>
                   </CardContent>
                 </Card>
@@ -362,7 +365,7 @@ const Home = () => {
               </h2>
             </div>
             <Button asChild variant="outline" className="hover:bg-primary hover:text-primary-foreground">
-              <a href="/casos">{t('cases.viewAll')}</a>
+              <a href={getLocalizedHref(locale === 'en' ? '/cases' : '/casos')}>{t('cases.viewAll')}</a>
             </Button>
           </motion.div>
 
@@ -371,11 +374,15 @@ const Home = () => {
               className="grid grid-cols-1 gap-8 md:grid-cols-3"
             >
               {/* Placeholder Cases */}
-              {[
+              {(locale === 'en' ? [
+                { title: "Clinical workflow optimization", metric: 40, unit: "% time reduction", sector: "Veterinary clinic" },
+                { title: "AI for diagnostic imaging", metric: 95, unit: "% accuracy", sector: "Clinic network" },
+                { title: "Inventory automation", metric: 30, unit: "% cost savings", sector: "Distributor" }
+              ] : [
                 { title: "Optimización de flujos clínicos", metric: 40, unit: "% reducción tiempo", sector: "Clínica veterinaria" },
                 { title: "IA para diagnóstico por imagen", metric: 95, unit: "% precisión", sector: "Red de clínicas" },
                 { title: "Automatización de inventario", metric: 30, unit: "% ahorro costes", sector: "Distribuidor" }
-              ].map((caseItem, index) => (
+              ]).map((caseItem, index) => (
                 <Reveal key={index} delay={index * 0.1}>
                   <Card className="card-premium h-full hover:shadow-elegant transition-shadow duration-300">
                     <CardContent className="p-6">
@@ -390,7 +397,7 @@ const Home = () => {
                       </div>
                       <div className="flex items-center text-sm text-muted-foreground">
                         <CheckCircle className="h-4 w-4 text-success mr-2" />
-                        Caso verificado
+                        {locale === 'en' ? 'Verified case' : 'Caso verificado'}
                       </div>
                     </CardContent>
                   </Card>
@@ -424,7 +431,18 @@ const Home = () => {
             variants={staggerContainer}
           >
             {/* Placeholder Testimonials */}
-            {[
+            {(locale === 'en' ? [
+              {
+                quote: "KADMEIA completely transformed our processes. Their scientific approach combined with practical solutions gave us immediate results.",
+                author: "Dr. María González",
+                position: "Clinical Director VetPlus"
+              },
+              {
+                quote: "The AI implementation was perfect. The team understands both technology and the real needs of veterinary clinics.",
+                author: "Carlos Ruiz",
+                position: "CEO, Mediterranean Veterinary Group"
+              }
+            ] : [
               {
                 quote: "KADMEIA transformó completamente nuestros procesos. Su enfoque científico combinado con soluciones prácticas nos dio resultados inmediatos.",
                 author: "Dra. María González",
@@ -435,7 +453,7 @@ const Home = () => {
                 author: "Carlos Ruiz",
                 position: "CEO, Grupo Veterinario Mediterráneo"
               }
-            ].map((testimonial, index) => (
+            ]).map((testimonial, index) => (
               <motion.div key={index} variants={fadeInUp}>
                 <Card className="card-premium h-full">
                   <CardContent className="p-8">
@@ -492,7 +510,7 @@ const Home = () => {
                 variant="secondary"
                 className="btn-secondary text-lg px-8 py-4 h-auto"
               >
-                <Link to="/contacto" className="gap-2">
+                <Link to={getLocalizedHref(locale === 'en' ? '/contact' : '/contacto')} className="gap-2">
                   {t('finalCta.cta')}
                   <ArrowRight className="h-5 w-5" />
                 </Link>
