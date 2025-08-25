@@ -56,7 +56,7 @@ export const BlogHeader: React.FC<BlogHeaderProps> = ({
   return (
     <header className="mb-12">
       {/* Title - First, with 2-line clamp */}
-      <h1 className="text-4xl md:text-5xl font-serif text-foreground leading-tight mb-4 line-clamp-2">
+      <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif text-foreground leading-tight mb-6 max-w-4xl">
         {title}
       </h1>
 
