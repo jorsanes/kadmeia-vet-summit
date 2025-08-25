@@ -364,7 +364,9 @@ export const BlogAdminV2: React.FC = () => {
                       </Badge>
                     ))}
                   </div>
-                  <TiptapRenderer content={editorContent} />
+                  <div className="blog-prose">
+                    <TiptapRenderer content={editorContent} />
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>

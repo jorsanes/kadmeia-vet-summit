@@ -340,7 +340,9 @@ export const BlogAdmin: React.FC = () => {
                       />
                     )}
                     <p className="text-muted-foreground mb-4">{watch('excerpt')}</p>
-                    <TiptapRenderer content={editorContent} />
+                    <div className="blog-prose">
+                      <TiptapRenderer content={editorContent} />
+                    </div>
                   </CardContent>
                 </Card>
               </TabsContent>

@@ -27,61 +27,27 @@ export const TiptapRenderer: React.FC<TiptapRendererProps> = ({
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
+        link: false, // Disable the built-in link extension to avoid conflicts
         bulletList: false, // Disable built-in to avoid conflicts
         orderedList: false, // Disable built-in to avoid conflicts
         listItem: false, // Disable built-in to avoid conflicts
       }),
-      BulletList.configure({
-        HTMLAttributes: {
-          class: 'list-disc pl-6 space-y-1 my-2',
-        },
-      }),
-      OrderedList.configure({
-        HTMLAttributes: {
-          class: 'list-decimal pl-6 space-y-1 my-2',
-        },
-      }),
-      ListItem.configure({
-        HTMLAttributes: {
-          class: 'leading-relaxed',
-        },
-      }),
-      Image.configure({
-        HTMLAttributes: {
-          class: 'rounded-lg max-w-full h-auto',
-        },
-      }),
+      BulletList,
+      OrderedList,
+      ListItem,
+      Image,
       Link.configure({
-        HTMLAttributes: {
-          class: 'text-primary underline cursor-pointer',
-          target: '_blank',
-          rel: 'noopener noreferrer',
-        },
+        openOnClick: false,
       }),
       TextStyle,
       Color,
       Underline,
       Table.configure({
         resizable: true,
-        HTMLAttributes: {
-          class: 'border-collapse table-auto w-full border border-border my-4',
-        },
       }),
-      TableRow.configure({
-        HTMLAttributes: {
-          class: 'border-b border-border',
-        },
-      }),
-      TableHeader.configure({
-        HTMLAttributes: {
-          class: 'border border-border bg-muted/50 px-4 py-2 text-left font-medium',
-        },
-      }),
-      TableCell.configure({
-        HTMLAttributes: {
-          class: 'border border-border px-4 py-2',
-        },
-      }),
+      TableRow,
+      TableHeader,
+      TableCell,
     ],
     content: (() => {
       try {

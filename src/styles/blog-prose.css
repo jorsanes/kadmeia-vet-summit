@@ -12,6 +12,20 @@
   display: none;
 }
 
+/* H1 - Títulos principales (cuando no es el primero) */
+.blog-prose h1:not(:first-child) {
+  margin-top: 3.5rem;
+  margin-bottom: 1.75rem;
+  color: hsl(var(--secondary)) !important;
+  font-weight: 700;
+  font-size: 2.25rem; /* text-4xl */
+  font-family: 'Playfair Display', Georgia, serif;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  border-bottom: 3px solid hsl(var(--secondary) / 0.3);
+  padding-bottom: 1rem;
+}
+
 /* H2 - Títulos de sección en oro corporativo */
 .blog-prose h2 {
   margin-top: 3rem;
