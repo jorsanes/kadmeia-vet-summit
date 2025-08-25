@@ -5,6 +5,7 @@ import { Menu, X, Globe, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocale } from '@/i18n/LocaleProvider';
 import { SmartImage } from '@/components/mdx';
+import { SmartLink } from '@/components/navigation/SmartLink';
 import SkipLink from '@/components/accessibility/SkipLink';
 import SearchCommand from '@/components/search/SearchCommand';
 
@@ -57,8 +58,8 @@ const Header = () => {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex lg:flex-1">
-            <a 
-              href="/" 
+            <SmartLink 
+              to="/" 
               className="-m-1.5 p-1.5 flex items-center gap-2"
               aria-label="KADMEIA — Inicio"
             >
@@ -73,15 +74,15 @@ const Header = () => {
               <span className="font-display text-2xl font-semibold text-primary">
                 KADMEIA
               </span>
-            </a>
+            </SmartLink>
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex lg:gap-x-8">
             {navigation.map((item) => (
-              <a
+              <SmartLink
                 key={item.name}
-                href={item.href}
+                to={item.href}
                 className={`text-sm font-medium transition-colors hover:text-primary ${
                   locationPathname === item.href 
                     ? 'text-primary' 
@@ -89,7 +90,7 @@ const Header = () => {
                 }`}
               >
                 {item.name}
-              </a>
+              </SmartLink>
             ))}
           </div>
 
@@ -115,9 +116,9 @@ const Header = () => {
               {locale.toUpperCase()}
             </Button>
             <Button asChild className="btn-primary">
-              <a href={getLocalizedHref(locale === 'en' ? '/contact' : '/contacto')}>
+              <SmartLink to={getLocalizedHref(locale === 'en' ? '/contact' : '/contacto')}>
                 {t('nav.cta')}
-              </a>
+              </SmartLink>
             </Button>
           </div>
 
@@ -155,9 +156,9 @@ const Header = () => {
           >
             <div className="space-y-2 px-6 pb-6 pt-4">
               {navigation.map((item) => (
-                <a
+                <SmartLink
                   key={item.name}
-                  href={item.href}
+                  to={item.href}
                   className={`block py-2 text-base font-medium transition-colors ${
                     locationPathname === item.href
                       ? 'text-primary'
@@ -166,7 +167,7 @@ const Header = () => {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
-                </a>
+                </SmartLink>
               ))}
               <div className="flex items-center gap-4 pt-4">
                 <Button
@@ -178,12 +179,12 @@ const Header = () => {
                   {locale.toUpperCase()}
                 </Button>
                 <Button asChild className="btn-primary flex-1">
-                  <a 
-                    href={getLocalizedHref(locale === 'en' ? '/contact' : '/contacto')} 
+                  <SmartLink 
+                    to={getLocalizedHref(locale === 'en' ? '/contact' : '/contacto')} 
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {t('nav.cta')}
-                  </a>
+                  </SmartLink>
                 </Button>
               </div>
             </div>

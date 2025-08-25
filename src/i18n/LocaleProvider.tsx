@@ -38,6 +38,7 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
       else if (currentPath === '/privacidad') newPath = '/privacy';
       else if (currentPath === '/aviso-legal') newPath = '/legal';
       else if (currentPath.startsWith('/casos')) newPath = currentPath.replace('/casos', '/cases');
+      else if (currentPath.startsWith('/blog')) newPath = currentPath; // Keep blog paths as-is
       else newPath = currentPath;
       
       newPath = `/en${newPath}`;
@@ -49,6 +50,7 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
       else if (currentPath === '/privacy') newPath = '/privacidad';
       else if (currentPath === '/legal') newPath = '/aviso-legal';
       else if (currentPath.startsWith('/cases')) newPath = currentPath.replace('/cases', '/casos');
+      else if (currentPath.startsWith('/blog')) newPath = currentPath; // Keep blog paths as-is
       else newPath = currentPath || '/';
     }
     
