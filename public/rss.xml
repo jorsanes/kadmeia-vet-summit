@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+<channel>
+  <title>KADMEIA Blog</title>
+  <link>https://www.kadmeia.com</link>
+  <description>IA aplicada y consultoría clínica veterinaria, sin fricción</description>
+  <language>es</language>
+  <lastBuildDate>Mon, 25 Aug 2025 00:00:00 GMT</lastBuildDate>
+  <generator>KADMEIA</generator>
+  
+  <!-- RSS feed will be populated when blog posts are created -->
+  <!-- Script generate-rss.mjs will regenerate this file with actual blog content -->
+  
+</channel>
+</rss>
