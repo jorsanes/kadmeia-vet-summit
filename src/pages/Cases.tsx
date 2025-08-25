@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import { caseIndex } from "@/lib/content-index";
 import { getAllCasesMeta } from "@/lib/content";
-import { supabase } from '@/integrations/supabase/client';
+import { getPublishedDbCases, dbCaseToMdxFormat } from '@/lib/case-db';
 import { SmartImage } from '@/components/mdx';
 import Reveal from '@/components/ui/Reveal';
 import { ContentCard as CaseCard } from '@/components/content/EnhancedContentCard';
@@ -28,29 +28,25 @@ export default function Cases() {
   useEffect(() => {
     const loadSupabaseCases = async () => {
       try {
-        const { data, error } = await supabase
-          .from('case_studies')
-          .select('*')
-          .eq('status', 'published')
-          .eq('lang', lang)
-          .order('published_at', { ascending: false });
-
-        if (error) throw error;
+        const data = await getPublishedDbCases(lang);
         
         if (data && data.length > 0) {
           // Convertir formato de Supabase al formato del índice
-          const supabaseFormatted = data.map(caseItem => ({
-            slug: caseItem.slug,
-            locale: caseItem.lang,
-            meta: {
-              title: caseItem.title,
-              date: new Date(caseItem.published_at || caseItem.created_at),
-              excerpt: caseItem.excerpt || '',
-              cover: caseItem.cover_image || '',
-              tags: caseItem.tags || [],
-            },
-            supabaseData: caseItem, // Mantener datos originales para usar con TiptapRenderer
-          }));
+          const supabaseFormatted = data.map(caseItem => {
+            const mdxFormat = dbCaseToMdxFormat(caseItem);
+            return {
+              slug: mdxFormat.slug,
+              locale: mdxFormat.lang,
+              meta: {
+                title: mdxFormat.title,
+                date: new Date(mdxFormat.date),
+                excerpt: mdxFormat.excerpt,
+                cover: mdxFormat.cover,
+                tags: mdxFormat.tags,
+              },
+              supabaseData: caseItem, // Mantener datos originales para usar con TiptapRenderer
+            };
+          });
           setSupabaseCases(supabaseFormatted);
         }
       } catch (error) {

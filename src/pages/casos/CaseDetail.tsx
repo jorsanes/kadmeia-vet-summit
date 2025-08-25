@@ -27,6 +27,8 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import { FrontmatterHider } from '@/components/mdx/FrontmatterHider';
 import { KpiGrid, type Kpi } from "@/components/cases/KpiGrid";
 import { Testimonial } from "@/components/cases/Testimonial";
+import { getDbCaseBySlug, DbCaseStudy } from '@/lib/case-db';
+import { TiptapRenderer } from '@/components/blog/TiptapRenderer';
 import "@/styles/case-prose.css";
 
 const formatDateSafe = (iso?: string | Date, lang: 'es'|'en' = 'es') => {
@@ -45,6 +47,11 @@ export default function CaseDetail() {
   const lang = (isEN ? "en" : "es");
   const { trackCTA } = usePlausible();
   
+  // State for data sources
+  const [dbCase, setDbCase] = React.useState<DbCaseStudy | null>(null);
+  const [MDX, setMDX] = React.useState<any>(null);
+  const [loading, setLoading] = React.useState(true);
+  
   // Referencias y estado para KPIs y testimoniales
   const contentRef = React.useRef<HTMLDivElement>(null);
   const [kpis, setKpis] = React.useState<Kpi[]>([]);
@@ -56,9 +63,41 @@ export default function CaseDetail() {
     pageName: `case-${slug}`
   });
 
-  const entry = getCaseBySlug(lang as any, slug);
+  // Fetch data on mount
+  React.useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      
+      // Try to fetch from Supabase first
+      const dbData = await getDbCaseBySlug(slug, lang);
+      if (dbData) {
+        setDbCase(dbData);
+        setLoading(false);
+        return;
+      }
+      
+      // Fallback to MDX
+      const entry = getCaseBySlug(lang as any, slug);
+      if (entry) {
+        setMDX(entry);
+      }
+      setLoading(false);
+    };
+    
+    fetchData();
+  }, [slug, lang]);
 
-  if (!entry) {
+  if (loading) {
+    return (
+      <div className="container py-12">
+        <div className="max-w-2xl mx-auto text-center">
+          <p>Cargando...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!dbCase && !MDX) {
     return (
       <div className="container py-12">
         <div className="max-w-2xl mx-auto text-center">
@@ -79,7 +118,9 @@ export default function CaseDetail() {
     );
   }
 
-  const rawMeta = entry.meta;
+  // Determine the primary data source
+  const caseData = dbCase || (MDX ? MDX.meta : null);
+  const rawMeta = caseData;
   
   // Validate and enhance meta with CaseMeta schema
   const metaValidation = CaseMeta.safeParse(rawMeta);
@@ -89,7 +130,7 @@ export default function CaseDetail() {
   const currentUrl = `https://kadmeia.com${lang === 'en' ? '/en' : ''}/casos/${slug}`;
   const siteUrl = 'https://kadmeia.com';
   const alternateUrl = `${siteUrl}${getHreflangUrl(slug, lang, 'cases')}`;
-  const MDXComponent = entry.mod.default;
+  const MDXComponent = MDX?.mod?.default;
   
   // OG Image with fallback to generated version
   const ogImage = metaData.cover 
@@ -268,13 +309,18 @@ export default function CaseDetail() {
             <article ref={contentRef} className="case-prose" id="article-root">
               <Reveal>
                 <div className="max-w-none">
-                  {MDXComponent && (
+                  {dbCase ? (
+                    <TiptapRenderer 
+                      content={dbCase.content} 
+                      className="prose prose-lg max-w-none"
+                    />
+                  ) : MDXComponent ? (
                     <MDXProvider components={enhancedMDXComponents}>
                       <CaseArticleLayout>
                         <MDXComponent />
                       </CaseArticleLayout>
                     </MDXProvider>
-                  )}
+                  ) : null}
                 </div>
               </Reveal>
             </article>

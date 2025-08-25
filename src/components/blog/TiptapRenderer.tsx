@@ -61,7 +61,7 @@ export const TiptapRenderer: React.FC<TiptapRendererProps> = ({
         },
       }),
     ],
-    content,
+    content: typeof content === 'string' ? JSON.parse(content) : content,
     editable: false,
   });
 

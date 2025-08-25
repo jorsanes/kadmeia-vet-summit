@@ -100,7 +100,7 @@ export const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ content, onChange 
         },
       }),
     ],
-    content,
+    content: typeof content === 'string' ? JSON.parse(content) : content,
     onUpdate: ({ editor }) => {
       onChange(editor.getJSON());
     },
