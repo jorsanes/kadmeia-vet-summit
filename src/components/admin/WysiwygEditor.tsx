@@ -11,6 +11,9 @@ import { Table } from '@tiptap/extension-table';
 import { TableRow } from '@tiptap/extension-table-row';
 import { TableHeader } from '@tiptap/extension-table-header';
 import { TableCell } from '@tiptap/extension-table-cell';
+import { BulletList } from '@tiptap/extension-bullet-list';
+import { OrderedList } from '@tiptap/extension-ordered-list';
+import { ListItem } from '@tiptap/extension-list-item';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -32,7 +35,9 @@ import {
   Heading3,
   Table as TableIcon,
   TableCellsMerge,
-  TableProperties
+  TableProperties,
+  Indent,
+  Outdent
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -63,6 +68,24 @@ export const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ content, onChange 
     extensions: [
       StarterKit.configure({
         link: false, // Disable the built-in link extension to avoid conflicts
+        bulletList: false, // Disable built-in to avoid conflicts
+        orderedList: false, // Disable built-in to avoid conflicts
+        listItem: false, // Disable built-in to avoid conflicts
+      }),
+      BulletList.configure({
+        HTMLAttributes: {
+          class: 'list-disc pl-6 space-y-1',
+        },
+      }),
+      OrderedList.configure({
+        HTMLAttributes: {
+          class: 'list-decimal pl-6 space-y-1',
+        },
+      }),
+      ListItem.configure({
+        HTMLAttributes: {
+          class: 'leading-relaxed',
+        },
       }),
       Image.configure({
         HTMLAttributes: {
@@ -273,7 +296,13 @@ export const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ content, onChange 
           type="button"
           variant="ghost"
           size="sm"
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
+          onClick={() => {
+            // Convert heading to paragraph first if necessary
+            if (editor.isActive('heading')) {
+              editor.chain().focus().setParagraph().run();
+            }
+            editor.chain().focus().toggleBulletList().run();
+          }}
           className={editor.isActive('bulletList') ? 'bg-accent' : ''}
         >
           <List className="h-4 w-4" />
@@ -283,11 +312,43 @@ export const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ content, onChange 
           type="button"
           variant="ghost"
           size="sm"
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          onClick={() => {
+            // Convert heading to paragraph first if necessary
+            if (editor.isActive('heading')) {
+              editor.chain().focus().setParagraph().run();
+            }
+            editor.chain().focus().toggleOrderedList().run();
+          }}
           className={editor.isActive('orderedList') ? 'bg-accent' : ''}
         >
           <ListOrdered className="h-4 w-4" />
         </Button>
+
+        {(editor.isActive('bulletList') || editor.isActive('orderedList')) && (
+          <>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => editor.chain().focus().sinkListItem('listItem').run()}
+              title="Sangrar"
+              className="text-blue-600"
+            >
+              <Indent className="h-4 w-4" />
+            </Button>
+            
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => editor.chain().focus().liftListItem('listItem').run()}
+              title="Reducir sangría"
+              className="text-blue-600"
+            >
+              <Outdent className="h-4 w-4" />
+            </Button>
+          </>
+        )}
         
         <Button
           type="button"
@@ -490,7 +551,7 @@ export const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ content, onChange 
       
       <EditorContent 
         editor={editor} 
-        className="prose prose-sm max-w-none p-4 min-h-[400px] focus:outline-none [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:font-serif [&_h1]:text-foreground [&_h1]:mb-4 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:font-serif [&_h2]:text-foreground [&_h2]:mb-3 [&_h3]:text-xl [&_h3]:font-medium [&_h3]:font-serif [&_h3]:text-foreground [&_h3]:mb-2 [&_table]:my-4 [&_table]:border-collapse [&_td]:border [&_td]:border-border [&_td]:px-3 [&_td]:py-2 [&_th]:border [&_th]:border-border [&_th]:bg-muted/50 [&_th]:px-3 [&_th]:py-2 [&_th]:font-semibold"
+        className="prose prose-sm max-w-none p-4 min-h-[400px] focus:outline-none [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:font-serif [&_h1]:text-foreground [&_h1]:mb-4 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:font-serif [&_h2]:text-foreground [&_h2]:mb-3 [&_h3]:text-xl [&_h3]:font-medium [&_h3]:font-serif [&_h3]:text-foreground [&_h3]:mb-2 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-1 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:space-y-1 [&_li]:leading-relaxed [&_table]:my-4 [&_table]:border-collapse [&_td]:border [&_td]:border-border [&_td]:px-3 [&_td]:py-2 [&_th]:border [&_th]:border-border [&_th]:bg-muted/50 [&_th]:px-3 [&_th]:py-2 [&_th]:font-semibold"
       />
     </div>
   );

@@ -47,6 +47,12 @@ export default function CaseDetail() {
   const lang = (isEN ? "en" : "es");
   const { trackCTA } = usePlausible();
   
+  // Track scroll depth for engagement metrics
+  useScrollDepth({
+    enableTracking: true,
+    pageName: `case-${slug}`
+  });
+  
   // State for data sources
   const [dbCase, setDbCase] = React.useState<DbCaseStudy | null>(null);
   const [MDX, setMDX] = React.useState<any>(null);
@@ -56,12 +62,6 @@ export default function CaseDetail() {
   const contentRef = React.useRef<HTMLDivElement>(null);
   const [kpis, setKpis] = React.useState<Kpi[]>([]);
   const [testimonial, setTestimonial] = React.useState<{quote?: string; author?: string; role?: string}>({});
-  
-  // Track scroll depth for engagement metrics
-  useScrollDepth({
-    enableTracking: true,
-    pageName: `case-${slug}`
-  });
 
   // Fetch data on mount
   React.useEffect(() => {
