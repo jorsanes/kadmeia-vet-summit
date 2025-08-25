@@ -25,7 +25,34 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
   
   const switchLocale = (to: 'es' | 'en') => {
     const currentPath = location.pathname.replace(/^\/en/, '');
-    const newPath = to === 'en' ? `/en${currentPath || '/'}` : (currentPath || '/');
+    
+    // Handle special route mappings for Spanish/English equivalents
+    let newPath = currentPath;
+    
+    if (to === 'en') {
+      // Convert Spanish routes to English routes
+      if (currentPath === '/') newPath = '/';
+      else if (currentPath === '/sobre') newPath = '/about';
+      else if (currentPath === '/servicios') newPath = '/services';
+      else if (currentPath === '/contacto') newPath = '/contact';
+      else if (currentPath === '/privacidad') newPath = '/privacy';
+      else if (currentPath === '/aviso-legal') newPath = '/legal';
+      else if (currentPath.startsWith('/casos')) newPath = currentPath.replace('/casos', '/cases');
+      else newPath = currentPath;
+      
+      newPath = `/en${newPath}`;
+    } else {
+      // Convert English routes to Spanish routes  
+      if (currentPath === '/about') newPath = '/sobre';
+      else if (currentPath === '/services') newPath = '/servicios';
+      else if (currentPath === '/contact') newPath = '/contacto';
+      else if (currentPath === '/privacy') newPath = '/privacidad';
+      else if (currentPath === '/legal') newPath = '/aviso-legal';
+      else if (currentPath.startsWith('/cases')) newPath = currentPath.replace('/cases', '/casos');
+      else newPath = currentPath || '/';
+    }
+    
+    console.log('Switching locale:', { from: locale, to, currentPath, newPath });
     navigate(newPath, { replace: true });
   };
 
