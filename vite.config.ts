@@ -142,6 +142,10 @@ export default defineConfig(({ mode, command }) => {
     build: {
       sourcemap: mode === "analyze",
       rollupOptions: {
+        external: [
+          // Exclude scripts folder from build
+          /^\/scripts\//,
+        ],
         output: {
           manualChunks: {
             vendor: ["react", "react-dom"],

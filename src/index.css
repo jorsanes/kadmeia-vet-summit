@@ -1,10 +1,10 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 /* Import prose styles for content */
 @import './styles/case-prose.css';
 @import './styles/blog-prose.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 
 /* KADMEIA Design System - Premium Veterinary Corporate Identity
