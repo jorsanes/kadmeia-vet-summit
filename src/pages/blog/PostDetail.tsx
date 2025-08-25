@@ -257,6 +257,7 @@ export default function PostDetail() {
                 author={meta?.author}
                 cover={meta?.cover}
                 banner={meta?.banner}
+                excerpt={meta?.excerpt}
                 lang={lang}
               />
 

@@ -16,6 +16,7 @@ interface BlogHeaderProps {
   };
   cover?: string;
   banner?: string;
+  excerpt?: string;
   lang: string;
 }
 
@@ -28,6 +29,7 @@ export const BlogHeader: React.FC<BlogHeaderProps> = ({
   author,
   cover,
   banner,
+  excerpt,
   lang
 }) => {
   const formatDate = (dateStr: string) => {
@@ -48,34 +50,26 @@ export const BlogHeader: React.FC<BlogHeaderProps> = ({
     return Math.ceil(words / wordsPerMinute);
   };
 
+  // Use banner if available, fallback to cover for banner display
+  const bannerImage = banner || cover;
+
   return (
     <header className="mb-12">
-      {/* Banner Image - Optional and different from cover */}
-      {banner && (
-        <div className="mb-8 -mx-6 md:mx-0">
-          <SmartImage
-            src={banner}
-            alt={title}
-            className="w-full h-24 md:h-32 object-cover rounded-lg"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
-            width={800}
-            height={128}
-          />
-        </div>
-      )}
-
-      {/* Title */}
-      <h1 className="text-4xl md:text-5xl font-serif text-foreground leading-tight mb-6">
+      {/* Title - First, with 2-line clamp */}
+      <h1 className="text-4xl md:text-5xl font-serif text-foreground leading-tight mb-4 line-clamp-2">
         {title}
       </h1>
 
-      {/* Meta Information */}
-      <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-6">
-        {/* Date */}
+      {/* Date and Language Badge */}
+      <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mb-6">
         <div className="flex items-center gap-1">
           <Calendar className="h-4 w-4" />
           <time dateTime={date}>{formatDate(date)}</time>
         </div>
+        
+        <Badge variant="outline" className="text-xs">
+          {lang.toUpperCase()}
+        </Badge>
 
         {/* Updated Date */}
         {updatedAt && updatedAt !== date && (
@@ -106,9 +100,41 @@ export const BlogHeader: React.FC<BlogHeaderProps> = ({
         )}
       </div>
 
-      {/* Author Card */}
+      {/* Banner Image - Max 300px height, full width */}
+      {bannerImage && (
+        <div className="mb-6 -mx-6 md:mx-0">
+          <SmartImage
+            src={bannerImage}
+            alt={title}
+            className="w-full h-48 md:h-72 lg:h-80 max-h-[300px] object-cover rounded-lg"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
+            width={1200}
+            height={300}
+          />
+        </div>
+      )}
+
+      {/* Excerpt */}
+      {excerpt && (
+        <div className="text-lg text-muted-foreground mb-6 leading-relaxed">
+          {excerpt}
+        </div>
+      )}
+
+      {/* Tags */}
+      {tags && tags.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-6">
+          {tags.map((tag: string, index: number) => (
+            <Badge key={index} variant="secondary" className="text-xs">
+              {tag}
+            </Badge>
+          ))}
+        </div>
+      )}
+
+      {/* Author Card - Moved to bottom if has avatar */}
       {author && author.avatar && (
-        <div className="flex items-center gap-3 p-4 border border-border rounded-lg mb-6">
+        <div className="flex items-center gap-3 p-4 border border-border rounded-lg">
           <SmartImage
             src={author.avatar}
             alt={author.name}
@@ -122,17 +148,6 @@ export const BlogHeader: React.FC<BlogHeaderProps> = ({
               <div className="text-sm text-muted-foreground">{author.bio}</div>
             )}
           </div>
-        </div>
-      )}
-
-      {/* Tags */}
-      {tags && tags.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {tags.map((tag: string, index: number) => (
-            <Badge key={index} variant="secondary" className="text-xs">
-              {tag}
-            </Badge>
-          ))}
         </div>
       )}
     </header>

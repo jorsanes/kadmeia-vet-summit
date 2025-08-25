@@ -16,6 +16,7 @@ import { BlogMeta } from '@/content/schemas';
 import { enhancedMDXComponents } from '@/components/mdx';
 import { MDXProvider } from '@mdx-js/react';
 import { MdxPreview } from '@/components/mdx/MdxPreview';
+import { BlogHeader } from '@/components/blog/BlogHeader';
 import { TagPicker } from './TagPicker';
 import matter from 'gray-matter';
 import { 
@@ -578,28 +579,49 @@ export const BlogEditorV2: React.FC<BlogEditorV2Props> = ({ config }) => {
 
           {previewMode && (
             <TabsContent value="preview">
-              <Card>
-                <CardHeader>
-                  <CardTitle>{editingPost.meta.title}</CardTitle>
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <span>{new Date(editingPost.meta.date).toLocaleDateString()}</span>
-                    <div className="flex gap-1">
-                      {editingPost.meta.tags.map(tag => (
-                        <Badge key={tag} variant="outline">{tag}</Badge>
-                      ))}
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="prose max-w-none">
-                    <MdxPreview>
-                      <MDXProvider components={enhancedMDXComponents}>
-                        <div dangerouslySetInnerHTML={{ __html: editingPost.content }} />
-                      </MDXProvider>
-                    </MdxPreview>
-                  </div>
-                </CardContent>
-              </Card>
+              <div className="space-y-6">
+                {/* Production BlogHeader */}
+                <BlogHeader
+                  title={editingPost.meta.title}
+                  date={editingPost.meta.date.toString()}
+                  updatedAt={editingPost.meta.updatedAt?.toString()}
+                  readingTime={editingPost.meta.readingTime}
+                  tags={editingPost.meta.tags}
+                  author={editingPost.meta.author?.name ? {
+                    name: editingPost.meta.author.name,
+                    bio: editingPost.meta.author.bio,
+                    avatar: editingPost.meta.author.avatar
+                  } : undefined}
+                  cover={editingPost.meta.cover}
+                  banner={editingPost.meta.banner}
+                  excerpt={editingPost.meta.excerpt}
+                  lang={editingPost.lang}
+                />
+                
+                {/* Content Preview */}
+                <div className="max-w-none blog-prose">
+                  <MdxPreview>
+                    <MDXProvider components={{
+                      ...enhancedMDXComponents,
+                      // Hide first H1 to prevent duplication
+                      h1: ({ children, ...props }: React.HTMLProps<HTMLHeadingElement>) => {
+                        const [isFirstH1, setIsFirstH1] = React.useState(true);
+                        React.useEffect(() => {
+                          if (isFirstH1) {
+                            setIsFirstH1(false);
+                            return;
+                          }
+                        }, [isFirstH1]);
+                        
+                        if (isFirstH1) return null;
+                        return enhancedMDXComponents.h1({ children, ...props });
+                      }
+                    }}>
+                      <div dangerouslySetInnerHTML={{ __html: editingPost.content }} />
+                    </MDXProvider>
+                  </MdxPreview>
+                </div>
+              </div>
             </TabsContent>
           )}
         </Tabs>
