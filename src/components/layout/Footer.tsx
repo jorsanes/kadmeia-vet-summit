@@ -44,7 +44,7 @@ const Footer = () => {
           {/* Navigation */}
           <div>
             <h3 className="font-semibold text-primary-foreground mb-4">
-              Navegación
+              {locale === 'en' ? 'Navigation' : 'Navegación'}
             </h3>
             <ul className="space-y-3">
               <li>
