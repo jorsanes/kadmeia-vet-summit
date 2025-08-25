@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/sonner";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { LangProvider } from "@/components/accessibility/LangProvider";
+import { LocaleProvider } from "@/i18n/LocaleProvider";
 import SkipLink from "@/components/accessibility/SkipLink";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "@/pages/Index";
@@ -44,9 +45,10 @@ function App() {
         <ErrorBoundary>
           <AuthProvider>
             <Router>
-              <LangProvider>
-                <SkipLink />
-                <Routes>
+              <LocaleProvider>
+                <LangProvider>
+                  <SkipLink />
+                  <Routes>
                   <Route path="/" element={<Layout><Index /></Layout>} />
                   
                   {/* Spanish routes */}
@@ -81,9 +83,10 @@ function App() {
                   {/* Error routes */}
                   <Route path="/500" element={<ServerError />} />
                   <Route path="*" element={<NotFound />} />
-                </Routes>
-                <Toaster />
-              </LangProvider>
+                  </Routes>
+                  <Toaster />
+                </LangProvider>
+              </LocaleProvider>
             </Router>
           </AuthProvider>
         </ErrorBoundary>

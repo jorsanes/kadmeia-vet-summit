@@ -31,7 +31,7 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
     
     if (to === 'en') {
       // Convert Spanish routes to English routes
-      if (currentPath === '/') newPath = '/';
+      if (currentPath === '/') newPath = '';
       else if (currentPath === '/sobre') newPath = '/about';
       else if (currentPath === '/servicios') newPath = '/services';
       else if (currentPath === '/contacto') newPath = '/contact';
