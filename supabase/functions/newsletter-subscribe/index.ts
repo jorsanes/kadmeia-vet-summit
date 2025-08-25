@@ -18,8 +18,54 @@ serve(async (req) => {
   }
 
   try {
-    // Rate limiting: basic IP-based check
-    const clientIP = req.headers.get('x-forwarded-for') || 'unknown'
+    // Get client IP for rate limiting
+    const clientIP = req.headers.get('cf-connecting-ip') || 
+                    req.headers.get('x-forwarded-for') || 
+                    req.headers.get('x-real-ip') || 
+                    'unknown'
+
+    // Initialize Supabase client
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+
+    // Rate limiting: max 5 subscriptions per 10 minutes per IP
+    const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString()
+    
+    const { data: recentSubmissions, error: rateLimitError } = await supabase
+      .from('api_throttle')
+      .select('request_count')
+      .eq('ip_address', clientIP)
+      .eq('endpoint', 'newsletter-subscribe')
+      .gte('window_start', tenMinutesAgo)
+
+    if (rateLimitError) {
+      console.error('Rate limit check error:', rateLimitError)
+    } else {
+      const totalRequests = recentSubmissions?.reduce((sum, record) => sum + record.request_count, 0) || 0
+      
+      if (totalRequests >= 5) {
+        console.log(`Rate limit exceeded for IP: ${clientIP}`)
+        return new Response(
+          JSON.stringify({ error: 'Demasiadas solicitudes. Intenta de nuevo más tarde.' }),
+          { 
+            status: 429, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          }
+        )
+      }
+    }
+
+    // Record this request for rate limiting
+    await supabase
+      .from('api_throttle')
+      .insert({
+        ip_address: clientIP,
+        endpoint: 'newsletter-subscribe',
+        window_start: new Date().toISOString(),
+        request_count: 1
+      })
     
     // Parse request body
     const formData: NewsletterSubscriptionData = await req.json()
@@ -50,11 +96,6 @@ serve(async (req) => {
       )
     }
 
-    // Initialize Supabase client
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
 
     // Check if email already exists
     const { data: existingSubscriber, error: checkError } = await supabase
@@ -158,7 +199,7 @@ serve(async (req) => {
       }
     }
 
-    console.log('Newsletter subscription successful:', { email: formData.email })
+    console.log('Newsletter subscription successful')
 
     return new Response(
       JSON.stringify({ 

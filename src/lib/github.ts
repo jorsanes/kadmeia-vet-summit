@@ -33,126 +33,91 @@ export class GitHubAPI {
   }
 
   async getFile(path: string): Promise<FileContent> {
-    const response = await fetch(
-      `${this.getBaseUrl()}/contents/${path}?ref=${this.config.branch}`,
-      { headers: this.getHeaders() }
-    );
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch file: ${response.statusText}`);
-    }
-
-    const data = await response.json();
+    // Use the secure GitHub proxy instead of direct API calls
+    const { supabase } = await import('@/integrations/supabase/client');
     
-    if (data.type !== 'file') {
-      throw new Error('Path is not a file');
+    const { data, error } = await supabase.functions.invoke('github-proxy', {
+      body: {
+        operation: 'getFile',
+        path: path
+      }
+    });
+
+    if (error) {
+      throw new Error(`Failed to fetch file: ${error.message}`);
     }
 
-    return {
-      content: decodeBase64Utf8(data.content),
-      sha: data.sha
-    };
+    return data;
   }
 
   async updateFile(path: string, content: string, sha: string, message: string): Promise<void> {
-    const response = await fetch(
-      `${this.getBaseUrl()}/contents/${path}`,
-      {
-        method: 'PUT',
-        headers: this.getHeaders(),
-        body: JSON.stringify({
-          message,
-          content: encodeBase64Utf8(content),
-          sha,
-          branch: this.config.branch
-        })
+    const { supabase } = await import('@/integrations/supabase/client');
+    
+    const { error } = await supabase.functions.invoke('github-proxy', {
+      body: {
+        operation: 'updateFile',
+        path: path,
+        content: content,
+        sha: sha,
+        message: message
       }
-    );
+    });
 
-    if (!response.ok) {
-      throw new Error(`Failed to update file: ${response.statusText}`);
+    if (error) {
+      throw new Error(`Failed to update file: ${error.message}`);
     }
   }
 
   async createFile(path: string, content: string, message: string): Promise<void> {
-    const response = await fetch(
-      `${this.getBaseUrl()}/contents/${path}`,
-      {
-        method: 'PUT',
-        headers: this.getHeaders(),
-        body: JSON.stringify({
-          message,
-          content: encodeBase64Utf8(content),
-          branch: this.config.branch
-        })
+    const { supabase } = await import('@/integrations/supabase/client');
+    
+    const { error } = await supabase.functions.invoke('github-proxy', {
+      body: {
+        operation: 'createFile',
+        path: path,
+        content: content,
+        message: message
       }
-    );
+    });
 
-    if (!response.ok) {
-      throw new Error(`Failed to create file: ${response.statusText}`);
+    if (error) {
+      throw new Error(`Failed to create file: ${error.message}`);
     }
   }
 
   async deleteFile(path: string, sha: string, message: string): Promise<void> {
-    const response = await fetch(
-      `${this.getBaseUrl()}/contents/${path}`,
-      {
-        method: 'DELETE',
-        headers: this.getHeaders(),
-        body: JSON.stringify({
-          message,
-          sha,
-          branch: this.config.branch
-        })
+    const { supabase } = await import('@/integrations/supabase/client');
+    
+    const { error } = await supabase.functions.invoke('github-proxy', {
+      body: {
+        operation: 'deleteFile',
+        path: path,
+        sha: sha,
+        message: message
       }
-    );
+    });
 
-    if (!response.ok) {
-      throw new Error(`Failed to delete file: ${response.statusText}`);
+    if (error) {
+      throw new Error(`Failed to delete file: ${error.message}`);
     }
   }
 
   async getTree(path: string = '', recursive: boolean = false): Promise<any[]> {
-    const baseUrl = `https://api.github.com/repos/${this.config.owner}/${this.config.repo}`;
+    const { supabase } = await import('@/integrations/supabase/client');
     
-    // First get the commit SHA for the branch
-    const branchResponse = await fetch(`${baseUrl}/branches/${this.config.branch}`, {
-      headers: {
-        'Authorization': `token ${this.config.token}`,
-        'Accept': 'application/vnd.github.v3+json',
-      },
+    const { data, error } = await supabase.functions.invoke('github-proxy', {
+      body: {
+        operation: 'getTree',
+        path: path,
+        recursive: recursive
+      }
     });
 
-    if (!branchResponse.ok) {
-      throw new Error(`Failed to get branch info: ${branchResponse.statusText}`);
+    if (error) {
+      throw new Error(`Failed to get tree: ${error.message}`);
     }
 
-    const branchData = await branchResponse.json();
-    const commitSha = branchData.commit.sha;
-
-    // Get the tree
-    const treeUrl = `${baseUrl}/git/trees/${commitSha}${recursive ? '?recursive=1' : ''}`;
-    const treeResponse = await fetch(treeUrl, {
-      headers: {
-        'Authorization': `token ${this.config.token}`,
-        'Accept': 'application/vnd.github.v3+json',
-      },
-    });
-
-    if (!treeResponse.ok) {
-      throw new Error(`Failed to get tree: ${treeResponse.statusText}`);
-    }
-
-    const treeData = await treeResponse.json();
-    
-    // Filter by path if specified
-    if (path) {
-      return treeData.tree.filter((item: any) => 
-        item.path.startsWith(path)
-      );
-    }
-
-    return treeData.tree;
+    return data;
   }
 
   static getStoredConfig(): GitHubConfig | null {

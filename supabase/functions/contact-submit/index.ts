@@ -23,8 +23,54 @@ serve(async (req) => {
   }
 
   try {
-    // Rate limiting: basic IP-based check
-    const clientIP = req.headers.get('x-forwarded-for') || 'unknown'
+    // Get client IP for rate limiting
+    const clientIP = req.headers.get('cf-connecting-ip') || 
+                    req.headers.get('x-forwarded-for') || 
+                    req.headers.get('x-real-ip') || 
+                    'unknown'
+
+    // Initialize Supabase client
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+
+    // Rate limiting: max 3 submissions per 10 minutes per IP
+    const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString()
+    
+    const { data: recentSubmissions, error: rateLimitError } = await supabase
+      .from('api_throttle')
+      .select('request_count')
+      .eq('ip_address', clientIP)
+      .eq('endpoint', 'contact-submit')
+      .gte('window_start', tenMinutesAgo)
+
+    if (rateLimitError) {
+      console.error('Rate limit check error:', rateLimitError)
+    } else {
+      const totalRequests = recentSubmissions?.reduce((sum, record) => sum + record.request_count, 0) || 0
+      
+      if (totalRequests >= 3) {
+        console.log(`Rate limit exceeded for IP: ${clientIP}`)
+        return new Response(
+          JSON.stringify({ error: 'Demasiadas solicitudes. Intenta de nuevo más tarde.' }),
+          { 
+            status: 429, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          }
+        )
+      }
+    }
+
+    // Record this request for rate limiting
+    await supabase
+      .from('api_throttle')
+      .insert({
+        ip_address: clientIP,
+        endpoint: 'contact-submit',
+        window_start: new Date().toISOString(),
+        request_count: 1
+      })
     
     // Parse request body
     const formData: ContactFormData = await req.json()
@@ -55,11 +101,6 @@ serve(async (req) => {
       )
     }
 
-    // Initialize Supabase client
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
 
     // Store in database
     const { data, error: dbError } = await supabase
@@ -99,14 +140,14 @@ serve(async (req) => {
             subject: `Nuevo contacto de ${formData.name}`,
             html: `
               <h2>Nuevo mensaje de contacto</h2>
-              <p><strong>Nombre:</strong> ${formData.name}</p>
-              <p><strong>Email:</strong> ${formData.email}</p>
-              <p><strong>Empresa:</strong> ${formData.company}</p>
-              ${formData.phone ? `<p><strong>Teléfono:</strong> ${formData.phone}</p>` : ''}
+              <p><strong>Nombre:</strong> ${formData.name.replace(/[<>&"]/g, (c) => ({'<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;'}[c] || c))}</p>
+              <p><strong>Email:</strong> ${formData.email.replace(/[<>&"]/g, (c) => ({'<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;'}[c] || c))}</p>
+              <p><strong>Empresa:</strong> ${formData.company.replace(/[<>&"]/g, (c) => ({'<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;'}[c] || c))}</p>
+              ${formData.phone ? `<p><strong>Teléfono:</strong> ${formData.phone.replace(/[<>&"]/g, (c) => ({'<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;'}[c] || c))}</p>` : ''}
               <p><strong>Mensaje:</strong></p>
-              <p>${formData.message.replace(/\n/g, '<br>')}</p>
+              <p>${formData.message.replace(/[<>&"]/g, (c) => ({'<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;'}[c] || c)).replace(/\n/g, '<br>')}</p>
               <hr>
-              <p><small>IP: ${clientIP} | Fecha: ${new Date().toLocaleString('es-ES')}</small></p>
+              <p><small>Fecha: ${new Date().toLocaleString('es-ES')}</small></p>
             `,
             text: `
               Nuevo mensaje de contacto
@@ -134,7 +175,7 @@ serve(async (req) => {
       }
     }
 
-    console.log('Contact form submitted successfully:', { name: formData.name, email: formData.email, company: formData.company })
+    console.log('Contact form submitted successfully')
 
     return new Response(
       JSON.stringify({ 
