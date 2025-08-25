@@ -8,6 +8,8 @@ import { CheckCircle, Clock, Users, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Prose, enhancedMDXComponents } from '@/components/mdx';
 import Reveal from '@/components/ui/Reveal';
+import { supabase } from '@/integrations/supabase/client';
+import { TiptapRenderer } from '@/components/blog/TiptapRenderer';
 
 const modules = import.meta.glob("@/content/casos/**/*.{mdx,md}");
 
@@ -16,21 +18,58 @@ export default function CaseDetail() {
   const isEN = useLocation().pathname.startsWith('/en/');
   const lang = isEN ? 'en' : 'es';
 
+  const [supabaseCase, setSupabaseCase] = React.useState<any>(null);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [useMDX, setUseMDX] = React.useState(false);
+
   const key = Object.keys(modules).find(p => p.includes(`/casos/${lang}/${slug}.`));
   const [Comp, setComp] = React.useState<React.ComponentType | null>(null);
   // @ts-ignore
   const [meta, setMeta] = React.useState<any>(null);
 
+  // Intentar cargar desde Supabase primero
   React.useEffect(() => {
-    if (!key) return;
+    const loadCase = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('case_studies')
+          .select('*')
+          .eq('slug', slug)
+          .eq('lang', lang)
+          .eq('status', 'published')
+          .single();
+
+        if (data && !error) {
+          setSupabaseCase(data);
+          setUseMDX(false);
+        } else {
+          // Fallback a MDX
+          setUseMDX(true);
+        }
+      } catch (error) {
+        console.error('Error loading case from Supabase:', error);
+        setUseMDX(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadCase();
+  }, [slug, lang]);
+
+  // Cargar MDX si es necesario
+  React.useEffect(() => {
+    if (!useMDX || !key) return;
     (async () => {
       const mod: any = await modules[key]!();
       setComp(() => mod.default);
       setMeta(mod.meta || {});
     })();
-  }, [key]);
+  }, [key, useMDX]);
 
-  if (!key) return (
+  if (isLoading) return <div className="container py-16">Cargando…</div>;
+
+  if (!supabaseCase && !key) return (
     <div className="container py-20 text-center">
       <h1 className="text-2xl font-serif mb-4">Caso no encontrado</h1>
       <Link to={isEN ? "/en/cases" : "/casos"} className="text-primary hover:underline">
@@ -39,10 +78,12 @@ export default function CaseDetail() {
     </div>
   );
   
-  if (!Comp) return <div className="container py-16">Cargando…</div>;
+  if (useMDX && !Comp) return <div className="container py-16">Cargando…</div>;
 
-  const title = `${meta?.title || slug} | KADMEIA`;
-  const desc = meta?.excerpt ?? 'Caso de éxito KADMEIA';
+  // Usar datos de Supabase o MDX según corresponda
+  const caseData = supabaseCase || meta;
+  const title = `${caseData?.title || slug} | KADMEIA`;
+  const desc = caseData?.excerpt ?? 'Caso de éxito KADMEIA';
   const url = typeof window !== 'undefined' ? window.location.href : '';
   const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://kadmeia.com';
 
@@ -50,8 +91,8 @@ export default function CaseDetail() {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "Article",
-    "headline": meta?.title || slug,
-    "description": meta?.excerpt || desc,
+    "headline": caseData?.title || slug,
+    "description": caseData?.excerpt || desc,
     "author": {
       "@type": "Organization",
       "name": "KADMEIA",
@@ -66,22 +107,22 @@ export default function CaseDetail() {
         "url": `${siteUrl}/og.png`
       }
     },
-    "datePublished": meta?.date,
-    "dateModified": meta?.date,
+    "datePublished": caseData?.published_at || caseData?.date,
+    "dateModified": caseData?.updated_at || caseData?.date,
     "mainEntityOfPage": {
       "@type": "WebPage",
       "@id": url
     },
     "url": url,
     "articleSection": "Case Study",
-    ...(meta?.cover && {
+    ...((caseData?.cover_image || caseData?.cover) && {
       "image": {
         "@type": "ImageObject",
-        "url": meta.cover
+        "url": caseData.cover_image || caseData.cover
       }
     }),
-    ...(meta?.tags && {
-      "keywords": meta.tags.join(", ")
+    ...(caseData?.tags && {
+      "keywords": caseData.tags.join(", ")
     })
   };
 
@@ -93,7 +134,7 @@ export default function CaseDetail() {
     { label: '4 meses', description: 'tiempo de implementación', icon: '📅' }
   ];
 
-  const technologies = meta?.tags || ['IA', 'Radiología', 'Automatización'];
+  const technologies = caseData?.tags || ['IA', 'Radiología', 'Automatización'];
 
   const fadeInUp = {
     initial: { opacity: 0, y: 20 },
@@ -110,7 +151,7 @@ export default function CaseDetail() {
         <meta property="og:description" content={desc} />
         <meta property="og:type" content="article" />
         <meta property="og:url" content={url} />
-        {meta?.cover && <meta property="og:image" content={meta.cover} />}
+        {(caseData?.cover_image || caseData?.cover) && <meta property="og:image" content={caseData.cover_image || caseData.cover} />}
         <link rel="canonical" href={url} />
         <script type="application/ld+json">
           {JSON.stringify(structuredData)}
@@ -146,7 +187,7 @@ export default function CaseDetail() {
                   Clínica veterinaria
                 </Badge>
                 <h1 className="text-4xl md:text-5xl font-serif text-foreground leading-tight mb-6">
-                  {meta?.title || slug}
+                  {caseData?.title || slug}
                 </h1>
                 <div className="flex items-center gap-6 text-muted-foreground mb-6">
                   <div className="flex items-center gap-2">
@@ -282,11 +323,18 @@ export default function CaseDetail() {
 
           {/* Detailed Content */}
           <div className="mt-16">
-            <MDXProvider components={enhancedMDXComponents}>
-              <Prose>
-                <Comp />
-              </Prose>
-            </MDXProvider>
+            {supabaseCase ? (
+              <TiptapRenderer 
+                content={supabaseCase.content} 
+                className="prose prose-lg max-w-none"
+              />
+            ) : (
+              <MDXProvider components={enhancedMDXComponents}>
+                <Prose>
+                  <Comp />
+                </Prose>
+              </MDXProvider>
+            )}
           </div>
         </div>
       </section>

@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import { caseIndex } from "@/lib/content-index";
 import { getAllCasesMeta } from "@/lib/content";
+import { supabase } from '@/integrations/supabase/client';
 import { SmartImage } from '@/components/mdx';
 import Reveal from '@/components/ui/Reveal';
 import { ContentCard as CaseCard } from '@/components/content/EnhancedContentCard';
@@ -19,8 +20,57 @@ export default function Cases() {
   }
   const lang = isEN ? 'en' : 'es';
   
-  // Usar el índice, pero con fallback a lib/content si está vacío
+  // Estados para casos de Supabase
+  const [supabaseCases, setSupabaseCases] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Cargar casos de Supabase
+  useEffect(() => {
+    const loadSupabaseCases = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('case_studies')
+          .select('*')
+          .eq('status', 'published')
+          .eq('lang', lang)
+          .order('published_at', { ascending: false });
+
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+          // Convertir formato de Supabase al formato del índice
+          const supabaseFormatted = data.map(caseItem => ({
+            slug: caseItem.slug,
+            locale: caseItem.lang,
+            meta: {
+              title: caseItem.title,
+              date: new Date(caseItem.published_at || caseItem.created_at),
+              excerpt: caseItem.excerpt || '',
+              cover: caseItem.cover_image || '',
+              tags: caseItem.tags || [],
+            },
+            supabaseData: caseItem, // Mantener datos originales para usar con TiptapRenderer
+          }));
+          setSupabaseCases(supabaseFormatted);
+        }
+      } catch (error) {
+        console.error('Error loading cases from Supabase:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadSupabaseCases();
+  }, [lang]);
+
+  // Usar casos de Supabase con fallback a índice/lib/content
   const allCases = useMemo(() => {
+    // Si hay casos de Supabase, usarlos
+    if (supabaseCases.length > 0) {
+      return supabaseCases;
+    }
+
+    // Fallback al índice existente
     let indexCases = caseIndex.filter(c => c.locale === lang);
     
     // Si el índice está vacío, usar fallback de lib/content
@@ -49,17 +99,8 @@ export default function Cases() {
       }
     }
     
-    if (import.meta.env.DEV) {
-      console.log('📋 Cases loaded:', { 
-        total: indexCases.length, 
-        lang,
-        cases: indexCases.map(c => c.slug),
-        source: caseIndex.length > 0 ? 'index' : 'fallback'
-      });
-    }
-    
     return indexCases;
-  }, [lang]);
+  }, [supabaseCases, lang]);
   
   // Estado para filtros
   const [selectedTags, setSelectedTags] = useState<string[]>([]);

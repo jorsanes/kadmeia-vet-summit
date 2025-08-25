@@ -6,6 +6,7 @@ import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import { TextStyle } from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
+import { Underline } from '@tiptap/extension-underline';
 import { Table } from '@tiptap/extension-table';
 import { TableRow } from '@tiptap/extension-table-row';
 import { TableHeader } from '@tiptap/extension-table-header';
@@ -37,6 +38,7 @@ export const TiptapRenderer: React.FC<TiptapRendererProps> = ({
       }),
       TextStyle,
       Color,
+      Underline,
       Table.configure({
         resizable: true,
         HTMLAttributes: {

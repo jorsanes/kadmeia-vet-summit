@@ -6,6 +6,7 @@ import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import { TextStyle } from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
+import { Underline } from '@tiptap/extension-underline';
 import { Table } from '@tiptap/extension-table';
 import { TableRow } from '@tiptap/extension-table-row';
 import { TableHeader } from '@tiptap/extension-table-header';
@@ -16,6 +17,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { 
   Bold, 
   Italic, 
+  Underline as UnderlineIcon,
   List, 
   ListOrdered, 
   Quote, 
@@ -23,6 +25,7 @@ import {
   Redo,
   Image as ImageIcon,
   Link as LinkIcon,
+  Unlink,
   Palette,
   Heading1,
   Heading2,
@@ -63,7 +66,7 @@ export const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ content, onChange 
       }),
       Image.configure({
         HTMLAttributes: {
-          class: 'rounded-lg max-w-full h-auto',
+          class: 'rounded-lg max-w-full h-auto cursor-pointer',
         },
       }),
       Link.configure({
@@ -74,6 +77,7 @@ export const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ content, onChange 
       }),
       TextStyle,
       Color,
+      Underline,
       Table.configure({
         resizable: true,
         HTMLAttributes: {
@@ -132,6 +136,30 @@ export const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ content, onChange 
     const url = window.prompt('URL:');
     if (url) {
       editor?.chain().focus().setLink({ href: url }).run();
+    }
+  };
+
+  const removeLink = () => {
+    editor?.chain().focus().unsetLink().run();
+  };
+
+  const linkImage = () => {
+    const url = window.prompt('URL del enlace para la imagen:');
+    if (url && editor?.isActive('image')) {
+      // Get current image attributes
+      const { src, alt } = editor.getAttributes('image');
+      // Remove current image and add wrapped version
+      editor.chain().focus().deleteSelection().run();
+      editor.chain().focus().setLink({ href: url }).run();
+      editor.chain().focus().setImage({ src, alt }).run();
+    }
+  };
+
+  const unlinkImage = () => {
+    if (editor?.isActive('image')) {
+      const { src, alt } = editor.getAttributes('image');
+      editor.chain().focus().deleteSelection().run();
+      editor.chain().focus().setImage({ src, alt }).run();
     }
   };
 
@@ -235,6 +263,16 @@ export const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ content, onChange 
           type="button"
           variant="ghost"
           size="sm"
+          onClick={() => editor.chain().focus().toggleUnderline().run()}
+          className={editor.isActive('underline') ? 'bg-accent' : ''}
+        >
+          <UnderlineIcon className="h-4 w-4" />
+        </Button>
+        
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           className={editor.isActive('bulletList') ? 'bg-accent' : ''}
         >
@@ -268,8 +306,20 @@ export const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ content, onChange 
           variant="ghost"
           size="sm"
           onClick={addLink}
+          title="Añadir enlace"
         >
           <LinkIcon className="h-4 w-4" />
+        </Button>
+        
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={removeLink}
+          disabled={!editor.isActive('link')}
+          title="Quitar enlace"
+        >
+          <Unlink className="h-4 w-4" />
         </Button>
         
         <Popover open={colorPickerOpen} onOpenChange={setColorPickerOpen}>
@@ -321,6 +371,30 @@ export const WysiwygEditor: React.FC<WysiwygEditorProps> = ({ content, onChange 
             onChange={handleImageUpload}
           />
         </label>
+        
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={linkImage}
+          disabled={!editor.isActive('image')}
+          title="Enlazar imagen"
+          className="text-blue-600"
+        >
+          🔗📷
+        </Button>
+        
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={unlinkImage}
+          disabled={!editor.isActive('image')}
+          title="Quitar enlace de imagen"
+          className="text-orange-600"
+        >
+          🚫🔗
+        </Button>
         
         <div className="w-px h-6 bg-border mx-1" />
         
