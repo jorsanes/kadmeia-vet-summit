@@ -161,12 +161,14 @@ serve(async (req) => {
 
     // Send webhook notification to MAKE.com for automation
     const makeWebhookUrl = Deno.env.get('MAKE_NEWSLETTER_WEBHOOK_URL')
+    const makeSecret = Deno.env.get('MAKE_WEBHOOK_SECRET')
     if (makeWebhookUrl) {
       try {
         const webhookResponse = await fetch(makeWebhookUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'X-Make-Secret': makeSecret || 'kad-2025',
           },
           body: JSON.stringify({
             event_type: 'newsletter_subscription',
