@@ -159,43 +159,35 @@ serve(async (req) => {
       )
     }
 
-    // Send notification email to admin using Resend
-    const resendApiKey = Deno.env.get('RESEND_API_KEY')
-    if (resendApiKey) {
+    // Send webhook notification to MAKE.com for automation
+    const makeWebhookUrl = Deno.env.get('MAKE_NEWSLETTER_WEBHOOK_URL')
+    if (makeWebhookUrl) {
       try {
-        const emailResponse = await fetch('https://api.resend.com/emails', {
+        const webhookResponse = await fetch(makeWebhookUrl, {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${resendApiKey}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            from: 'KADMEIA Newsletter <noreply@kadmeia.com>',
-            to: ['jorge.sanchez@kadmeia.com'],
-            subject: `Nueva suscripción al newsletter: ${formData.email}`,
-            html: `
-              <h2>Nueva suscripción al newsletter</h2>
-              <p><strong>Email:</strong> ${formData.email}</p>
-              <hr>
-              <p><small>IP: ${clientIP} | Fecha: ${new Date().toLocaleString('es-ES')}</small></p>
-            `,
-            text: `
-              Nueva suscripción al newsletter
-              
-              Email: ${formData.email}
-              
-              ---
-              IP: ${clientIP} | Fecha: ${new Date().toLocaleString('es-ES')}
-            `
+            event_type: 'newsletter_subscription',
+            timestamp: new Date().toISOString(),
+            data: {
+              email: formData.email,
+              client_ip: clientIP,
+              date: new Date().toLocaleString('es-ES'),
+              status: 'new'
+            }
           }),
         })
 
-        if (!emailResponse.ok) {
-          console.error('Email sending failed:', await emailResponse.text())
+        if (!webhookResponse.ok) {
+          console.error('MAKE webhook failed:', await webhookResponse.text())
+        } else {
+          console.log('MAKE webhook sent successfully')
         }
-      } catch (emailError) {
-        console.error('Email error:', emailError)
-        // Don't fail the whole request if email fails
+      } catch (webhookError) {
+        console.error('MAKE webhook error:', webhookError)
+        // Don't fail the whole request if webhook fails
       }
     }
 

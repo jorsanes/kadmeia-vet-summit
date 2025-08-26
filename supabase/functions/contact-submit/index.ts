@@ -123,55 +123,38 @@ serve(async (req) => {
       )
     }
 
-    // Send email notification using Resend
-    const resendApiKey = Deno.env.get('RESEND_API_KEY')
-    if (resendApiKey) {
+    // Send webhook notification to MAKE.com for automation
+    const makeWebhookUrl = Deno.env.get('MAKE_CONTACT_WEBHOOK_URL')
+    if (makeWebhookUrl) {
       try {
-        const emailResponse = await fetch('https://api.resend.com/emails', {
+        const webhookResponse = await fetch(makeWebhookUrl, {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${resendApiKey}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            from: 'KADMEIA Contact <noreply@kadmeia.com>',
-            to: ['jorge.sanchez@kadmeia.com'],
-            reply_to: [formData.email],
-            subject: `Nuevo contacto de ${formData.name}`,
-            html: `
-              <h2>Nuevo mensaje de contacto</h2>
-              <p><strong>Nombre:</strong> ${formData.name.replace(/[<>&"]/g, (c) => ({'<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;'}[c] || c))}</p>
-              <p><strong>Email:</strong> ${formData.email.replace(/[<>&"]/g, (c) => ({'<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;'}[c] || c))}</p>
-              <p><strong>Empresa:</strong> ${formData.company.replace(/[<>&"]/g, (c) => ({'<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;'}[c] || c))}</p>
-              ${formData.phone ? `<p><strong>Teléfono:</strong> ${formData.phone.replace(/[<>&"]/g, (c) => ({'<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;'}[c] || c))}</p>` : ''}
-              <p><strong>Mensaje:</strong></p>
-              <p>${formData.message.replace(/[<>&"]/g, (c) => ({'<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;'}[c] || c)).replace(/\n/g, '<br>')}</p>
-              <hr>
-              <p><small>Fecha: ${new Date().toLocaleString('es-ES')}</small></p>
-            `,
-            text: `
-              Nuevo mensaje de contacto
-              
-              Nombre: ${formData.name}
-              Email: ${formData.email}
-              Empresa: ${formData.company}
-              ${formData.phone ? `Teléfono: ${formData.phone}` : ''}
-              
-              Mensaje:
-              ${formData.message}
-              
-              ---
-              IP: ${clientIP} | Fecha: ${new Date().toLocaleString('es-ES')}
-            `
+            event_type: 'contact_form_submission',
+            timestamp: new Date().toISOString(),
+            data: {
+              name: formData.name,
+              email: formData.email,
+              company: formData.company,
+              phone: formData.phone || null,
+              message: formData.message,
+              client_ip: clientIP,
+              date: new Date().toLocaleString('es-ES')
+            }
           }),
         })
 
-        if (!emailResponse.ok) {
-          console.error('Email sending failed:', await emailResponse.text())
+        if (!webhookResponse.ok) {
+          console.error('MAKE webhook failed:', await webhookResponse.text())
+        } else {
+          console.log('MAKE webhook sent successfully')
         }
-      } catch (emailError) {
-        console.error('Email error:', emailError)
-        // Don't fail the whole request if email fails
+      } catch (webhookError) {
+        console.error('MAKE webhook error:', webhookError)
+        // Don't fail the whole request if webhook fails
       }
     }
 
