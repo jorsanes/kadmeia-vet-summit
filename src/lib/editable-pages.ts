@@ -113,7 +113,7 @@ export const getDefaultPageContent = (pageKey: string, lang: string = 'es') => {
           },
           {
             title: isEnglish ? 'AI & software for clinics' : 'IA & software para clínicas',
-            description: isEnglish ? 'Distribution/implementation of clinical AI (radiology, workflows), PACS, report automation.' : 'Distribución/implantación de IA clínica (radiología, flujos), PACS, automatización de informes.'
+            description: isEnglish ? 'Distribution/implementation of clinical AI for diagnostic support, workflows, and report automation.' : 'Distribución/implantación de IA clínica para soporte diagnóstico, flujos de trabajo y automatización de informes.'
           },
           {
             title: isEnglish ? 'No-Code Automation' : 'Automatización No-Code',
