@@ -151,11 +151,9 @@ export const getDefaultPageContent = (pageKey: string, lang: string = 'es') => {
         title: isEnglish ? 'Success Cases' : 'Casos de éxito',
         cases: isEnglish ? [
           { title: "Clinical workflow optimization", metric: 40, unit: "% time reduction", sector: "Veterinary clinic" },
-          { title: "AI for diagnostic imaging", metric: 95, unit: "% accuracy", sector: "Clinic network" },
           { title: "Inventory automation", metric: 30, unit: "% cost savings", sector: "Distributor" }
         ] : [
           { title: "Optimización de flujos clínicos", metric: 40, unit: "% reducción tiempo", sector: "Clínica veterinaria" },
-          { title: "IA para diagnóstico por imagen", metric: 95, unit: "% precisión", sector: "Red de clínicas" },
           { title: "Automatización de inventario", metric: 30, unit: "% ahorro costes", sector: "Distribuidor" }
         ]
       },
