@@ -157,7 +157,7 @@ const AboutEnPage = () => {
                 <CardContent className="p-6">
                   <h3 className="font-display text-xl font-semibold mb-3">AI & Software</h3>
                   <p className="text-muted-foreground mb-4">
-                    Distribution and implementation of clinical AI (radiology, workflows), PACS, automated reporting.
+                    Distribution and implementation of clinical AI for diagnostic support, workflows, and automated reporting.
                   </p>
                   <ul className="text-sm text-muted-foreground space-y-1">
                     <li>• Clinical AI solutions</li>
