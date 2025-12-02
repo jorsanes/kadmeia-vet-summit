@@ -129,11 +129,11 @@ export const EditableHero: React.FC<EditableHeroProps> = ({
          
          <Reveal delay={0.1}>
            <SmartImage
-             src="/images/illustrations/hero-vet-desk.webp"
-             alt="Veterinaria trabajando con paneles de IA"
+             src="/images/illustrations/hero-kadmeia-main.png"
+             alt="KADMEIA - IA y automatización veterinaria"
              className="w-full max-w-4xl mx-auto mt-8 shadow-lg rounded-2xl"
-             width={1200}
-             height={800}
+             width={1600}
+             height={900}
              priority
            />
          </Reveal>
